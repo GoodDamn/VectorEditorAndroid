@@ -8,6 +8,7 @@ import android.graphics.PointF
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.annotation.ColorInt
 import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.models.view.VEModelLine
 import good.damn.editor.vector.paints.VEPaintBase
@@ -26,6 +27,20 @@ class VEViewVector(
     }
 
     var currentPrimitive = VEEnumPrimitives.LINE
+
+    var strokeWidth: Float
+        get() = mCurrentPrimitive?.strokeWidth ?: 0f
+        set(v) {
+            mCurrentPrimitive?.strokeWidth = v
+        }
+
+    @get:ColorInt
+    @setparam:ColorInt
+    var color: Int
+        get() = mCurrentPrimitive?.color ?: 0
+        set(v) {
+            mCurrentPrimitive?.color = v
+        }
 
     private val mPrimitives = LinkedList<VEPaintBase>()
     private var mCurrentPrimitive: VEPaintBase? = null
@@ -101,6 +116,7 @@ class VEViewVector(
                         this
                     )
                 }
+                mCurrentPrimitive = null
                 invalidate()
             }
         }
