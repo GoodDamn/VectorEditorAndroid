@@ -13,7 +13,6 @@ class VEActivityMain
         super.onCreate(
             savedInstanceState
         )
-
         val context = this
 
         setContentView(
@@ -21,6 +20,8 @@ class VEActivityMain
                 context
             )
         )
+
+
 
     }
 
