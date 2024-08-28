@@ -2,6 +2,7 @@ package good.damn.editor.vector.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Point
 import android.graphics.PointF
@@ -28,17 +29,17 @@ class VEViewVector(
 
     var currentPrimitive = VEEnumPrimitives.LINE
 
-    var strokeWidth: Float
-        get() = mCurrentPrimitive?.strokeWidth ?: 0f
+    var strokeWidth = 0f
         set(v) {
+            field = v
             mCurrentPrimitive?.strokeWidth = v
         }
 
     @get:ColorInt
     @setparam:ColorInt
-    var color: Int
-        get() = mCurrentPrimitive?.color ?: 0
+    var color: Int = 0xffff0000.toInt()
         set(v) {
+            field = v
             mCurrentPrimitive?.color = v
         }
 
@@ -93,6 +94,8 @@ class VEViewVector(
                         event.x,
                         event.y
                     )
+                    strokeWidth = this@VEViewVector.strokeWidth
+                    color = this@VEViewVector.color
                 }
                 invalidate()
             }
