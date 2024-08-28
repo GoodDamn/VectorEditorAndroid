@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.views.VEViewVector
+import good.damn.gradient_color_picker.GradientColorPicker
 
 class VEActivityMain
 : AppCompatActivity() {
@@ -133,6 +134,25 @@ class VEActivityMain
                 top = VEApp.height * 0.4f,
                 width = VEApp.width.toFloat()
             )
+
+            root.addView(
+                this
+            )
+        }
+
+        GradientColorPicker(
+            context
+        ).apply {
+
+            boundsFrame(
+                top = VEApp.height * 0.5f,
+                width = VEApp.width.toFloat(),
+                height = VEApp.height * 0.2f
+            )
+
+            setOnPickColorListener {
+                mViewVector?.color = it
+            }
 
             root.addView(
                 this
