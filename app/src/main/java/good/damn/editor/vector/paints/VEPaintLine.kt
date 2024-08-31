@@ -3,7 +3,10 @@ package good.damn.editor.vector.paints
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
+import good.damn.editor.vector.extensions.io.readFraction
+import good.damn.editor.vector.extensions.io.readU
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
+import java.io.InputStream
 
 class VEPaintLine(
     canvasWidth: Float,
@@ -72,6 +75,16 @@ class VEPaintLine(
         y2.toDigitalFraction(mCanvasHeight),
         strokeWidth.toDigitalFraction(mCanvasWidth)
     )
+
+    override fun onDecodeObject(
+        inp: InputStream
+    ) {
+        x1 = inp.readFraction() * mCanvasWidth
+        y1 = inp.readFraction() * mCanvasHeight
+        x2 = inp.readFraction() * mCanvasWidth
+        y2 = inp.readFraction() * mCanvasHeight
+        strokeWidth = inp.readFraction() * mCanvasWidth
+    }
 
     override fun onUp(
         x: Float,

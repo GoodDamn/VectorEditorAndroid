@@ -10,7 +10,8 @@ import java.io.OutputStream
 abstract class VEPaintBase(
     protected val mCanvasWidth: Float,
     protected val mCanvasHeight: Float
-): Encodable {
+): Encodable,
+Decodable {
 
     @get:ColorInt
     @setparam:ColorInt

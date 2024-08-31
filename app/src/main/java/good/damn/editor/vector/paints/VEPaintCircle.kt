@@ -1,7 +1,10 @@
 package good.damn.editor.vector.paints
 
 import android.graphics.Canvas
+import good.damn.editor.vector.extensions.io.readFraction
+import good.damn.editor.vector.extensions.io.readU
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
+import java.io.InputStream
 import kotlin.math.hypot
 
 class VEPaintCircle(
@@ -57,6 +60,14 @@ class VEPaintCircle(
         y.toDigitalFraction(mCanvasHeight),
         radius.toDigitalFraction(mCanvasWidth)
     )
+
+    override fun onDecodeObject(
+        inp: InputStream
+    ) {
+        x = inp.readFraction() * mCanvasWidth
+        y = inp.readFraction() * mCanvasHeight
+        radius = inp.readFraction() * mCanvasWidth
+    }
 
     override fun onUp(
         x: Float,

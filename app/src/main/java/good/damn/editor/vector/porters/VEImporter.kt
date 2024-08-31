@@ -28,8 +28,8 @@ class VEImporter {
         var bytesCount = 0
 
         for (i in 0..<vectorsCount) {
-            val vectorType = inp.readU()
             val vectorDataSize = inp.readU()
+            val vectorType = inp.readU()
             list.add(
                 when(vectorType) {
                     VEPaintLine.ENCODE_TYPE.toInt() -> VEPaintLine(
@@ -40,6 +40,8 @@ class VEImporter {
                         canvasWidth,
                         canvasHeight
                     )
+                }.apply {
+                    onDecodeObject(inp)
                 }
             )
 
