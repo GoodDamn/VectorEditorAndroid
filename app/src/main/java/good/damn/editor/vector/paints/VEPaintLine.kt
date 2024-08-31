@@ -3,8 +3,19 @@ package good.damn.editor.vector.paints
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
+import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 
-class VEPaintLine: VEPaintBase() {
+class VEPaintLine(
+    canvasWidth: Float,
+    canvasHeight: Float
+): VEPaintBase(
+    canvasWidth,
+    canvasHeight
+) {
+
+    companion object {
+        val ENCODE_TYPE = 0.toByte()
+    }
 
     var x1 = 0f
         private set
@@ -53,11 +64,18 @@ class VEPaintLine: VEPaintBase() {
         y2 = y
     }
 
+    override fun onEncodeObject() = byteArrayOf(
+        ENCODE_TYPE,
+        x1.toDigitalFraction(mCanvasWidth),
+        y1.toDigitalFraction(mCanvasHeight),
+        x2.toDigitalFraction(mCanvasWidth),
+        y2.toDigitalFraction(mCanvasHeight),
+        strokeWidth.toDigitalFraction(mCanvasWidth)
+    )
+
     override fun onUp(
         x: Float,
         y: Float
-    ) {
-
-    }
+    ) = Unit
 
 }

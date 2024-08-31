@@ -1,9 +1,19 @@
 package good.damn.editor.vector.paints
 
 import android.graphics.Canvas
+import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import kotlin.math.hypot
 
-class VEPaintCircle: VEPaintBase() {
+class VEPaintCircle(
+    canvasWidth: Float,
+    canvasHeight: Float
+): VEPaintBase(
+    canvasWidth,
+    canvasHeight
+) {
+    companion object {
+        val ENCODE_TYPE = 1.toByte()
+    }
 
     var x = 0f
         private set
@@ -41,10 +51,15 @@ class VEPaintCircle: VEPaintBase() {
         )
     }
 
+    override fun onEncodeObject() = byteArrayOf(
+        ENCODE_TYPE,
+        x.toDigitalFraction(mCanvasWidth),
+        y.toDigitalFraction(mCanvasHeight),
+        radius.toDigitalFraction(mCanvasWidth)
+    )
+
     override fun onUp(
         x: Float,
         y: Float
-    ) {
-
-    }
+    ) = Unit
 }

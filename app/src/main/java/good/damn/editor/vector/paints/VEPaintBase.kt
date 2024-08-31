@@ -3,8 +3,15 @@ package good.damn.editor.vector.paints
 import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.annotation.ColorInt
+import good.damn.editor.vector.interfaces.Decodable
+import good.damn.editor.vector.interfaces.Encodable
+import java.io.OutputStream
 
-abstract class VEPaintBase {
+abstract class VEPaintBase(
+    protected val mCanvasWidth: Float,
+    protected val mCanvasHeight: Float
+): Encodable {
+
     @get:ColorInt
     @setparam:ColorInt
     var color: Int
