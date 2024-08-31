@@ -2,8 +2,10 @@ package good.damn.editor.vector.paints
 
 import android.graphics.Canvas
 import good.damn.editor.vector.extensions.io.readFraction
+import good.damn.editor.vector.extensions.io.readInt32
 import good.damn.editor.vector.extensions.io.readU
 import good.damn.editor.vector.extensions.io.write
+import good.damn.editor.vector.extensions.primitives.toByteArray
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import java.io.InputStream
 import java.io.OutputStream
@@ -78,15 +80,20 @@ class VEPaintCircle(
                     mCanvasWidth
                 )
             )
+            write(
+                color.toByteArray()
+            )
         }
     }
 
     override fun onDecodeObject(
         inp: InputStream
     ) {
+        val buffer = ByteArray(4)
         x = inp.readFraction() * mCanvasWidth
         y = inp.readFraction() * mCanvasHeight
         radius = inp.readFraction() * mCanvasWidth
+        color = inp.readInt32(buffer)
     }
 
     override fun onUp(

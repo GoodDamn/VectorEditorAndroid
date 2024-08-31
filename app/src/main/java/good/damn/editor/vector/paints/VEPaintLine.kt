@@ -4,8 +4,10 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
 import good.damn.editor.vector.extensions.io.readFraction
+import good.damn.editor.vector.extensions.io.readInt32
 import good.damn.editor.vector.extensions.io.readU
 import good.damn.editor.vector.extensions.io.write
+import good.damn.editor.vector.extensions.primitives.toByteArray
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import java.io.InputStream
 import java.io.OutputStream
@@ -99,17 +101,25 @@ class VEPaintLine(
                     mCanvasWidth
                 )
             )
+
+            write(
+                color.toByteArray()
+            )
         }
     }
 
     override fun onDecodeObject(
         inp: InputStream
     ) {
+        val buffer = ByteArray(4)
         x1 = inp.readFraction() * mCanvasWidth
         y1 = inp.readFraction() * mCanvasHeight
         x2 = inp.readFraction() * mCanvasWidth
         y2 = inp.readFraction() * mCanvasHeight
         strokeWidth = inp.readFraction() * mCanvasWidth
+        color = inp.readInt32(
+            buffer
+        )
     }
 
     override fun onUp(
