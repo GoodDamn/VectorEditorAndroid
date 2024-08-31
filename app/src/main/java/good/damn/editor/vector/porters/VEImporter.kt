@@ -27,14 +27,17 @@ class VEImporter {
         val list = LinkedList<VEPaintBase>()
         var bytesCount = 0
 
+        var vectorDataSize: Int
+        var vectorType: Int
+
         for (i in 0..<vectorsCount) {
-            val vectorDataSize = inp.readU()
-            val vectorType = inp.readU()
+            vectorDataSize = inp.readU()
+            vectorType = inp.readU()
             list.add(
-                when(vectorType) {
+                when (vectorType) {
                     VEPaintLine.ENCODE_TYPE.toInt() -> VEPaintLine(
                         canvasWidth,
-                        canvasWidth
+                        canvasHeight
                     )
                     else -> VEPaintCircle(
                         canvasWidth,
