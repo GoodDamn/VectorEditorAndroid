@@ -4,9 +4,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
 import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.views.VEViewVector
@@ -159,10 +161,88 @@ class VEActivityMain
             )
         }
 
+        LinearLayout(
+            context
+        ).apply {
+            orientation = LinearLayout.HORIZONTAL
+
+            AppCompatButton(
+                context
+            ).apply {
+                text = "Export"
+                setOnClickListener(
+                    this@VEActivityMain::onClickExportVector
+                )
+                addView(
+                    this
+                )
+            }
+
+            AppCompatButton(
+                context
+            ).apply {
+                text = "Import"
+                setOnClickListener(
+                    this@VEActivityMain::onClickImportVector
+                )
+                addView(this)
+            }
+
+            AppCompatButton(
+                context
+            ).apply {
+                text = "Delete all"
+                setOnClickListener(
+                    this@VEActivityMain::onClickDeleteAll
+                )
+                addView(this)
+            }
+
+            AppCompatButton(
+                context
+            ).apply {
+                text = "Undo"
+                setOnClickListener(
+                    this@VEActivityMain::onClickUndoAction
+                )
+                addView(this)
+            }
+
+            boundsFrame(
+                top = VEApp.height * 0.7f
+            )
+
+            root.addView(this)
+        }
+
         setContentView(
             root
         )
 
+    }
+
+    private fun onClickExportVector(
+        v: View
+    ) {
+
+    }
+
+    private fun onClickImportVector(
+        v: View
+    ) {
+
+    }
+
+    private fun onClickDeleteAll(
+        v: View
+    ) {
+        mViewVector?.clearVector()
+    }
+
+    private fun onClickUndoAction(
+        v: View
+    ) {
+        mViewVector?.undoVector()
     }
 
 }

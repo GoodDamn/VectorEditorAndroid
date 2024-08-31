@@ -127,6 +127,20 @@ class VEViewVector(
 
         return true
     }
+
+    fun undoVector() = mPrimitives.run {
+        if (isEmpty()) {
+            return@run
+        }
+        mPrimitives.removeLast()
+        invalidate()
+    }
+
+    fun clearVector() {
+        mCurrentPrimitive = null
+        mPrimitives.clear()
+        invalidate()
+    }
 }
 
 private fun VEViewVector.selectPrimitive(
