@@ -5,8 +5,10 @@ import android.graphics.Paint
 import android.graphics.PointF
 import good.damn.editor.vector.extensions.io.readFraction
 import good.damn.editor.vector.extensions.io.readU
+import good.damn.editor.vector.extensions.io.write
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import java.io.InputStream
+import java.io.OutputStream
 
 class VEPaintLine(
     canvasWidth: Float,
@@ -67,14 +69,38 @@ class VEPaintLine(
         y2 = y
     }
 
-    override fun onEncodeObject() = byteArrayOf(
-        ENCODE_TYPE,
-        x1.toDigitalFraction(mCanvasWidth),
-        y1.toDigitalFraction(mCanvasHeight),
-        x2.toDigitalFraction(mCanvasWidth),
-        y2.toDigitalFraction(mCanvasHeight),
-        strokeWidth.toDigitalFraction(mCanvasWidth)
-    )
+    override fun onEncodeObject(
+        os: OutputStream
+    )  {
+        os.apply {
+            write(ENCODE_TYPE)
+            write(
+                x1.toDigitalFraction(
+                    mCanvasWidth
+                )
+            )
+            write(
+                y1.toDigitalFraction(
+                    mCanvasHeight
+                )
+            )
+            write(
+                x2.toDigitalFraction(
+                    mCanvasWidth
+                )
+            )
+            write(
+                y2.toDigitalFraction(
+                    mCanvasHeight
+                )
+            )
+            write(
+                strokeWidth.toDigitalFraction(
+                    mCanvasWidth
+                )
+            )
+        }
+    }
 
     override fun onDecodeObject(
         inp: InputStream

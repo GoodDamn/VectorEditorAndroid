@@ -3,8 +3,11 @@ package good.damn.editor.vector.paints
 import android.graphics.Canvas
 import good.damn.editor.vector.extensions.io.readFraction
 import good.damn.editor.vector.extensions.io.readU
+import good.damn.editor.vector.extensions.io.write
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import java.io.InputStream
+import java.io.OutputStream
+import java.io.OutputStreamWriter
 import kotlin.math.hypot
 
 class VEPaintCircle(
@@ -15,7 +18,7 @@ class VEPaintCircle(
     canvasHeight
 ) {
     companion object {
-        const val ENCODE_TYPE = 1.toByte()
+        const val ENCODE_TYPE = 1
     }
 
     var x = 0f
@@ -54,12 +57,29 @@ class VEPaintCircle(
         )
     }
 
-    override fun onEncodeObject() = byteArrayOf(
-        ENCODE_TYPE,
-        x.toDigitalFraction(mCanvasWidth),
-        y.toDigitalFraction(mCanvasHeight),
-        radius.toDigitalFraction(mCanvasWidth)
-    )
+    override fun onEncodeObject(
+        os: OutputStream
+    ) {
+        os.apply {
+            write(ENCODE_TYPE)
+            write(
+                x.toDigitalFraction(
+                    mCanvasWidth
+                )
+            )
+
+            write(
+                y.toDigitalFraction(
+                    mCanvasHeight
+                )
+            )
+            write(
+                radius.toDigitalFraction(
+                    mCanvasWidth
+                )
+            )
+        }
+    }
 
     override fun onDecodeObject(
         inp: InputStream

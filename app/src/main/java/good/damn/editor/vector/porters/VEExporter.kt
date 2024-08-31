@@ -20,12 +20,8 @@ class VEExporter {
         baos.write(inputData.size)
 
         inputData.forEach {
-            val vectorData = it.onEncodeObject()
-            baos.write(
-                vectorData.size
-            )
-            baos.write(
-                vectorData
+            it.onEncodeObject(
+                baos
             )
         }
 

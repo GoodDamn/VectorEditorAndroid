@@ -25,13 +25,10 @@ class VEImporter {
 
         val vectorsCount = inp.readU()
         val list = LinkedList<VEPaintBase>()
-        var bytesCount = 0
 
-        var vectorDataSize: Int
         var vectorType: Int
 
         for (i in 0..<vectorsCount) {
-            vectorDataSize = inp.readU()
             vectorType = inp.readU()
             list.add(
                 when (vectorType) {
@@ -47,8 +44,6 @@ class VEImporter {
                     onDecodeObject(inp)
                 }
             )
-
-            bytesCount += vectorDataSize
         }
 
         inp.close()
