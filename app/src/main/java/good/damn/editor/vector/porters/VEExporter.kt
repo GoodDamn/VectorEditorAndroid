@@ -1,8 +1,7 @@
-package good.damn.editor.vector.export
+package good.damn.editor.vector.porters
 
 import good.damn.editor.vector.extensions.file.write
 import good.damn.editor.vector.interfaces.Encodable
-import good.damn.editor.vector.paints.VEPaintBase
 import java.io.ByteArrayOutputStream
 import java.io.File
 

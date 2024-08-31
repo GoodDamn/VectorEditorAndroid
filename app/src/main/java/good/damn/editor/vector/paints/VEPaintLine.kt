@@ -14,7 +14,7 @@ class VEPaintLine(
 ) {
 
     companion object {
-        val ENCODE_TYPE = 0.toByte()
+        const val ENCODE_TYPE = 0.toByte()
     }
 
     var x1 = 0f

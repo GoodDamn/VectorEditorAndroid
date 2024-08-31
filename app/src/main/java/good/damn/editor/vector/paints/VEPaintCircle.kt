@@ -12,7 +12,7 @@ class VEPaintCircle(
     canvasHeight
 ) {
     companion object {
-        val ENCODE_TYPE = 1.toByte()
+        const val ENCODE_TYPE = 1.toByte()
     }
 
     var x = 0f

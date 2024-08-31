@@ -1,6 +1,5 @@
 package good.damn.editor.vector
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
@@ -10,12 +9,11 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import good.damn.editor.vector.enums.VEEnumPrimitives
-import good.damn.editor.vector.export.VEExporter
+import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.files.VEFileDocument
 import good.damn.editor.vector.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
-import java.io.File
 
 class VEActivityMain
 : AppCompatActivity() {
