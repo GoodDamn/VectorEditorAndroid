@@ -10,14 +10,19 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import good.damn.editor.vector.enums.VEEnumPrimitives
+import good.damn.editor.vector.export.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
+import good.damn.editor.vector.files.VEFileDocument
 import good.damn.editor.vector.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
+import java.io.File
 
 class VEActivityMain
 : AppCompatActivity() {
 
     private var mViewVector: VEViewVector? = null
+
+    private var mExporter = VEExporter()
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -224,7 +229,15 @@ class VEActivityMain
     private fun onClickExportVector(
         v: View
     ) {
+        val data = mViewVector?.primitives
+            ?: return
 
+        mExporter.exportTo(
+            VEFileDocument(
+                "myVector.sav"
+            ),
+            data
+        )
     }
 
     private fun onClickImportVector(

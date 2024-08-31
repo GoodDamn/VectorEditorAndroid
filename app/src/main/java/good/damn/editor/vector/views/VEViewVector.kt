@@ -2,16 +2,10 @@ package good.damn.editor.vector.views
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Point
-import android.graphics.PointF
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
 import good.damn.editor.vector.enums.VEEnumPrimitives
-import good.damn.editor.vector.models.view.VEModelLine
 import good.damn.editor.vector.paints.VEPaintBase
 import good.damn.editor.vector.paints.VEPaintCircle
 import good.damn.editor.vector.paints.VEPaintLine
@@ -43,7 +37,7 @@ class VEViewVector(
             mCurrentPrimitive?.color = v
         }
 
-    private val mPrimitives = LinkedList<VEPaintBase>()
+    val primitives = LinkedList<VEPaintBase>()
     private var mCurrentPrimitive: VEPaintBase? = null
 
     override fun onDraw(
@@ -53,7 +47,7 @@ class VEViewVector(
             canvas
         )
 
-        mPrimitives.forEach {
+        primitives.forEach {
             it.onDraw(canvas)
         }
 
@@ -115,7 +109,7 @@ class VEViewVector(
                         event.y
                     )
 
-                    mPrimitives.add(
+                    primitives.add(
                         this
                     )
                 }
@@ -128,17 +122,17 @@ class VEViewVector(
         return true
     }
 
-    fun undoVector() = mPrimitives.run {
+    fun undoVector() = primitives.run {
         if (isEmpty()) {
             return@run
         }
-        mPrimitives.removeLast()
+        primitives.removeLast()
         invalidate()
     }
 
     fun clearVector() {
         mCurrentPrimitive = null
-        mPrimitives.clear()
+        primitives.clear()
         invalidate()
     }
 }
