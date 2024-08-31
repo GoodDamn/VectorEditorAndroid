@@ -37,7 +37,7 @@ class VEViewVector(
             mCurrentPrimitive?.color = v
         }
 
-    val primitives = LinkedList<VEPaintBase>()
+    var primitives = LinkedList<VEPaintBase>()
     private var mCurrentPrimitive: VEPaintBase? = null
 
     override fun onDraw(
@@ -82,7 +82,9 @@ class VEViewVector(
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 mCurrentPrimitive = selectPrimitive(
-                    currentPrimitive
+                    currentPrimitive,
+                    width.toFloat(),
+                    height.toFloat()
                 ).apply {
                     onDown(
                         event.x,
@@ -138,8 +140,16 @@ class VEViewVector(
 }
 
 private fun VEViewVector.selectPrimitive(
-    primitive: VEEnumPrimitives
+    primitive: VEEnumPrimitives,
+    canvasWidth: Float,
+    canvasHeight: Float
 ) = when (primitive) {
-    VEEnumPrimitives.CIRCLE -> VEPaintCircle()
-    else -> VEPaintLine()
+    VEEnumPrimitives.CIRCLE -> VEPaintCircle(
+        canvasWidth,
+        canvasHeight
+    )
+    else -> VEPaintLine(
+        canvasWidth,
+        canvasHeight
+    )
 }

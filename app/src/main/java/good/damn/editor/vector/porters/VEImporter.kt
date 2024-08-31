@@ -19,7 +19,7 @@ class VEImporter {
         canvasHeight: Float
     ): LinkedList<VEPaintBase>? {
         val version = inp.readU()
-        if (version == mVersionImporter) {
+        if (version != mVersionImporter) {
             return null
         }
 

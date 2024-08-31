@@ -11,25 +11,38 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import good.damn.editor.vector.browsers.VEBrowserContent
+import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.files.VEFileDocument
+import good.damn.editor.vector.porters.VEImporter
 import good.damn.editor.vector.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
 
 class VEActivityMain
-: AppCompatActivity() {
+: AppCompatActivity(),
+VEListenerOnGetBrowserContent {
 
     private var mViewVector: VEViewVector? = null
 
-    private var mExporter = VEExporter()
+    private val mExporter = VEExporter()
+    private val mImporter = VEImporter()
+
+    private val mBrowserContent = VEBrowserContent().apply {
+        onGetContent = this@VEActivityMain
+    }
 
     override fun onCreate(
         savedInstanceState: Bundle?
     ) {
         super.onCreate(
             savedInstanceState
+        )
+
+        mBrowserContent.register(
+            this
         )
 
         val context = this
@@ -244,7 +257,7 @@ class VEActivityMain
     private fun onClickImportVector(
         v: View
     ) {
-
+        mBrowserContent.launch()
     }
 
     private fun onClickDeleteAll(
@@ -257,6 +270,30 @@ class VEActivityMain
         v: View
     ) {
         mViewVector?.undoVector()
+    }
+
+    override fun onGetBrowserContent(
+        uri: Uri?
+    ) {
+        if (uri == null) {
+            return
+        }
+
+        val vectorCanvas = mViewVector
+            ?: return
+
+        val stream = contentResolver.openInputStream(
+            uri
+        ) ?: return
+
+        mImporter.importFrom(
+            stream,
+            vectorCanvas.width.toFloat(),
+            vectorCanvas.height.toFloat()
+        )?.let {
+            vectorCanvas.primitives = it
+            vectorCanvas.invalidate()
+        }
     }
 
 }
