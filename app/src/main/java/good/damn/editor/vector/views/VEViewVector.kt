@@ -29,6 +29,8 @@ class VEViewVector(
             mCurrentPrimitive?.strokeWidth = v
         }
 
+    private var mIsDraggingVector = false
+
     @get:ColorInt
     @setparam:ColorInt
     var color: Int = 0xffff0000.toInt()
@@ -56,22 +58,6 @@ class VEViewVector(
         }
     }
 
-    override fun onLayout(
-        changed: Boolean,
-        left: Int,
-        top: Int,
-        right: Int,
-        bottom: Int
-    ) {
-        super.onLayout(
-            changed,
-            left,
-            top,
-            right,
-            bottom
-        )
-    }
-
     override fun onTouchEvent(
         event: MotionEvent?
     ): Boolean {
@@ -81,6 +67,23 @@ class VEViewVector(
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                mIsDraggingVector = false
+
+                for (i in primitives) {
+                    if (i.onDragVector(
+                            event.x,
+                            event.y
+                    )) {
+                        mIsDraggingVector = true
+                        mCurrentPrimitive = i
+                        break
+                    }
+                }
+
+                if (mIsDraggingVector) {
+                    return true
+                }
+
                 mCurrentPrimitive = selectPrimitive(
                     currentPrimitive,
                     width.toFloat(),
@@ -97,14 +100,26 @@ class VEViewVector(
             }
 
             MotionEvent.ACTION_MOVE -> {
-                mCurrentPrimitive?.onMove(
-                    event.x,
-                    event.y
-                )
+                if (mIsDraggingVector) {
+                    mCurrentPrimitive?.onDragMove(
+                        event.x,
+                        event.y
+                    )
+                } else {
+                    mCurrentPrimitive?.onMove(
+                        event.x,
+                        event.y
+                    )
+                }
                 invalidate()
             }
 
             MotionEvent.ACTION_UP -> {
+                if (mIsDraggingVector) {
+                    mCurrentPrimitive = null
+                    return true
+                }
+
                 mCurrentPrimitive?.apply {
                     onUp(
                         event.x,
@@ -125,6 +140,7 @@ class VEViewVector(
     }
 
     fun undoVector() = primitives.run {
+        mCurrentPrimitive = null
         if (isEmpty()) {
             return@run
         }

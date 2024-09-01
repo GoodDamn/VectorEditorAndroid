@@ -1,7 +1,7 @@
 package good.damn.editor.vector.porters
 
 import good.damn.editor.vector.extensions.file.write
-import good.damn.editor.vector.interfaces.Encodable
+import good.damn.editor.vector.interfaces.VEIEncodable
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -13,7 +13,7 @@ class VEExporter {
 
     fun exportTo(
         file: File,
-        inputData: List<Encodable>
+        inputData: List<VEIEncodable>
     ) {
         val baos = ByteArrayOutputStream()
         baos.write(mVersionExporter)

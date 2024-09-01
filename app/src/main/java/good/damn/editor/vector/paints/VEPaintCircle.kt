@@ -1,6 +1,7 @@
 package good.damn.editor.vector.paints
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import good.damn.editor.vector.extensions.io.readFraction
 import good.damn.editor.vector.extensions.io.readInt32
 import good.damn.editor.vector.extensions.io.readU
@@ -10,6 +11,7 @@ import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.OutputStreamWriter
+import kotlin.math.abs
 import kotlin.math.hypot
 
 class VEPaintCircle(
@@ -94,6 +96,28 @@ class VEPaintCircle(
         y = inp.readFraction() * mCanvasHeight
         radius = inp.readFraction() * mCanvasWidth
         color = inp.readInt32(buffer)
+    }
+
+    override fun onDragMove(
+        x: Float,
+        y: Float
+    ) {
+        this.x = x
+        this.y = y
+    }
+
+    override fun onDragVector(
+        touchX: Float,
+        touchY: Float
+    ): Boolean {
+        if (abs(hypot(
+            touchX - x,
+            touchY - y
+        )) < mTriggerRadius) {
+            return true
+        }
+
+        return false
     }
 
     override fun onUp(

@@ -3,15 +3,16 @@ package good.damn.editor.vector.paints
 import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.annotation.ColorInt
-import good.damn.editor.vector.interfaces.Decodable
-import good.damn.editor.vector.interfaces.Encodable
-import java.io.OutputStream
+import good.damn.editor.vector.interfaces.VEIDecodable
+import good.damn.editor.vector.interfaces.VEIDraggable
+import good.damn.editor.vector.interfaces.VEIEncodable
 
 abstract class VEPaintBase(
     protected val mCanvasWidth: Float,
     protected val mCanvasHeight: Float
-): Encodable,
-Decodable {
+): VEIEncodable,
+VEIDecodable,
+VEIDraggable {
 
     @get:ColorInt
     @setparam:ColorInt
@@ -32,6 +33,14 @@ Decodable {
         set(v) {
             mPaint.style = v
         }
+
+    protected var mTriggerRadius = 0.05f * mCanvasWidth
+
+    protected val mPaintDrag = Paint().apply {
+        style = Paint.Style.STROKE
+        strokeWidth = mTriggerRadius * 0.25f
+        color = 0xffffffff.toInt()
+    }
 
     protected val mPaint = Paint()
     abstract fun onDraw(

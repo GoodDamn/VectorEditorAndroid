@@ -11,6 +11,8 @@ import good.damn.editor.vector.extensions.primitives.toByteArray
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import java.io.InputStream
 import java.io.OutputStream
+import kotlin.math.abs
+import kotlin.math.hypot
 
 class VEPaintLine(
     canvasWidth: Float,
@@ -32,6 +34,9 @@ class VEPaintLine(
         private set
     var y2 = 0f
         private set
+
+    private var mIsDraggingPoint1 = false
+    private var mIsDraggingPoint2 = false
 
     init {
         mPaint.apply {
@@ -120,6 +125,48 @@ class VEPaintLine(
         color = inp.readInt32(
             buffer
         )
+    }
+
+    override fun onDragVector(
+        touchX: Float,
+        touchY: Float
+    ): Boolean {
+        mIsDraggingPoint1 = false
+        mIsDraggingPoint2 = false
+
+        if (abs(hypot(
+            x1 - touchX,
+            y1 - touchY
+        )) < mTriggerRadius) {
+            mIsDraggingPoint1 = true
+            return true
+        }
+
+        if (abs(hypot(
+            x2 - touchX,
+            y2 - touchY
+        )) < mTriggerRadius) {
+            mIsDraggingPoint2 = true
+            return true
+        }
+
+        return false
+    }
+
+    override fun onDragMove(
+        x: Float,
+        y: Float
+    ) {
+        if (mIsDraggingPoint1) {
+            x1 = x
+            y1 = y
+            return
+        }
+
+        if (mIsDraggingPoint2) {
+            x2 = x
+            y2 = y
+        }
     }
 
     override fun onUp(
