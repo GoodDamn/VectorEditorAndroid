@@ -34,6 +34,9 @@ VEIDraggable {
             mPaint.style = v
         }
 
+    var isAlignedHorizontal = false
+    var isAlignedVertical = false
+
     protected var mTriggerRadius = 0.05f * mCanvasWidth
 
     protected val mPaintDrag = Paint().apply {

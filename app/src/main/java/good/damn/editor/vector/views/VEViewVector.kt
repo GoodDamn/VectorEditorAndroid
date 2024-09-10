@@ -29,11 +29,23 @@ class VEViewVector(
             mCurrentPrimitive?.strokeWidth = v
         }
 
+    var isAlignedHorizontal = false
+        set(v) {
+            field = v
+            mCurrentPrimitive?.isAlignedHorizontal = v
+        }
+
+    var isAlignedVertical = false
+        set(v) {
+            field = v
+            mCurrentPrimitive?.isAlignedVertical = v
+        }
+
     private var mIsDraggingVector = false
 
     @get:ColorInt
     @setparam:ColorInt
-    var color: Int = 0xffff0000.toInt()
+    var color: Int = 0
         set(v) {
             field = v
             mCurrentPrimitive?.color = v
@@ -71,10 +83,12 @@ class VEViewVector(
 
                 for (i in primitives) {
                     if (i.onDragVector(
-                            event.x,
-                            event.y
+                       event.x,
+                       event.y
                     )) {
                         mIsDraggingVector = true
+                        i.isAlignedHorizontal = isAlignedHorizontal
+                        i.isAlignedVertical = isAlignedVertical
                         mCurrentPrimitive = i
                         break
                     }
@@ -93,6 +107,8 @@ class VEViewVector(
                         event.x,
                         event.y
                     )
+                    isAlignedVertical = this@VEViewVector.isAlignedVertical
+                    isAlignedHorizontal = this@VEViewVector.isAlignedHorizontal
                     strokeWidth = this@VEViewVector.strokeWidth
                     color = this@VEViewVector.color
                 }
