@@ -7,7 +7,7 @@ import android.view.View
 import androidx.annotation.ColorInt
 import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.paints.VEPaintBase
-import good.damn.editor.vector.paints.VEPaintCircle
+import good.damn.editor.vector.paints.VEPaintArc
 import good.damn.editor.vector.paints.VEPaintLine
 import java.util.LinkedList
 
@@ -161,7 +161,7 @@ private fun VEViewVector.selectPrimitive(
     canvasWidth: Float,
     canvasHeight: Float
 ) = when (primitive) {
-    VEEnumPrimitives.CIRCLE -> VEPaintCircle(
+    VEEnumPrimitives.CIRCLE -> VEPaintArc(
         canvasWidth,
         canvasHeight
     )

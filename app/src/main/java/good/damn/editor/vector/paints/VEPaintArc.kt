@@ -2,11 +2,10 @@ package good.damn.editor.vector.paints
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Point
 import android.graphics.PointF
+import android.graphics.RectF
 import good.damn.editor.vector.extensions.io.readFraction
 import good.damn.editor.vector.extensions.io.readInt32
-import good.damn.editor.vector.extensions.io.readU
 import good.damn.editor.vector.extensions.io.write
 import good.damn.editor.vector.extensions.primitives.toByteArray
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
@@ -16,22 +15,23 @@ import java.io.OutputStream
 import kotlin.math.abs
 import kotlin.math.hypot
 
-class VEPaintLine(
+class VEPaintArc(
     canvasWidth: Float,
     canvasHeight: Float
 ): VEPaintBase(
     canvasWidth,
     canvasHeight
 ) {
-
     companion object {
-        const val ENCODE_TYPE = 0.toByte()
+        const val ENCODE_TYPE = 1
     }
 
-    val point1 = PointF()
-    val point2 = PointF()
+    val rect = RectF()
 
-    private var mPointDrag: PointF? = null
+    var useCenter = true
+
+    var startAngle = 0f
+    var sweepAngle = 360f
 
     private val mTriggerRadius = canvasWidth * 0.05f
 
@@ -41,111 +41,60 @@ class VEPaintLine(
         strokeWidth = mTriggerRadius * 0.5f
     }
 
-
-    init {
-        mPaint.apply {
-            strokeCap = Paint.Cap.ROUND
-            strokeJoin = Paint.Join.ROUND
-        }
-    }
-
     override fun onDraw(
         canvas: Canvas
     ) {
-        canvas.drawLine(
-            point1.x,
-            point1.y,
-            point2.x,
-            point2.y,
+        canvas.drawArc(
+            rect,
+            startAngle,
+            sweepAngle,
+            useCenter,
             mPaint
         )
 
         canvas.drawCircle(
-            point1.x,
-            point1.y,
+            rect.left,
+            rect.top,
             mTriggerRadius,
             mPaintDrag
         )
 
         canvas.drawCircle(
-            point2.x,
-            point2.y,
+            rect.right,
+            rect.bottom,
             mTriggerRadius,
             mPaintDrag
         )
     }
-
-    override fun onCheckCollision(
-        px: Float,
-        py: Float
-    ): Boolean {
-        if (abs(hypot(
-            px - point1.x,
-            py - point1.y
-        )) < mTriggerRadius) {
-            mPointDrag = point1
-            return true
-        }
-
-        if (abs(hypot(
-            px - point2.x,
-            py - point2.y
-        )) < mTriggerRadius) {
-            mPointDrag = point2
-            return true
-        }
-
-        return false
-    }
-
 
     override fun onDown(
         x: Float,
         y: Float
     ) {
-        point1.set(x,y)
-        point2.set(x,y)
+        rect.set(
+            x, y,
+            x, y
+        )
     }
 
     override fun onMove(
         moveX: Float,
         moveY: Float
     ) {
-        mPointDrag?.apply {
-            set(moveX,moveY)
-            return
-        }
-
-        point2.set(
-            moveX,
-            moveY
-        )
+        rect.right = moveX
+        rect.bottom = moveY
     }
 
     override fun onEncodeObject(
         os: OutputStream
-    )  {
+    ) {
         os.apply {
+            rect.writeToStream(
+                this,
+                mCanvasWidth,
+                mCanvasHeight
+            )
             write(ENCODE_TYPE)
-
-            point1.writeToStream(
-                this,
-                mCanvasWidth,
-                mCanvasHeight
-            )
-
-            point2.writeToStream(
-                this,
-                mCanvasWidth,
-                mCanvasHeight
-            )
-
-            write(
-                strokeWidth.toDigitalFraction(
-                    mCanvasWidth
-                )
-            )
-
             write(
                 color.toByteArray()
             )
@@ -156,28 +105,34 @@ class VEPaintLine(
         inp: InputStream
     ) {
         val buffer = ByteArray(4)
-
-        point1.set(
+        rect.set(
+            inp.readFraction() * mCanvasWidth,
+            inp.readFraction() * mCanvasHeight,
             inp.readFraction() * mCanvasWidth,
             inp.readFraction() * mCanvasHeight
         )
+        color = inp.readInt32(buffer)
+    }
 
-        point2.set(
-            inp.readFraction() * mCanvasWidth,
-            inp.readFraction() * mCanvasHeight
-        )
+    override fun onCheckCollision(
+        px: Float,
+        py: Float
+    ): Boolean {
+        if (abs(hypot(
+          px - rect.right,
+          py - rect.bottom
+        )) < mCanvasWidth * 0.05f) {
 
-        strokeWidth = inp.readFraction() * mCanvasWidth
-        color = inp.readInt32(
-            buffer
-        )
+            return true
+        }
+
+        return false
     }
 
     override fun onUp(
         x: Float,
         y: Float
     ) {
-        mPointDrag = null
-    }
 
+    }
 }

@@ -2,7 +2,7 @@ package good.damn.editor.vector.porters
 
 import good.damn.editor.vector.extensions.io.readU
 import good.damn.editor.vector.paints.VEPaintBase
-import good.damn.editor.vector.paints.VEPaintCircle
+import good.damn.editor.vector.paints.VEPaintArc
 import good.damn.editor.vector.paints.VEPaintLine
 import java.io.InputStream
 import java.util.LinkedList
@@ -36,7 +36,7 @@ class VEImporter {
                         canvasWidth,
                         canvasHeight
                     )
-                    else -> VEPaintCircle(
+                    else -> VEPaintArc(
                         canvasWidth,
                         canvasHeight
                     )

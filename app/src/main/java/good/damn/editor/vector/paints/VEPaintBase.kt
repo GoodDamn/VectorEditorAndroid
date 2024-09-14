@@ -45,8 +45,8 @@ VEICollidable {
         y: Float
     )
     abstract fun onMove(
-        x: Float,
-        y: Float
+        moveX: Float,
+        moveY: Float
     )
     abstract fun onUp(
         x: Float,
