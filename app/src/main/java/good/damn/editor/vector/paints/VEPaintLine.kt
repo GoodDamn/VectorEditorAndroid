@@ -72,8 +72,13 @@ class VEPaintLine(
         x: Float,
         y: Float
     ) {
-        x2 = x
-        y2 = y
+        if (isAlignedHorizontal) {
+            x2 = x
+        }
+
+        if (isAlignedVertical) {
+            y2 = y
+        }
     }
 
     override fun onEncodeObject(
@@ -158,14 +163,22 @@ class VEPaintLine(
         y: Float
     ) {
         if (mIsDraggingPoint1) {
-            x1 = x
-            y1 = y
+            if (isAlignedHorizontal) {
+                x1 = x
+            }
+            if (isAlignedVertical) {
+                y1 = y
+            }
             return
         }
 
         if (mIsDraggingPoint2) {
-            x2 = x
-            y2 = y
+            if (isAlignedHorizontal) {
+                x2 = x
+            }
+            if (isAlignedVertical) {
+                y2 = y
+            }
         }
     }
 

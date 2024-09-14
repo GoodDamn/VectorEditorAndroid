@@ -2,7 +2,9 @@ package good.damn.editor.vector
 
 import android.net.Uri
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.SeekBar
@@ -63,6 +65,9 @@ VEListenerOnGetBrowserContent {
             setBackgroundColor(
                 0xff565656.toInt()
             )
+
+            isAlignedVertical = true
+            isAlignedHorizontal = true
 
             boundsFrame(
                 width = VEApp.width.toFloat(),
@@ -125,6 +130,59 @@ VEListenerOnGetBrowserContent {
                 this
             )
         }
+
+        Button(
+            context
+        ).apply {
+
+            text = "H"
+            val s = VEApp.width * 0.1f
+            boundsFrame(
+                gravity = Gravity.END,
+                width = s,
+                height = s,
+                top = topOptions,
+                end = 0f
+            )
+
+            setOnClickListener {
+                mViewVector?.apply {
+                    isAlignedHorizontal = !isAlignedHorizontal
+                }
+            }
+
+            root.addView(
+                this
+            )
+        }
+
+        Button(
+            context
+        ).apply {
+
+            text = "V"
+
+            val s = VEApp.width * 0.1f
+            boundsFrame(
+                gravity = Gravity.END,
+                width = s,
+                height = s,
+                top = topOptions,
+                end = s
+            )
+
+            setOnClickListener {
+                mViewVector?.apply {
+                    isAlignedVertical = !isAlignedVertical
+                }
+            }
+
+            root.addView(
+                this
+            )
+        }
+
+
 
         SeekBar(
             context

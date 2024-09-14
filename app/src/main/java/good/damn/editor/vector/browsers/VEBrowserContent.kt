@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
+import java.lang.ref.WeakReference
 
 class VEBrowserContent
 : ActivityResultCallback<Uri?> {
