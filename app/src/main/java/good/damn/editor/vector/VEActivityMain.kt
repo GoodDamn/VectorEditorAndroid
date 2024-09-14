@@ -126,6 +126,29 @@ VEListenerOnGetBrowserContent {
         Button(
             context
         ).apply {
+            text = "SER"
+            val s = VEApp.width * 0.15f
+
+            setOnClickListener {
+                mViewVector?.apply {
+                    isSerialDraw = !isSerialDraw
+                }
+            }
+
+            boundsFrame(
+                gravity = Gravity.END,
+                width = s,
+                top = s*2
+            )
+
+            root.addView(
+                this
+            )
+        }
+
+        Button(
+            context
+        ).apply {
             text = "|"
 
             val s = VEApp.width * 0.1f

@@ -32,6 +32,8 @@ class VEViewVector(
 
     var anchorOption = VEEnumOptions.MOVE
 
+    var isSerialDraw = false
+
     var isAlignedHorizontal = false
     var isAlignedVertical = false
 
@@ -79,8 +81,13 @@ class VEViewVector(
         ) {
             MotionEvent.ACTION_DOWN -> {
 
-                moveX = event.x
-                moveY = event.y
+                val tempX = event.x
+                val tempY = event.y
+
+                if (!isSerialDraw) {
+                    moveX = tempX
+                    moveY = tempY
+                }
 
                 if (anchorOption == VEEnumOptions.HOOK) {
 
@@ -110,7 +117,7 @@ class VEViewVector(
 
                 mCurrentPrimitive = primitives.find {
                     it.onCheckCollision(
-                        moveX, moveY
+                        tempX, tempY
                     )
                 }
 
