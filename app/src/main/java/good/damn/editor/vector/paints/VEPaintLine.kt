@@ -28,10 +28,11 @@ class VEPaintLine(
         const val ENCODE_TYPE = 0.toByte()
     }
 
+    var affectablePoint: PointF? = null
+        private set
+
     val point1 = PointF()
     val point2 = PointF()
-
-    private var mPointDrag: PointF? = null
 
     private val mTriggerRadius = canvasWidth * 0.05f
 
@@ -40,7 +41,6 @@ class VEPaintLine(
         color = 0x55ffffff
         strokeWidth = mTriggerRadius * 0.5f
     }
-
 
     init {
         mPaint.apply {
@@ -83,7 +83,7 @@ class VEPaintLine(
             px - point1.x,
             py - point1.y
         )) < mTriggerRadius) {
-            mPointDrag = point1
+            affectablePoint = point1
             return true
         }
 
@@ -91,7 +91,7 @@ class VEPaintLine(
             px - point2.x,
             py - point2.y
         )) < mTriggerRadius) {
-            mPointDrag = point2
+            affectablePoint = point2
             return true
         }
 
@@ -111,7 +111,7 @@ class VEPaintLine(
         moveX: Float,
         moveY: Float
     ) {
-        mPointDrag?.apply {
+        affectablePoint?.apply {
             set(moveX,moveY)
             return
         }
@@ -173,11 +173,27 @@ class VEPaintLine(
         )
     }
 
+    override fun onAffect(
+        affect: VEPaintBase
+    ) {
+        (affect as? VEPaintLine)?.affectablePoint?.let {
+            this@VEPaintLine
+                .affectablePoint
+                ?.set(it)
+        }
+
+        (affect as? VEPaintArc)?.let {
+
+            return
+        }
+        affectablePoint = null
+    }
+
     override fun onUp(
         x: Float,
         y: Float
     ) {
-        mPointDrag = null
+        affectablePoint = null
     }
 
 }

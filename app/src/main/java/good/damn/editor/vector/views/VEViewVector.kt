@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
+import good.damn.editor.vector.enums.VEEnumOptions
 import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.paints.VEPaintBase
 import good.damn.editor.vector.paints.VEPaintArc
@@ -29,6 +30,8 @@ class VEViewVector(
             mCurrentPrimitive?.strokeWidth = v
         }
 
+    var anchorOption = VEEnumOptions.MOVE
+
     var isAlignedHorizontal = false
     var isAlignedVertical = false
 
@@ -42,6 +45,7 @@ class VEViewVector(
 
     var primitives = LinkedList<VEPaintBase>()
     private var mCurrentPrimitive: VEPaintBase? = null
+    private var mAnchorPrimitive: VEPaintBase? = null
     private var mIsExistedVector = false
 
     private var moveX = 0f
@@ -74,10 +78,35 @@ class VEViewVector(
             event.action
         ) {
             MotionEvent.ACTION_DOWN -> {
-                mIsExistedVector = false
 
                 moveX = event.x
                 moveY = event.y
+
+                if (anchorOption == VEEnumOptions.HOOK) {
+
+                    val srcPrimitive = mAnchorPrimitive
+
+                    mAnchorPrimitive = primitives.find {
+                        it.onCheckCollision(
+                            moveX, moveY
+                        )
+                    }
+
+                    if (srcPrimitive != null) {
+                        val targetPrimitive = mAnchorPrimitive
+                            ?: return false
+
+                        srcPrimitive.onAffect(
+                            targetPrimitive
+                        )
+                        mAnchorPrimitive = null
+                        invalidate()
+                    }
+
+                    return false
+                }
+
+                mIsExistedVector = false
 
                 mCurrentPrimitive = primitives.find {
                     it.onCheckCollision(
@@ -120,6 +149,7 @@ class VEViewVector(
 
             MotionEvent.ACTION_UP -> {
                 mCurrentPrimitive?.apply {
+
                     onUp(
                         moveX,
                         moveY

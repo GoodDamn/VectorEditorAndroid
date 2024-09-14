@@ -3,6 +3,7 @@ package good.damn.editor.vector.paints
 import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.annotation.ColorInt
+import good.damn.editor.vector.interfaces.VEIAffectable
 import good.damn.editor.vector.interfaces.VEICollidable
 import good.damn.editor.vector.interfaces.VEIDecodable
 import good.damn.editor.vector.interfaces.VEIEncodable
@@ -12,7 +13,8 @@ abstract class VEPaintBase(
     protected val mCanvasHeight: Float
 ): VEIEncodable,
 VEIDecodable,
-VEICollidable {
+VEICollidable,
+VEIAffectable<VEPaintBase> {
 
     @get:ColorInt
     @setparam:ColorInt

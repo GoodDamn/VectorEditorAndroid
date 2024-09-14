@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
+import good.damn.editor.vector.enums.VEEnumOptions
 import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
@@ -86,6 +87,10 @@ VEListenerOnGetBrowserContent {
 
             val s = VEApp.width * 0.15f
 
+            setOnClickListener {
+                mViewVector?.anchorOption = VEEnumOptions.MOVE
+            }
+
             boundsFrame(
                 gravity = Gravity.END,
                 width = s,
@@ -102,6 +107,10 @@ VEListenerOnGetBrowserContent {
             text = "HOK"
 
             val s = VEApp.width * 0.15f
+
+            setOnClickListener {
+                mViewVector?.anchorOption = VEEnumOptions.HOOK
+            }
 
             boundsFrame(
                 gravity = Gravity.END,

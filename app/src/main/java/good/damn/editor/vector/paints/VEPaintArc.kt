@@ -114,6 +114,20 @@ class VEPaintArc(
         color = inp.readInt32(buffer)
     }
 
+    override fun onAffect(
+        affect: VEPaintBase
+    ) {
+        (affect as? VEPaintLine)?.apply {
+
+            return
+        }
+
+        (affect as? VEPaintArc)?.apply {
+
+            return
+        }
+    }
+
     override fun onCheckCollision(
         px: Float,
         py: Float
