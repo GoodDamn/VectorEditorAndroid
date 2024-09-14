@@ -35,6 +35,7 @@ VEICollidable {
         }
 
     protected val mPaint = Paint()
+
     abstract fun onDraw(
         canvas: Canvas
     )
@@ -47,7 +48,6 @@ VEICollidable {
         x: Float,
         y: Float
     )
-
     abstract fun onUp(
         x: Float,
         y: Float

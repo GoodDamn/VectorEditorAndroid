@@ -2,6 +2,7 @@ package good.damn.editor.vector.paints
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Point
 import android.graphics.PointF
 import good.damn.editor.vector.extensions.io.readFraction
 import good.damn.editor.vector.extensions.io.readInt32
@@ -26,17 +27,12 @@ class VEPaintLine(
         const val ENCODE_TYPE = 0.toByte()
     }
 
-    var x1 = 0f
-        private set
-    var y1 = 0f
-        private set
-    var x2 = 0f
-        private set
-    var y2 = 0f
-        private set
+    val point1 = PointF()
+    val point2 = PointF()
 
-    private var mIsDraggingPoint1 = false
-    private var mIsDraggingPoint2 = false
+    private var mPointDrag: PointF? = null
+
+    private val mTriggerRadius = canvasWidth * 0.05f
 
     init {
         mPaint.apply {
@@ -49,31 +45,55 @@ class VEPaintLine(
         canvas: Canvas
     ) {
         canvas.drawLine(
-            x1,
-            y1,
-            x2,
-            y2,
+            point1.x,
+            point1.y,
+            point2.x,
+            point2.y,
             mPaint
         )
     }
+
+    override fun onCheckCollision(
+        px: Float,
+        py: Float
+    ): Boolean {
+        if (abs(hypot(
+            px - point1.x,
+            py - point1.y
+        )) < mTriggerRadius) {
+            mPointDrag = point1
+            return true
+        }
+
+        if (abs(hypot(
+            px - point2.x,
+            py - point2.y
+        )) < mTriggerRadius) {
+            mPointDrag = point2
+            return true
+        }
+
+        return false
+    }
+
 
     override fun onDown(
         x: Float,
         y: Float
     ) {
-        x1 = x
-        x2 = x
-
-        y1 = y
-        y2 = y
+        point1.set(x,y)
+        point2.set(x,y)
     }
 
     override fun onMove(
         x: Float,
         y: Float
     ) {
-        x2 = x
-        y2 = y
+        if (mPointDrag == null) {
+            point2.set(x,y)
+            return
+        }
+        mPointDrag!!.set(x,y)
     }
 
     override fun onEncodeObject(
@@ -82,22 +102,22 @@ class VEPaintLine(
         os.apply {
             write(ENCODE_TYPE)
             write(
-                x1.toDigitalFraction(
+                point1.x.toDigitalFraction(
                     mCanvasWidth
                 )
             )
             write(
-                y1.toDigitalFraction(
+                point1.y.toDigitalFraction(
                     mCanvasHeight
                 )
             )
             write(
-                x2.toDigitalFraction(
+                point2.x.toDigitalFraction(
                     mCanvasWidth
                 )
             )
             write(
-                y2.toDigitalFraction(
+                point2.y.toDigitalFraction(
                     mCanvasHeight
                 )
             )
@@ -117,26 +137,28 @@ class VEPaintLine(
         inp: InputStream
     ) {
         val buffer = ByteArray(4)
-        x1 = inp.readFraction() * mCanvasWidth
-        y1 = inp.readFraction() * mCanvasHeight
-        x2 = inp.readFraction() * mCanvasWidth
-        y2 = inp.readFraction() * mCanvasHeight
+
+        point1.set(
+            inp.readFraction() * mCanvasWidth,
+            inp.readFraction() * mCanvasHeight
+        )
+
+        point2.set(
+            inp.readFraction() * mCanvasWidth,
+            inp.readFraction() * mCanvasHeight
+        )
+
         strokeWidth = inp.readFraction() * mCanvasWidth
         color = inp.readInt32(
             buffer
         )
     }
 
-    override fun onCheckCollision(
-        px: Float,
-        py: Float
-    ): Boolean {
-        return false
-    }
-
     override fun onUp(
         x: Float,
         y: Float
-    ) = Unit
+    ) {
+        mPointDrag = null
+    }
 
 }

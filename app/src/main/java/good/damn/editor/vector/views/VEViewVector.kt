@@ -121,8 +121,8 @@ class VEViewVector(
             MotionEvent.ACTION_UP -> {
                 mCurrentPrimitive?.apply {
                     onUp(
-                        event.x,
-                        event.y
+                        moveX,
+                        moveY
                     )
 
                     if (!mIsExistedVector) {
