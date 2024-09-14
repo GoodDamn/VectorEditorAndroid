@@ -72,13 +72,8 @@ class VEPaintLine(
         x: Float,
         y: Float
     ) {
-        if (isAlignedHorizontal) {
-            x2 = x
-        }
-
-        if (isAlignedVertical) {
-            y2 = y
-        }
+        x2 = x
+        y2 = y
     }
 
     override fun onEncodeObject(
@@ -132,54 +127,11 @@ class VEPaintLine(
         )
     }
 
-    override fun onDragVector(
-        touchX: Float,
-        touchY: Float
+    override fun onCheckCollision(
+        px: Float,
+        py: Float
     ): Boolean {
-        mIsDraggingPoint1 = false
-        mIsDraggingPoint2 = false
-
-        if (abs(hypot(
-            x1 - touchX,
-            y1 - touchY
-        )) < mTriggerRadius) {
-            mIsDraggingPoint1 = true
-            return true
-        }
-
-        if (abs(hypot(
-            x2 - touchX,
-            y2 - touchY
-        )) < mTriggerRadius) {
-            mIsDraggingPoint2 = true
-            return true
-        }
-
         return false
-    }
-
-    override fun onDragMove(
-        x: Float,
-        y: Float
-    ) {
-        if (mIsDraggingPoint1) {
-            if (isAlignedHorizontal) {
-                x1 = x
-            }
-            if (isAlignedVertical) {
-                y1 = y
-            }
-            return
-        }
-
-        if (mIsDraggingPoint2) {
-            if (isAlignedHorizontal) {
-                x2 = x
-            }
-            if (isAlignedVertical) {
-                y2 = y
-            }
-        }
     }
 
     override fun onUp(

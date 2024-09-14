@@ -30,18 +30,7 @@ class VEViewVector(
         }
 
     var isAlignedHorizontal = false
-        set(v) {
-            field = v
-            mCurrentPrimitive?.isAlignedHorizontal = v
-        }
-
     var isAlignedVertical = false
-        set(v) {
-            field = v
-            mCurrentPrimitive?.isAlignedVertical = v
-        }
-
-    private var mIsDraggingVector = false
 
     @get:ColorInt
     @setparam:ColorInt
@@ -53,6 +42,10 @@ class VEViewVector(
 
     var primitives = LinkedList<VEPaintBase>()
     private var mCurrentPrimitive: VEPaintBase? = null
+    private var mIsExistedVector = false
+
+    private var moveX = 0f
+    private var moveY = 0f
 
     override fun onDraw(
         canvas: Canvas
@@ -77,24 +70,23 @@ class VEViewVector(
             return false
         }
 
-        when (event.action) {
+        when (
+            event.action
+        ) {
             MotionEvent.ACTION_DOWN -> {
-                mIsDraggingVector = false
+                mIsExistedVector = false
 
-                for (i in primitives) {
-                    if (i.onDragVector(
-                       event.x,
-                       event.y
-                    )) {
-                        mIsDraggingVector = true
-                        i.isAlignedHorizontal = isAlignedHorizontal
-                        i.isAlignedVertical = isAlignedVertical
-                        mCurrentPrimitive = i
-                        break
-                    }
+                moveX = event.x
+                moveY = event.y
+
+                mCurrentPrimitive = primitives.find {
+                    it.onCheckCollision(
+                        moveX, moveY
+                    )
                 }
 
-                if (mIsDraggingVector) {
+                if (mCurrentPrimitive != null) {
+                    mIsExistedVector = true
                     return true
                 }
 
@@ -103,12 +95,7 @@ class VEViewVector(
                     width.toFloat(),
                     height.toFloat()
                 ).apply {
-                    onDown(
-                        event.x,
-                        event.y
-                    )
-                    isAlignedVertical = this@VEViewVector.isAlignedVertical
-                    isAlignedHorizontal = this@VEViewVector.isAlignedHorizontal
+                    onDown(moveX, moveY)
                     strokeWidth = this@VEViewVector.strokeWidth
                     color = this@VEViewVector.color
                 }
@@ -116,35 +103,33 @@ class VEViewVector(
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (mIsDraggingVector) {
-                    mCurrentPrimitive?.onDragMove(
-                        event.x,
-                        event.y
-                    )
-                } else {
-                    mCurrentPrimitive?.onMove(
-                        event.x,
-                        event.y
-                    )
+                if (isAlignedHorizontal) {
+                    moveX = event.x
                 }
+
+                if (isAlignedVertical) {
+                    moveY = event.y
+                }
+
+                mCurrentPrimitive?.onMove(
+                    moveX,
+                    moveY
+                )
                 invalidate()
             }
 
             MotionEvent.ACTION_UP -> {
-                if (mIsDraggingVector) {
-                    mCurrentPrimitive = null
-                    return true
-                }
-
                 mCurrentPrimitive?.apply {
                     onUp(
                         event.x,
                         event.y
                     )
 
-                    primitives.add(
-                        this
-                    )
+                    if (!mIsExistedVector) {
+                        primitives.add(
+                            this
+                        )
+                    }
                 }
                 mCurrentPrimitive = null
                 invalidate()

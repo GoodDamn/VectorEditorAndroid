@@ -98,27 +98,13 @@ class VEPaintCircle(
         color = inp.readInt32(buffer)
     }
 
-    override fun onDragMove(
-        x: Float,
-        y: Float
-    ) {
-        this.x = x
-        this.y = y
-    }
-
-    override fun onDragVector(
-        touchX: Float,
-        touchY: Float
-    ): Boolean {
-        if (abs(hypot(
-            touchX - x,
-            touchY - y
-        )) < mTriggerRadius) {
-            return true
-        }
-
-        return false
-    }
+    override fun onCheckCollision(
+        px: Float,
+        py: Float
+    ) = abs(hypot(
+        px - x,
+        py - y
+    )) < mCanvasWidth * 0.05f
 
     override fun onUp(
         x: Float,

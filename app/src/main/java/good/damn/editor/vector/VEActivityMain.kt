@@ -9,8 +9,6 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import good.damn.editor.vector.browsers.VEBrowserContent
@@ -56,7 +54,7 @@ VEListenerOnGetBrowserContent {
             )
         }
 
-        val topOptions = VEApp.height * 0.3f
+        val sizeCanvas = VEApp.height * 0.3f
 
         mViewVector = VEViewVector(
             context
@@ -70,8 +68,8 @@ VEListenerOnGetBrowserContent {
             isAlignedHorizontal = true
 
             boundsFrame(
-                width = VEApp.width.toFloat(),
-                height = topOptions
+                width = sizeCanvas,
+                height = sizeCanvas
             )
 
             root.addView(
@@ -80,19 +78,52 @@ VEListenerOnGetBrowserContent {
         }
 
 
-        View(
+        Button(
             context
         ).apply {
 
-            setBackgroundColor(
-                0xffff00ff.toInt()
+            text = "MOV"
+
+            val s = VEApp.width * 0.15f
+
+            boundsFrame(
+                gravity = Gravity.END,
+                width = s,
             )
+
+            root.addView(
+                this
+            )
+        }
+
+        Button(
+            context
+        ).apply {
+            text = "HOK"
+
+            val s = VEApp.width * 0.15f
+
+            boundsFrame(
+                gravity = Gravity.END,
+                width = s,
+                top = s
+            )
+
+            root.addView(
+                this
+            )
+        }
+
+        Button(
+            context
+        ).apply {
+            text = "|"
 
             val s = VEApp.width * 0.1f
             boundsFrame(
                 width = s,
                 height = s,
-                top = topOptions
+                top = sizeCanvas
             )
 
             setOnClickListener {
@@ -105,19 +136,17 @@ VEListenerOnGetBrowserContent {
             )
         }
 
-        View(
+        Button(
             context
         ).apply {
 
-            setBackgroundColor(
-                0xffffff00.toInt()
-            )
+            text = "O"
 
             val s = VEApp.width * 0.1f
             boundsFrame(
                 width = s,
                 height = s,
-                top = topOptions,
+                top = sizeCanvas,
                 start = s
             )
 
@@ -141,7 +170,7 @@ VEListenerOnGetBrowserContent {
                 gravity = Gravity.END,
                 width = s,
                 height = s,
-                top = topOptions,
+                top = sizeCanvas,
                 end = 0f
             )
 
@@ -167,7 +196,7 @@ VEListenerOnGetBrowserContent {
                 gravity = Gravity.END,
                 width = s,
                 height = s,
-                top = topOptions,
+                top = sizeCanvas,
                 end = s
             )
 
