@@ -9,6 +9,7 @@ import good.damn.editor.vector.extensions.io.readInt32
 import good.damn.editor.vector.extensions.io.write
 import good.damn.editor.vector.extensions.primitives.toByteArray
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
+import good.damn.editor.vector.extensions.readFromStream
 import good.damn.editor.vector.extensions.writeToStream
 import java.io.InputStream
 import java.io.OutputStream
@@ -89,12 +90,12 @@ class VEPaintArc(
         os: OutputStream
     ) {
         os.apply {
+            write(ENCODE_TYPE)
             rect.writeToStream(
                 this,
                 mCanvasWidth,
                 mCanvasHeight
             )
-            write(ENCODE_TYPE)
             write(
                 color.toByteArray()
             )
@@ -105,11 +106,10 @@ class VEPaintArc(
         inp: InputStream
     ) {
         val buffer = ByteArray(4)
-        rect.set(
-            inp.readFraction() * mCanvasWidth,
-            inp.readFraction() * mCanvasHeight,
-            inp.readFraction() * mCanvasWidth,
-            inp.readFraction() * mCanvasHeight
+        rect.readFromStream(
+            inp,
+            mCanvasWidth,
+            mCanvasHeight
         )
         color = inp.readInt32(buffer)
     }
@@ -136,7 +136,6 @@ class VEPaintArc(
           px - rect.right,
           py - rect.bottom
         )) < mCanvasWidth * 0.05f) {
-
             return true
         }
 
