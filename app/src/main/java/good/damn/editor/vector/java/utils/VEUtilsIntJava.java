@@ -1,6 +1,6 @@
 package good.damn.editor.vector.java.utils;
 
-public class VEUtilsIntJava {
+public final class VEUtilsIntJava {
 
     public static byte[] int32(
       final int n

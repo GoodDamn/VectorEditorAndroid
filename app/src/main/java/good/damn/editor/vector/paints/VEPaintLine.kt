@@ -182,8 +182,10 @@ class VEPaintLine(
                 ?.set(it)
         }
 
-        (affect as? VEPaintArc)?.let {
-
+        (affect as? VEPaintArc)?.rigidPoint?.let {
+            this@VEPaintLine
+                .affectablePoint
+                ?.set(it.point)
             return
         }
         affectablePoint = null

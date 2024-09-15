@@ -11,6 +11,9 @@ import good.damn.editor.vector.extensions.primitives.toByteArray
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import good.damn.editor.vector.extensions.readFromStream
 import good.damn.editor.vector.extensions.writeToStream
+import good.damn.editor.vector.rigid.VEPointRigid
+import good.damn.editor.vector.rigid.VERectRigid
+import good.damn.editor.vector.rigid.readFromStream
 import java.io.InputStream
 import java.io.OutputStream
 import kotlin.math.abs
@@ -27,12 +30,14 @@ class VEPaintArc(
         const val ENCODE_TYPE = 1
     }
 
-    val rect = RectF()
+    val rigidRect = VERectRigid()
 
     var useCenter = true
 
     var startAngle = 0f
     var sweepAngle = 360f
+
+    var rigidPoint: VEPointRigid? = null
 
     private val mTriggerRadius = canvasWidth * 0.05f
 
@@ -45,8 +50,9 @@ class VEPaintArc(
     override fun onDraw(
         canvas: Canvas
     ) {
+
         canvas.drawArc(
-            rect,
+            rigidRect.rect,
             startAngle,
             sweepAngle,
             useCenter,
@@ -54,15 +60,15 @@ class VEPaintArc(
         )
 
         canvas.drawCircle(
-            rect.left,
-            rect.top,
+            rigidRect.rigidPoint1.point.x,
+            rigidRect.rigidPoint1.point.y,
             mTriggerRadius,
             mPaintDrag
         )
 
         canvas.drawCircle(
-            rect.right,
-            rect.bottom,
+            rigidRect.rigidPoint2.point.x,
+            rigidRect.rigidPoint2.point.y,
             mTriggerRadius,
             mPaintDrag
         )
@@ -72,7 +78,7 @@ class VEPaintArc(
         x: Float,
         y: Float
     ) {
-        rect.set(
+        rigidRect.set(
             x, y,
             x, y
         )
@@ -82,8 +88,8 @@ class VEPaintArc(
         moveX: Float,
         moveY: Float
     ) {
-        rect.right = moveX
-        rect.bottom = moveY
+        rigidRect.right = moveX
+        rigidRect.bottom = moveY
     }
 
     override fun onEncodeObject(
@@ -91,7 +97,7 @@ class VEPaintArc(
     ) {
         os.apply {
             write(ENCODE_TYPE)
-            rect.writeToStream(
+            rigidRect.rect.writeToStream(
                 this,
                 mCanvasWidth,
                 mCanvasHeight
@@ -106,7 +112,7 @@ class VEPaintArc(
         inp: InputStream
     ) {
         val buffer = ByteArray(4)
-        rect.readFromStream(
+        rigidRect.readFromStream(
             inp,
             mCanvasWidth,
             mCanvasHeight
@@ -117,13 +123,15 @@ class VEPaintArc(
     override fun onAffect(
         affect: VEPaintBase
     ) {
-        (affect as? VEPaintLine)?.apply {
-
+        (affect as? VEPaintLine)?.affectablePoint?.apply {
+            this@VEPaintArc.rigidPoint
+                ?.onRigidRect(this)
             return
         }
 
-        (affect as? VEPaintArc)?.apply {
-
+        (affect as? VEPaintArc)?.rigidPoint?.apply {
+            this@VEPaintArc.rigidPoint
+                ?.onRigidRect(point)
             return
         }
     }
@@ -132,11 +140,24 @@ class VEPaintArc(
         px: Float,
         py: Float
     ): Boolean {
-        if (abs(hypot(
-          px - rect.right,
-          py - rect.bottom
-        )) < mCanvasWidth * 0.05f) {
-            return true
+        rigidRect.rigidPoint1.apply {
+            if (abs(hypot(
+                    px - point.x,
+                    py - point.y
+                )) < mTriggerRadius) {
+                rigidPoint = this
+                return true
+            }
+        }
+
+        rigidRect.rigidPoint2.apply {
+            if (abs(hypot(
+                    px - point.x,
+                    py - point.y
+                )) < mTriggerRadius) {
+                rigidPoint = this
+                return true
+            }
         }
 
         return false
