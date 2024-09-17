@@ -7,7 +7,7 @@ import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import java.io.InputStream
 import java.io.OutputStream
 
-fun RectF.readFromStream(
+inline fun RectF.readFromStream(
     inp: InputStream,
     width: Float,
     height: Float
@@ -20,7 +20,7 @@ fun RectF.readFromStream(
     )
 }
 
-fun RectF.writeToStream(
+inline fun RectF.writeToStream(
     out: OutputStream,
     width: Float,
     height: Float

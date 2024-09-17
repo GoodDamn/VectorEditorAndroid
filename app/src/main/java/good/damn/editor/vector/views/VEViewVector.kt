@@ -9,6 +9,7 @@ import good.damn.editor.vector.enums.VEEnumOptions
 import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.paints.VEPaintBase
 import good.damn.editor.vector.paints.VEPaintArc
+import good.damn.editor.vector.paints.VEPaintBezierQ
 import good.damn.editor.vector.paints.VEPaintLine
 import java.util.LinkedList
 
@@ -199,6 +200,10 @@ private fun VEViewVector.selectPrimitive(
     canvasHeight: Float
 ) = when (primitive) {
     VEEnumPrimitives.CIRCLE -> VEPaintArc(
+        canvasWidth,
+        canvasHeight
+    )
+    VEEnumPrimitives.CUBIC_BEZIER -> VEPaintBezierQ(
         canvasWidth,
         canvasHeight
     )

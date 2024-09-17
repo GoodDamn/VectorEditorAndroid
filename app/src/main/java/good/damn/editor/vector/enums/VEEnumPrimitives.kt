@@ -1,8 +1,7 @@
 package good.damn.editor.vector.enums
 
-enum class VEEnumPrimitives(
-    val primitive: Int
-) {
-    CIRCLE(0),
-    LINE(1)
+enum class VEEnumPrimitives {
+    CIRCLE,
+    LINE,
+    CUBIC_BEZIER
 }

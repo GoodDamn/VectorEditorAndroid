@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Point
 import android.graphics.PointF
+import good.damn.editor.vector.extensions.drawCircle
 import good.damn.editor.vector.extensions.io.readFraction
 import good.damn.editor.vector.extensions.io.readInt32
 import good.damn.editor.vector.extensions.io.readU
@@ -11,6 +12,7 @@ import good.damn.editor.vector.extensions.io.write
 import good.damn.editor.vector.extensions.primitives.toByteArray
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import good.damn.editor.vector.extensions.writeToStream
+import good.damn.editor.vector.interfaces.VEIPointable
 import java.io.InputStream
 import java.io.OutputStream
 import kotlin.math.abs
@@ -22,25 +24,16 @@ class VEPaintLine(
 ): VEPaintBase(
     canvasWidth,
     canvasHeight
-) {
+), VEIPointable {
 
     companion object {
         const val ENCODE_TYPE = 0.toByte()
     }
 
-    var affectablePoint: PointF? = null
-        private set
+    override var tempPoint: PointF? = null
 
     val point1 = PointF()
     val point2 = PointF()
-
-    private val mTriggerRadius = canvasWidth * 0.05f
-
-    private val mPaintDrag = Paint().apply {
-        style = Paint.Style.STROKE
-        color = 0x55ffffff
-        strokeWidth = mTriggerRadius * 0.5f
-    }
 
     init {
         mPaint.apply {
@@ -61,15 +54,13 @@ class VEPaintLine(
         )
 
         canvas.drawCircle(
-            point1.x,
-            point1.y,
+            point1,
             mTriggerRadius,
             mPaintDrag
         )
 
         canvas.drawCircle(
-            point2.x,
-            point2.y,
+            point2,
             mTriggerRadius,
             mPaintDrag
         )
@@ -79,19 +70,25 @@ class VEPaintLine(
         px: Float,
         py: Float
     ): Boolean {
-        if (abs(hypot(
-            px - point1.x,
-            py - point1.y
-        )) < mTriggerRadius) {
-            affectablePoint = point1
+        if (checkRadiusCollision(
+            px,
+            py,
+            point1.x,
+            point1.y,
+            mTriggerRadius
+        )) {
+            tempPoint = point1
             return true
         }
 
-        if (abs(hypot(
-            px - point2.x,
-            py - point2.y
-        )) < mTriggerRadius) {
-            affectablePoint = point2
+        if (checkRadiusCollision(
+                px,
+                py,
+                point2.x,
+                point2.y,
+                mTriggerRadius
+            )) {
+            tempPoint = point2
             return true
         }
 
@@ -111,7 +108,7 @@ class VEPaintLine(
         moveX: Float,
         moveY: Float
     ) {
-        affectablePoint?.apply {
+        tempPoint?.apply {
             set(moveX,moveY)
             return
         }
@@ -176,26 +173,26 @@ class VEPaintLine(
     override fun onAffect(
         affect: VEPaintBase
     ) {
-        (affect as? VEPaintLine)?.affectablePoint?.let {
+        (affect as? VEPaintLine)?.tempPoint?.let {
             this@VEPaintLine
-                .affectablePoint
+                .tempPoint
                 ?.set(it)
         }
 
         (affect as? VEPaintArc)?.rigidPoint?.let {
             this@VEPaintLine
-                .affectablePoint
+                .tempPoint
                 ?.set(it.point)
             return
         }
-        affectablePoint = null
+        tempPoint = null
     }
 
     override fun onUp(
         x: Float,
         y: Float
     ) {
-        affectablePoint = null
+        tempPoint = null
     }
 
 }

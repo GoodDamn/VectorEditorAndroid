@@ -196,6 +196,30 @@ VEListenerOnGetBrowserContent {
             context
         ).apply {
 
+            text = "CB"
+
+            val s = VEApp.width * 0.1f
+            boundsFrame(
+                width = s * 1.5f,
+                height = s,
+                top = sizeCanvas,
+                start = s * 2
+            )
+
+            setOnClickListener {
+                mViewVector?.currentPrimitive = VEEnumPrimitives
+                    .CUBIC_BEZIER
+            }
+
+            root.addView(
+                this
+            )
+        }
+
+        Button(
+            context
+        ).apply {
+
             text = "H"
             val s = VEApp.width * 0.1f
             boundsFrame(

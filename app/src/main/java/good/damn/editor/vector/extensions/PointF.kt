@@ -5,7 +5,7 @@ import good.damn.editor.vector.extensions.io.write
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import java.io.OutputStream
 
-fun PointF.writeToStream(
+inline fun PointF.writeToStream(
     out: OutputStream,
     width: Float,
     height: Float

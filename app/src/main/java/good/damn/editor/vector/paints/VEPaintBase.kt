@@ -2,11 +2,16 @@ package good.damn.editor.vector.paints
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.PointF
 import androidx.annotation.ColorInt
 import good.damn.editor.vector.interfaces.VEIAffectable
 import good.damn.editor.vector.interfaces.VEICollidable
 import good.damn.editor.vector.interfaces.VEIDecodable
+import good.damn.editor.vector.interfaces.VEIDrawable
 import good.damn.editor.vector.interfaces.VEIEncodable
+import good.damn.editor.vector.interfaces.VEITouchable
+import kotlin.math.abs
+import kotlin.math.hypot
 
 abstract class VEPaintBase(
     protected val mCanvasWidth: Float,
@@ -14,8 +19,9 @@ abstract class VEPaintBase(
 ): VEIEncodable,
 VEIDecodable,
 VEICollidable,
-VEIAffectable<VEPaintBase> {
-
+VEIAffectable<VEPaintBase>,
+VEIDrawable,
+VEITouchable {
     @get:ColorInt
     @setparam:ColorInt
     var color: Int
@@ -38,20 +44,32 @@ VEIAffectable<VEPaintBase> {
 
     protected val mPaint = Paint()
 
-    abstract fun onDraw(
-        canvas: Canvas
-    )
+    protected val mTriggerRadius = mCanvasWidth * 0.03f
 
-    abstract fun onDown(
+    protected val mPaintDrag = Paint().apply {
+        style = Paint.Style.STROKE
+        color = 0x55ffffff
+        strokeWidth = mTriggerRadius * 0.5f
+    }
+
+    protected inline fun checkRadiusCollision(
         x: Float,
-        y: Float
-    )
-    abstract fun onMove(
-        moveX: Float,
-        moveY: Float
-    )
-    abstract fun onUp(
+        y: Float,
+        point: PointF,
+        radius: Float
+    ) = abs(hypot(
+        x - point.x,
+        y - point.y
+    )) < radius
+
+    protected inline fun checkRadiusCollision(
         x: Float,
-        y: Float
-    )
+        y: Float,
+        cx: Float,
+        cy: Float,
+        radius: Float
+    ) = abs(hypot(
+        x - cx,
+        y - cy
+    )) < radius
 }

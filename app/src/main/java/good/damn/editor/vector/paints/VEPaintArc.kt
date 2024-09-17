@@ -2,8 +2,10 @@ package good.damn.editor.vector.paints
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
+import good.damn.editor.vector.extensions.drawCircle
 import good.damn.editor.vector.extensions.io.readFraction
 import good.damn.editor.vector.extensions.io.readInt32
 import good.damn.editor.vector.extensions.io.write
@@ -39,14 +41,6 @@ class VEPaintArc(
 
     var rigidPoint: VEPointRigid? = null
 
-    private val mTriggerRadius = canvasWidth * 0.05f
-
-    private val mPaintDrag = Paint().apply {
-        style = Paint.Style.STROKE
-        color = 0x55ffffff
-        strokeWidth = mTriggerRadius * 0.5f
-    }
-
     override fun onDraw(
         canvas: Canvas
     ) {
@@ -60,15 +54,13 @@ class VEPaintArc(
         )
 
         canvas.drawCircle(
-            rigidRect.rigidPoint1.point.x,
-            rigidRect.rigidPoint1.point.y,
+            rigidRect.rigidPoint1.point,
             mTriggerRadius,
             mPaintDrag
         )
 
         canvas.drawCircle(
-            rigidRect.rigidPoint2.point.x,
-            rigidRect.rigidPoint2.point.y,
+            rigidRect.rigidPoint2.point,
             mTriggerRadius,
             mPaintDrag
         )
@@ -123,7 +115,7 @@ class VEPaintArc(
     override fun onAffect(
         affect: VEPaintBase
     ) {
-        (affect as? VEPaintLine)?.affectablePoint?.apply {
+        (affect as? VEPaintLine)?.tempPoint?.apply {
             this@VEPaintArc.rigidPoint
                 ?.onRigidRect(this)
             return
@@ -141,20 +133,26 @@ class VEPaintArc(
         py: Float
     ): Boolean {
         rigidRect.rigidPoint1.apply {
-            if (abs(hypot(
-                    px - point.x,
-                    py - point.y
-                )) < mTriggerRadius) {
+            if (checkRadiusCollision(
+                px,
+                py,
+                point.x,
+                point.y,
+                mTriggerRadius
+            )) {
                 rigidPoint = this
                 return true
             }
         }
 
         rigidRect.rigidPoint2.apply {
-            if (abs(hypot(
-                    px - point.x,
-                    py - point.y
-                )) < mTriggerRadius) {
+            if (checkRadiusCollision(
+                    px,
+                    py,
+                    point.x,
+                    point.y,
+                    mTriggerRadius
+                )) {
                 rigidPoint = this
                 return true
             }
