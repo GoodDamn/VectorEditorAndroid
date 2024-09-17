@@ -11,6 +11,7 @@ import good.damn.editor.vector.interfaces.VEIDecodable
 import good.damn.editor.vector.interfaces.VEIDrawable
 import good.damn.editor.vector.interfaces.VEIEncodable
 import good.damn.editor.vector.interfaces.VEIInstasable
+import good.damn.editor.vector.interfaces.VEIPointable
 import good.damn.editor.vector.interfaces.VEITouchable
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -23,7 +24,10 @@ VEIDecodable,
 VEICollidable,
 VEIAffectable,
 VEIDrawable,
-VEITouchable {
+VEITouchable,
+VEIPointable {
+    override var tempPoint: PointF? = null
+
     @get:ColorInt
     @setparam:ColorInt
     var color: Int
@@ -74,6 +78,14 @@ VEITouchable {
         x - cx,
         y - cy
     )) < radius
+
+    override fun onAffect(
+        affect: VEPaintBase
+    ) {
+        affect.tempPoint?.let {
+            tempPoint?.set(it)
+        }
+    }
 
     abstract fun newInstance(
         width: Float,

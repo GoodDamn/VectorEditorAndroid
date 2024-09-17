@@ -3,6 +3,7 @@ package good.damn.editor.vector.paints
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.RectF
 import good.damn.editor.vector.extensions.drawCircle
@@ -32,21 +33,27 @@ class VEPaintArc(
         const val ENCODE_TYPE = 1
     }
 
-    val rigidRect = VERectRigid()
+    val rigidRect = RectF()
+
+    val point1 = PointF()
+    val point2 = PointF()
 
     var useCenter = true
 
     var startAngle = 0f
     var sweepAngle = 360f
 
-    var rigidPoint: VEPointRigid? = null
-
     override fun onDraw(
         canvas: Canvas
     ) {
 
+        rigidRect.left = point1.x
+        rigidRect.top = point1.y
+        rigidRect.right = point2.x
+        rigidRect.bottom = point2.y
+
         canvas.drawArc(
-            rigidRect.rect,
+            rigidRect,
             startAngle,
             sweepAngle,
             useCenter,
@@ -54,13 +61,13 @@ class VEPaintArc(
         )
 
         canvas.drawCircle(
-            rigidRect.rigidPoint1.point,
+            point1,
             mTriggerRadius,
             mPaintDrag
         )
 
         canvas.drawCircle(
-            rigidRect.rigidPoint2.point,
+            point2,
             mTriggerRadius,
             mPaintDrag
         )
@@ -70,18 +77,18 @@ class VEPaintArc(
         x: Float,
         y: Float
     ) {
-        rigidRect.set(
-            x, y,
-            x, y
-        )
+        point1.set(x,y)
+        point2.set(x,y)
     }
 
     override fun onMove(
         moveX: Float,
         moveY: Float
     ) {
-        rigidRect.right = moveX
-        rigidRect.bottom = moveY
+        point2.set(
+            moveX,
+            moveY
+        )
     }
 
     override fun onEncodeObject(
@@ -89,7 +96,7 @@ class VEPaintArc(
     ) {
         os.apply {
             write(ENCODE_TYPE)
-            rigidRect.rect.writeToStream(
+            rigidRect.writeToStream(
                 this,
                 mCanvasWidth,
                 mCanvasHeight
@@ -112,48 +119,30 @@ class VEPaintArc(
         color = inp.readInt32(buffer)
     }
 
-    override fun onAffect(
-        affect: VEPaintBase
-    ) {
-        (affect as? VEPaintLine)?.tempPoint?.apply {
-            this@VEPaintArc.rigidPoint
-                ?.onRigidRect(this)
-            return
-        }
-
-        (affect as? VEPaintArc)?.rigidPoint?.apply {
-            this@VEPaintArc.rigidPoint
-                ?.onRigidRect(point)
-            return
-        }
-    }
-
     override fun onCheckCollision(
         px: Float,
         py: Float
     ): Boolean {
-        rigidRect.rigidPoint1.apply {
+        point1.apply {
             if (checkRadiusCollision(
                 px,
                 py,
-                point.x,
-                point.y,
+                this,
                 mTriggerRadius
             )) {
-                rigidPoint = this
+                tempPoint = this
                 return true
             }
         }
 
-        rigidRect.rigidPoint2.apply {
+        point2.apply {
             if (checkRadiusCollision(
-                    px,
-                    py,
-                    point.x,
-                    point.y,
-                    mTriggerRadius
-                )) {
-                rigidPoint = this
+                px,
+                py,
+                this,
+                mTriggerRadius
+            )) {
+                tempPoint = this
                 return true
             }
         }
@@ -165,7 +154,7 @@ class VEPaintArc(
         x: Float,
         y: Float
     ) {
-        rigidPoint = null
+        tempPoint = null
     }
 
     override fun newInstance(

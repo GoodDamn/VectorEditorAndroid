@@ -30,8 +30,6 @@ class VEPaintLine(
         const val ENCODE_TYPE = 0.toByte()
     }
 
-    override var tempPoint: PointF? = null
-
     val point1 = PointF()
     val point2 = PointF()
 
@@ -73,8 +71,7 @@ class VEPaintLine(
         if (checkRadiusCollision(
             px,
             py,
-            point1.x,
-            point1.y,
+            point1,
             mTriggerRadius
         )) {
             tempPoint = point1
@@ -84,8 +81,7 @@ class VEPaintLine(
         if (checkRadiusCollision(
                 px,
                 py,
-                point2.x,
-                point2.y,
+                point2,
                 mTriggerRadius
             )) {
             tempPoint = point2
@@ -170,23 +166,6 @@ class VEPaintLine(
         )
     }
 
-    override fun onAffect(
-        affect: VEPaintBase
-    ) {
-        (affect as? VEPaintLine)?.tempPoint?.let {
-            this@VEPaintLine
-                .tempPoint
-                ?.set(it)
-        }
-
-        (affect as? VEPaintArc)?.rigidPoint?.let {
-            this@VEPaintLine
-                .tempPoint
-                ?.set(it.point)
-            return
-        }
-        tempPoint = null
-    }
 
     override fun onUp(
         x: Float,

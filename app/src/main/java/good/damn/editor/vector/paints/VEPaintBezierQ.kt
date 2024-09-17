@@ -17,11 +17,9 @@ class VEPaintBezierQ(
 ): VEPaintBase(
     canvasWidth,
     canvasHeight
-), VEIPointable {
+) {
 
     private val mPath = Path()
-
-    override var tempPoint: PointF? = null
 
     val point1 = PointF()
     val point2 = PointF()
@@ -141,12 +139,6 @@ class VEPaintBezierQ(
         }
 
         return false
-    }
-
-    override fun onAffect(
-        affect: VEPaintBase
-    ) {
-
     }
 
     override fun newInstance(
