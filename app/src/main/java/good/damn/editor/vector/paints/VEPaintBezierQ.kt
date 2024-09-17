@@ -6,6 +6,7 @@ import android.graphics.Point
 import android.graphics.PointF
 import good.damn.editor.vector.extensions.cubicTo
 import good.damn.editor.vector.extensions.drawCircle
+import good.damn.editor.vector.extensions.moveTo
 import good.damn.editor.vector.interfaces.VEIPointable
 import java.io.InputStream
 import java.io.OutputStream
@@ -30,6 +31,9 @@ class VEPaintBezierQ(
         canvas: Canvas
     ) {
         mPath.reset()
+        mPath.moveTo(
+            point1
+        )
         mPath.cubicTo(
             point1,
             point2,
@@ -129,7 +133,7 @@ class VEPaintBezierQ(
         if (checkRadiusCollision(
             px,
             py,
-            point1,
+            point3,
             mTriggerRadius
         )) {
             tempPoint = point3
@@ -145,5 +149,12 @@ class VEPaintBezierQ(
 
     }
 
+    override fun newInstance(
+        width: Float,
+        height: Float
+    ) = VEPaintBezierQ(
+        width,
+        height
+    )
 
 }

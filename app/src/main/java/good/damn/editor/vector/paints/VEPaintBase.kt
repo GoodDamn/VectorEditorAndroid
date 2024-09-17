@@ -3,12 +3,14 @@ package good.damn.editor.vector.paints
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
+import android.health.connect.datatypes.HeightRecord
 import androidx.annotation.ColorInt
 import good.damn.editor.vector.interfaces.VEIAffectable
 import good.damn.editor.vector.interfaces.VEICollidable
 import good.damn.editor.vector.interfaces.VEIDecodable
 import good.damn.editor.vector.interfaces.VEIDrawable
 import good.damn.editor.vector.interfaces.VEIEncodable
+import good.damn.editor.vector.interfaces.VEIInstasable
 import good.damn.editor.vector.interfaces.VEITouchable
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -19,7 +21,7 @@ abstract class VEPaintBase(
 ): VEIEncodable,
 VEIDecodable,
 VEICollidable,
-VEIAffectable<VEPaintBase>,
+VEIAffectable,
 VEIDrawable,
 VEITouchable {
     @get:ColorInt
@@ -72,4 +74,9 @@ VEITouchable {
         x - cx,
         y - cy
     )) < radius
+
+    abstract fun newInstance(
+        width: Float,
+        height: Float
+    ): VEPaintBase
 }

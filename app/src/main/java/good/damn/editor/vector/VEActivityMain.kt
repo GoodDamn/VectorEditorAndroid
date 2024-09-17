@@ -18,6 +18,9 @@ import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.files.VEFileDocument
+import good.damn.editor.vector.paints.VEPaintArc
+import good.damn.editor.vector.paints.VEPaintBezierQ
+import good.damn.editor.vector.paints.VEPaintLine
 import good.damn.editor.vector.porters.VEImporter
 import good.damn.editor.vector.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
@@ -159,8 +162,10 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-                mViewVector?.currentPrimitive = VEEnumPrimitives
-                    .LINE
+                mViewVector?.currentPrimitive = VEPaintLine(
+                    0f,
+                    0f
+                )
             }
 
             root.addView(
@@ -183,8 +188,10 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-                mViewVector?.currentPrimitive = VEEnumPrimitives
-                    .CIRCLE
+                mViewVector?.currentPrimitive = VEPaintArc(
+                    0f,
+                    0f
+                )
             }
 
             root.addView(
@@ -207,8 +214,10 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-                mViewVector?.currentPrimitive = VEEnumPrimitives
-                    .CUBIC_BEZIER
+                mViewVector?.currentPrimitive = VEPaintBezierQ(
+                    0f,
+                    0f
+                )
             }
 
             root.addView(

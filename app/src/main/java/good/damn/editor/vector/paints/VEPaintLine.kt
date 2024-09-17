@@ -195,4 +195,11 @@ class VEPaintLine(
         tempPoint = null
     }
 
+    override fun newInstance(
+        width: Float,
+        height: Float
+    ) = VEPaintLine(
+        width,
+        height
+    )
 }

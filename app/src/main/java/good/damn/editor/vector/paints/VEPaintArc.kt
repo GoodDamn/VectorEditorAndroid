@@ -165,6 +165,14 @@ class VEPaintArc(
         x: Float,
         y: Float
     ) {
-
+        rigidPoint = null
     }
+
+    override fun newInstance(
+        width: Float,
+        height: Float
+    ) = VEPaintArc(
+        width,
+        height
+    )
 }

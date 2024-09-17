@@ -2,15 +2,12 @@ package good.damn.editor.vector.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
 import good.damn.editor.vector.enums.VEEnumOptions
-import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.paints.VEPaintBase
-import good.damn.editor.vector.paints.VEPaintArc
-import good.damn.editor.vector.paints.VEPaintBezierQ
-import good.damn.editor.vector.paints.VEPaintLine
 import java.util.LinkedList
 
 class VEViewVector(
@@ -23,12 +20,10 @@ class VEViewVector(
         private const val TAG = "VEViewVector"
     }
 
-    var currentPrimitive = VEEnumPrimitives.LINE
-
     var strokeWidth = 0f
         set(v) {
             field = v
-            mCurrentPrimitive?.strokeWidth = v
+            currentPrimitive?.strokeWidth = v
         }
 
     var anchorOption = VEEnumOptions.MOVE
@@ -43,11 +38,12 @@ class VEViewVector(
     var color: Int = 0
         set(v) {
             field = v
-            mCurrentPrimitive?.color = v
+            currentPrimitive?.color = v
         }
 
     var primitives = LinkedList<VEPaintBase>()
-    private var mCurrentPrimitive: VEPaintBase? = null
+    var currentPrimitive: VEPaintBase? = null
+
     private var mAnchorPrimitive: VEPaintBase? = null
     private var mIsExistedVector = false
 
@@ -65,7 +61,7 @@ class VEViewVector(
             it.onDraw(canvas)
         }
 
-        mCurrentPrimitive?.apply {
+        currentPrimitive?.apply {
             onDraw(canvas)
         }
     }
@@ -116,22 +112,22 @@ class VEViewVector(
 
                 mIsExistedVector = false
 
-                mCurrentPrimitive = primitives.find {
+                val foundPrimitive = primitives.find {
                     it.onCheckCollision(
                         tempX, tempY
                     )
                 }
 
-                if (mCurrentPrimitive != null) {
+                if (foundPrimitive != null) {
+                    currentPrimitive = foundPrimitive
                     mIsExistedVector = true
                     return true
                 }
 
-                mCurrentPrimitive = selectPrimitive(
-                    currentPrimitive,
+                currentPrimitive = currentPrimitive?.newInstance(
                     width.toFloat(),
                     height.toFloat()
-                ).apply {
+                )?.apply {
                     onDown(moveX, moveY)
                     strokeWidth = this@VEViewVector.strokeWidth
                     color = this@VEViewVector.color
@@ -148,7 +144,7 @@ class VEViewVector(
                     moveY = event.y
                 }
 
-                mCurrentPrimitive?.onMove(
+                currentPrimitive?.onMove(
                     moveX,
                     moveY
                 )
@@ -156,7 +152,7 @@ class VEViewVector(
             }
 
             MotionEvent.ACTION_UP -> {
-                mCurrentPrimitive?.apply {
+                currentPrimitive?.apply {
 
                     onUp(
                         moveX,
@@ -169,7 +165,6 @@ class VEViewVector(
                         )
                     }
                 }
-                mCurrentPrimitive = null
                 invalidate()
             }
         }
@@ -179,7 +174,7 @@ class VEViewVector(
     }
 
     fun undoVector() = primitives.run {
-        mCurrentPrimitive = null
+        currentPrimitive = null
         if (isEmpty()) {
             return@run
         }
@@ -188,27 +183,8 @@ class VEViewVector(
     }
 
     fun clearVector() {
-        mCurrentPrimitive = null
+        currentPrimitive = null
         primitives.clear()
         invalidate()
     }
-}
-
-private fun VEViewVector.selectPrimitive(
-    primitive: VEEnumPrimitives,
-    canvasWidth: Float,
-    canvasHeight: Float
-) = when (primitive) {
-    VEEnumPrimitives.CIRCLE -> VEPaintArc(
-        canvasWidth,
-        canvasHeight
-    )
-    VEEnumPrimitives.CUBIC_BEZIER -> VEPaintBezierQ(
-        canvasWidth,
-        canvasHeight
-    )
-    else -> VEPaintLine(
-        canvasWidth,
-        canvasHeight
-    )
 }

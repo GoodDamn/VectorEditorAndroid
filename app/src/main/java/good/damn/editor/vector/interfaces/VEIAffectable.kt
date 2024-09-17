@@ -2,8 +2,8 @@ package good.damn.editor.vector.interfaces
 
 import good.damn.editor.vector.paints.VEPaintBase
 
-interface VEIAffectable<T> {
+interface VEIAffectable {
     fun onAffect(
-        affect: T
+        affect: VEPaintBase
     )
 }
