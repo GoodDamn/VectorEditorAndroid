@@ -14,9 +14,6 @@ import good.damn.editor.vector.extensions.primitives.toByteArray
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import good.damn.editor.vector.extensions.readFromStream
 import good.damn.editor.vector.extensions.writeToStream
-import good.damn.editor.vector.rigid.VEPointRigid
-import good.damn.editor.vector.rigid.VERectRigid
-import good.damn.editor.vector.rigid.readFromStream
 import java.io.InputStream
 import java.io.OutputStream
 import kotlin.math.abs
