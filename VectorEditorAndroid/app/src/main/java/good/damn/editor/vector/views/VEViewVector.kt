@@ -23,6 +23,15 @@ class VEViewVector(
     var strokeWidth = 0f
         set(v) {
             field = v
+            currentPrimitive?.strokeWidth = v
+        }
+
+    @get:ColorInt
+    @setparam:ColorInt
+    var color: Int = 0
+        set(v) {
+            field = v
+            currentPrimitive?.color = color
         }
 
     var anchorOption = VEEnumOptions.MOVE
@@ -31,14 +40,13 @@ class VEViewVector(
     var isAlignedHorizontal = false
     var isAlignedVertical = false
 
-    private val mSkeleton2D = VESkeleton2D()
+    val primitives = LinkedList<
+        VEPaintBase
+    >()
 
-    @get:ColorInt
-    @setparam:ColorInt
-    var color: Int = 0
-        set(v) {
-            field = v
-        }
+    var currentPrimitive: VEPaintBase? = null
+
+    private val mSkeleton2D = VESkeleton2D()
 
     private var mSelectedPoint: PointF? = null
 
@@ -55,6 +63,16 @@ class VEViewVector(
         mSkeleton2D.onDraw(
             canvas
         )
+
+        primitives.forEach {
+            it.onDraw(
+                canvas
+            )
+        }
+
+        currentPrimitive?.onDraw(
+            canvas
+        )
     }
 
     override fun onTouchEvent(
@@ -68,7 +86,6 @@ class VEViewVector(
             event.action
         ) {
             MotionEvent.ACTION_DOWN -> {
-
                 val tempX = event.x
                 val tempY = event.y
 
@@ -77,10 +94,7 @@ class VEViewVector(
                     moveY = tempY
                 }
 
-                if (anchorOption == VEEnumOptions.HOOK) {
-
-                    return false
-                }
+                val prevPoint = mSelectedPoint
 
                 mSelectedPoint = mSkeleton2D.find(
                     moveX,
@@ -99,6 +113,28 @@ class VEViewVector(
 
                     mSelectedPoint = mSkeleton2D
                         .getLastPoint()
+
+                    if (prevPoint == null) {
+                        invalidate()
+                        return true
+                    }
+                    currentPrimitive?.newInstance(
+                        width.toFloat(),
+                        height.toFloat()
+                    )?.apply {
+                        currentPrimitive = this
+
+                        color = this@VEViewVector.color
+                        strokeWidth = this@VEViewVector.strokeWidth
+
+                        points[0] = prevPoint
+                        points[1] = mSelectedPoint
+
+                        primitives.add(
+                            this
+                        )
+                    }
+
                 }
 
                 invalidate()

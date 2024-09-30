@@ -19,23 +19,29 @@ class VEPaintBezierС(
 
     private val mPath = Path()
 
-    val point1 = PointF()
-    val point2 = PointF()
-    val point3 = PointF()
+    override val points = Array<PointF?>(3) {null}
 
     override fun onDraw(
         canvas: Canvas
     ) {
         mPath.apply {
             reset()
-            moveTo(
-                point1
-            )
+
+            val p0 = points[0]
+                ?: return@apply
+
+            val p1 = points[0]
+                ?: return@apply
+
+            val p2 = points[0]
+                ?: return@apply
+
+            moveTo(p0)
 
             cubicTo(
-                point1,
-                point2,
-                point3
+                p0,
+                p1,
+                p2
             )
         }
 
@@ -44,54 +50,8 @@ class VEPaintBezierС(
             mPaint
         )
 
-        canvas.drawCircle(
-            point1,
-            mTriggerRadius,
-            mPaintDrag
-        )
-
-        canvas.drawCircle(
-            point2,
-            mTriggerRadius,
-            mPaintDrag
-        )
-
-        canvas.drawCircle(
-            point3,
-            mTriggerRadius,
-            mPaintDrag
-        )
     }
 
-    override fun onDown(
-        x: Float,
-        y: Float
-    ) {
-        point1.set(x,y)
-        point2.set(x,y)
-        point3.set(x,y)
-    }
-
-    override fun onMove(
-        moveX: Float,
-        moveY: Float
-    ) {
-        selectedPoint?.apply {
-            x = moveX
-            y = moveY
-            return
-        }
-
-        point2.x = moveX
-        point2.y = moveY
-    }
-
-    override fun onUp(
-        x: Float,
-        y: Float
-    ) {
-        selectedPoint = null
-    }
 
     override fun onEncodeObject(
         os: OutputStream
@@ -103,43 +63,6 @@ class VEPaintBezierС(
         inp: InputStream
     ) {
 
-    }
-
-    override fun onCheckCollision(
-        px: Float,
-        py: Float
-    ): Boolean {
-        if (checkRadiusCollision(
-            px,
-            py,
-            point1,
-            mTriggerRadius
-        )) {
-            selectedPoint = point1
-            return true
-        }
-
-        if (checkRadiusCollision(
-            px,
-            py,
-            point2,
-            mTriggerRadius
-        )) {
-            selectedPoint = point2
-            return true
-        }
-
-        if (checkRadiusCollision(
-            px,
-            py,
-            point3,
-            mTriggerRadius
-        )) {
-            selectedPoint = point3
-            return true
-        }
-
-        return false
     }
 
     override fun newInstance(

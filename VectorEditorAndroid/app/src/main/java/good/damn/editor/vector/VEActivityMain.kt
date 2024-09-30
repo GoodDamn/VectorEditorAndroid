@@ -17,7 +17,6 @@ import good.damn.editor.vector.enums.VEEnumOptions
 import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.files.VEFileDocument
-import good.damn.editor.vector.paints.VEPaintArc
 import good.damn.editor.vector.paints.VEPaintBezierС
 import good.damn.editor.vector.paints.VEPaintLine
 import good.damn.editor.vector.porters.VEImporter
@@ -161,30 +160,9 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-
-            }
-
-            root.addView(
-                this
-            )
-        }
-
-        Button(
-            context
-        ).apply {
-
-            text = "O"
-
-            val s = VEApp.width * 0.1f
-            boundsFrame(
-                width = s,
-                height = s,
-                top = sizeCanvas,
-                start = s
-            )
-
-            setOnClickListener {
-
+                mViewVector?.currentPrimitive = VEPaintLine(
+                    0f, 0f
+                )
             }
 
             root.addView(
@@ -203,11 +181,13 @@ VEListenerOnGetBrowserContent {
                 width = s * 1.5f,
                 height = s,
                 top = sizeCanvas,
-                start = s * 2
+                start = s
             )
 
             setOnClickListener {
-
+                mViewVector?.currentPrimitive = VEPaintBezierС(
+                    0f,0f
+                )
             }
 
             root.addView(
