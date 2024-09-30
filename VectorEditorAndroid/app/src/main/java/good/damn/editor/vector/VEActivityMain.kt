@@ -161,10 +161,7 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-                mViewVector?.currentPrimitive = VEPaintLine(
-                    0f,
-                    0f
-                )
+
             }
 
             root.addView(
@@ -187,10 +184,7 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-                mViewVector?.currentPrimitive = VEPaintArc(
-                    0f,
-                    0f
-                )
+
             }
 
             root.addView(
@@ -213,10 +207,7 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-                mViewVector?.currentPrimitive = VEPaintBezierС(
-                    0f,
-                    0f
-                )
+
             }
 
             root.addView(
@@ -394,7 +385,7 @@ VEListenerOnGetBrowserContent {
     private fun onClickExportVector(
         v: View
     ) {
-        val data = mViewVector?.primitives
+        /*val data = mViewVector?.primitives
             ?: return
 
         mExporter.exportTo(
@@ -402,7 +393,7 @@ VEListenerOnGetBrowserContent {
                 "myVector.sav"
             ),
             data
-        )
+        )*/
     }
 
     private fun onClickImportVector(
@@ -442,7 +433,6 @@ VEListenerOnGetBrowserContent {
             vectorCanvas.width.toFloat(),
             vectorCanvas.height.toFloat()
         )?.let {
-            vectorCanvas.primitives = it
             vectorCanvas.invalidate()
         }
     }

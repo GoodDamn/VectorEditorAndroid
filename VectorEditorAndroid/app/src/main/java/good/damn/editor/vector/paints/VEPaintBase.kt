@@ -3,7 +3,7 @@ package good.damn.editor.vector.paints
 import android.graphics.Paint
 import android.graphics.PointF
 import androidx.annotation.ColorInt
-import good.damn.editor.vector.interfaces.VEIAffectable
+import good.damn.editor.vector.interfaces.VEIInstansable
 import good.damn.editor.vector.interfaces.VEICollidable
 import good.damn.editor.vector.interfaces.VEIDecodable
 import good.damn.editor.vector.interfaces.VEIDrawable
@@ -19,10 +19,11 @@ abstract class VEPaintBase(
 ): VEIEncodable,
 VEIDecodable,
 VEICollidable,
-VEIAffectable,
+VEIInstansable,
 VEIDrawable,
 VEITouchable,
 VEIPointable {
+
     override var selectedPoint: PointF? = null
 
     @get:ColorInt
@@ -65,21 +66,10 @@ VEIPointable {
         y - point.y
     )) < radius
 
-    protected inline fun checkRadiusCollision(
-        x: Float,
-        y: Float,
-        cx: Float,
-        cy: Float,
-        radius: Float
-    ) = abs(hypot(
-        x - cx,
-        y - cy
-    )) < radius
-
-    override fun onAffect(
-        affect: VEPaintBase
+    override fun onReadInstance(
+        instance: VEPaintBase
     ) {
-        affect.selectedPoint?.let {
+        instance.selectedPoint?.let {
             selectedPoint?.set(it)
         }
     }

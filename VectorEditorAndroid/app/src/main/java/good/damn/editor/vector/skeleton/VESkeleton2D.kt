@@ -1,40 +1,45 @@
 package good.damn.editor.vector.skeleton
 
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.PointF
 import android.util.Log
+import good.damn.editor.vector.extensions.drawCircle
+import good.damn.editor.vector.interfaces.VEIDrawable
 import java.util.LinkedList
+import kotlin.math.abs
+import kotlin.math.hypot
 
-class VESkeleton2D {
+class VESkeleton2D
+: VEIDrawable {
 
     companion object {
         private const val TAG = "VESkeleton2D"
     }
 
+    private val mPaintPoint = Paint().apply {
+        color = 0x55ffffff
+    }
+
     private val mPoints = LinkedList<
-        VESkeletonPoint
+        PointF
     >()
 
-    fun changePosition(
-        skPoint: VESkeletonPoint,
-        withX: Float,
-        withY: Float
-    ) {
-        skPoint.points.forEach {
-            it.x = withX
-            it.y = withY
-        }
-    }
+    private val mRadius = 50f
+
+    fun getLastPoint() = mPoints
+        .lastOrNull()
 
     fun find(
         withX: Float,
         withY: Float
-    ): VESkeletonPoint? {
-        mPoints.forEach { sk ->
-            sk.points.forEach {
-                Log.d(TAG, "find: ${it.x} ${it.y};;;;;; $withX $withY")
-                if (it.x == withX && it.y == withY) {
-                    return sk
-                }
+    ): PointF? {
+        mPoints.forEach {
+            if (abs(hypot(
+                it.x - withX,
+                it.y - withY
+            )) < mRadius) {
+                return it
             }
         }
 
@@ -42,38 +47,22 @@ class VESkeleton2D {
     }
 
     fun addSkeletonPoint(
-        withX: Float,
-        withY: Float
-    ): LinkedList<PointF>? {
-        var isNotFound = true
-
-        for (skPoint in mPoints) {
-            isNotFound = false
-            skPoint.points.forEach { p ->
-                if (!(p.x == withX && p.y == withY)) {
-                    isNotFound = true
-                    return@forEach
-                }
-
-            }
-        }
-
-        return if (isNotFound) {
-            val list = LinkedList<PointF>()
-
-            mPoints.add(
-                VESkeletonPoint(
-                    list
-                )
-            )
-
-            list
-        } else null
+        point: PointF
+    ) {
+        mPoints.add(
+            point
+        )
     }
 
-    fun addSkeletonPoint(
-        point: VESkeletonPoint
-    ) = mPoints.add(
-        point
-    )
+    override fun onDraw(
+        canvas: Canvas
+    ) {
+        mPoints.forEach {
+            canvas.drawCircle(
+                it,
+                mRadius,
+                mPaintPoint
+            )
+        }
+    }
 }
