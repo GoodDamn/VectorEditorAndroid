@@ -16,6 +16,7 @@ import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.files.VEFileDocument
+import good.damn.editor.vector.options.VEOptionFreeMove
 import good.damn.editor.vector.options.VEOptionHookPointer
 import good.damn.editor.vector.options.VEOptionPrimitivable
 import good.damn.editor.vector.paints.VEPaintBezierС
@@ -41,6 +42,7 @@ VEListenerOnGetBrowserContent {
         VEApp.height * 0.3f
     )
     private val mOptionHook = VEOptionHookPointer()
+    private val mOptionFreeMove = VEOptionFreeMove()
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -89,7 +91,7 @@ VEListenerOnGetBrowserContent {
         Button(
             context
         ).apply {
-            text = "MOV"
+            text = "SER"
 
             val s = VEApp.width * 0.15f
 
@@ -122,6 +124,28 @@ VEListenerOnGetBrowserContent {
                 gravity = Gravity.END,
                 width = s,
                 top = s
+            )
+
+            root.addView(
+                this
+            )
+        }
+
+        Button(
+            context
+        ).apply {
+            text = "MOV"
+
+            val s = VEApp.width * 0.15f
+
+            setOnClickListener {
+                mViewVector?.optionable = mOptionFreeMove
+            }
+
+            boundsFrame(
+                gravity = Gravity.END,
+                width = s,
+                top = 2*s
             )
 
             root.addView(
