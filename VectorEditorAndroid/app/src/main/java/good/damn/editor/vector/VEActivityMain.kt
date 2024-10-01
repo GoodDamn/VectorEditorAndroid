@@ -13,10 +13,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
-import good.damn.editor.vector.enums.VEEnumOptions
 import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.files.VEFileDocument
+import good.damn.editor.vector.options.VEOptionHookPointer
+import good.damn.editor.vector.options.VEOptionPrimitivable
 import good.damn.editor.vector.paints.VEPaintBezierС
 import good.damn.editor.vector.paints.VEPaintLine
 import good.damn.editor.vector.porters.VEImporter
@@ -35,6 +36,11 @@ VEListenerOnGetBrowserContent {
     private val mBrowserContent = VEBrowserContent().apply {
         onGetContent = this@VEActivityMain
     }
+
+    private val mOptionPrimitive = VEOptionPrimitivable(
+        VEApp.height * 0.3f
+    )
+    private val mOptionHook = VEOptionHookPointer()
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -83,13 +89,12 @@ VEListenerOnGetBrowserContent {
         Button(
             context
         ).apply {
-
             text = "MOV"
 
             val s = VEApp.width * 0.15f
 
             setOnClickListener {
-                mViewVector?.anchorOption = VEEnumOptions.MOVE
+                mViewVector?.optionable = mOptionPrimitive
             }
 
             boundsFrame(
@@ -110,36 +115,13 @@ VEListenerOnGetBrowserContent {
             val s = VEApp.width * 0.15f
 
             setOnClickListener {
-                mViewVector?.anchorOption = VEEnumOptions.HOOK
+                mViewVector?.optionable = mOptionHook
             }
 
             boundsFrame(
                 gravity = Gravity.END,
                 width = s,
                 top = s
-            )
-
-            root.addView(
-                this
-            )
-        }
-
-        Button(
-            context
-        ).apply {
-            text = "SER"
-            val s = VEApp.width * 0.15f
-
-            setOnClickListener {
-                mViewVector?.apply {
-                    isSerialDraw = !isSerialDraw
-                }
-            }
-
-            boundsFrame(
-                gravity = Gravity.END,
-                width = s,
-                top = s*2
             )
 
             root.addView(
@@ -160,8 +142,8 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-                mViewVector?.currentPrimitive = VEPaintLine(
-                    0f, 0f
+                mOptionPrimitive.currentPrimitive = VEPaintLine(
+                    0f,0f
                 )
             }
 
@@ -173,7 +155,6 @@ VEListenerOnGetBrowserContent {
         Button(
             context
         ).apply {
-
             text = "CB"
 
             val s = VEApp.width * 0.1f
@@ -185,7 +166,7 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-                mViewVector?.currentPrimitive = VEPaintBezierС(
+                mOptionPrimitive.currentPrimitive = VEPaintBezierС(
                     0f,0f
                 )
             }
@@ -262,7 +243,7 @@ VEListenerOnGetBrowserContent {
                         fromUser: Boolean
                     ) {
                         val n = progress / 100f
-                        mViewVector?.strokeWidth = n * VEApp.width
+                        mOptionPrimitive.strokeWidth = n * VEApp.width
                     }
                     override fun onStartTrackingTouch(
                         seekBar: SeekBar?
@@ -294,7 +275,7 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnPickColorListener {
-                mViewVector?.color = it
+                mOptionPrimitive.color = it
             }
 
             root.addView(

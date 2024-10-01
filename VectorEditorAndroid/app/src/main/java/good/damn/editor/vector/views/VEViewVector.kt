@@ -6,7 +6,7 @@ import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
-import good.damn.editor.vector.enums.VEEnumOptions
+import good.damn.editor.vector.interfaces.VEIOptionable
 import good.damn.editor.vector.paints.VEPaintBase
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
@@ -20,31 +20,14 @@ class VEViewVector(
         private const val TAG = "VEViewVector"
     }
 
-    var strokeWidth = 0f
-        set(v) {
-            field = v
-            currentPrimitive?.strokeWidth = v
-        }
+    var optionable: VEIOptionable? = null
 
-    @get:ColorInt
-    @setparam:ColorInt
-    var color: Int = 0
-        set(v) {
-            field = v
-            currentPrimitive?.color = color
-        }
-
-    var anchorOption = VEEnumOptions.MOVE
-
-    var isSerialDraw = false
     var isAlignedHorizontal = false
     var isAlignedVertical = false
 
     val primitives = LinkedList<
         VEPaintBase
     >()
-
-    var currentPrimitive: VEPaintBase? = null
 
     private val mSkeleton2D = VESkeleton2D()
 
@@ -70,7 +53,7 @@ class VEViewVector(
             )
         }
 
-        currentPrimitive?.onDraw(
+        optionable?.onDraw(
             canvas
         )
     }
@@ -89,16 +72,9 @@ class VEViewVector(
                 val tempX = event.x
                 val tempY = event.y
 
-                if (!isSerialDraw) {
-                    moveX = tempX
-                    moveY = tempY
-                }
-
-                val prevPoint = mSelectedPoint
-
                 mSelectedPoint = mSkeleton2D.find(
-                    moveX,
-                    moveY
+                    tempX,
+                    tempY
                 )
 
                 if (mSelectedPoint == null) {
@@ -106,36 +82,19 @@ class VEViewVector(
                     // New primitive
                     mSkeleton2D.addSkeletonPoint(
                         PointF(
-                            moveX,
-                            moveY
+                            tempX,
+                            tempY
                         )
                     )
 
                     mSelectedPoint = mSkeleton2D
                         .getLastPoint()
-
-                    if (prevPoint == null) {
-                        invalidate()
-                        return true
-                    }
-                    currentPrimitive?.newInstance(
-                        width.toFloat(),
-                        height.toFloat()
-                    )?.apply {
-                        currentPrimitive = this
-
-                        color = this@VEViewVector.color
-                        strokeWidth = this@VEViewVector.strokeWidth
-
-                        points[0] = prevPoint
-                        points[1] = mSelectedPoint
-
-                        primitives.add(
-                            this
-                        )
-                    }
-
                 }
+
+                optionable?.runOption(
+                    primitives,
+                    mSelectedPoint
+                )
 
                 invalidate()
             }
@@ -158,7 +117,6 @@ class VEViewVector(
             }
 
             MotionEvent.ACTION_UP -> {
-
                 invalidate()
             }
         }
