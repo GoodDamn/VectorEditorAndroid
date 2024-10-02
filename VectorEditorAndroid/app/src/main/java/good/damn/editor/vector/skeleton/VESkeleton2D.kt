@@ -3,9 +3,9 @@ package good.damn.editor.vector.skeleton
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
-import android.util.Log
 import good.damn.editor.vector.extensions.drawCircle
 import good.damn.editor.vector.interfaces.VEIDrawable
+import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
 import java.util.LinkedList
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -16,6 +16,8 @@ class VESkeleton2D
     companion object {
         private const val TAG = "VESkeleton2D"
     }
+
+    var onAddSkeletonPoint: VEICallbackOnAddSkeletonPoint? = null
 
     private val mPaintPoint = Paint().apply {
         color = 0x55ffffff
@@ -52,7 +54,13 @@ class VESkeleton2D
         mPoints.add(
             point
         )
+        onAddSkeletonPoint?.onAddSkeletonPoint(
+            point
+        )
     }
+
+    fun removeLast() = mPoints
+        .removeLastOrNull()
 
     override fun onDraw(
         canvas: Canvas

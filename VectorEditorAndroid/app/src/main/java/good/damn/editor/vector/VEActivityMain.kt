@@ -15,10 +15,9 @@ import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
-import good.damn.editor.vector.files.VEFileDocument
 import good.damn.editor.vector.options.VEOptionFreeMove
 import good.damn.editor.vector.options.VEOptionHookPointer
-import good.damn.editor.vector.options.VEOptionPrimitivable
+import good.damn.editor.vector.options.VEOptionShapeable
 import good.damn.editor.vector.paints.VEPaintBezierС
 import good.damn.editor.vector.paints.VEPaintLine
 import good.damn.editor.vector.porters.VEImporter
@@ -38,7 +37,7 @@ VEListenerOnGetBrowserContent {
         onGetContent = this@VEActivityMain
     }
 
-    private val mOptionPrimitive = VEOptionPrimitivable(
+    private val mOptionPrimitive = VEOptionShapeable(
         VEApp.height * 0.3f
     )
     private val mOptionHook = VEOptionHookPointer()
@@ -393,13 +392,13 @@ VEListenerOnGetBrowserContent {
     private fun onClickDeleteAll(
         v: View
     ) {
-        mViewVector?.clearVector()
+        mViewVector?.clearActions()
     }
 
     private fun onClickUndoAction(
         v: View
     ) {
-        mViewVector?.undoVector()
+        mViewVector?.undoAction()
     }
 
     override fun onGetBrowserContent(

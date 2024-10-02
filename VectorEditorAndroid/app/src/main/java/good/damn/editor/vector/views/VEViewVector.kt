@@ -5,9 +5,13 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.View
-import androidx.annotation.ColorInt
-import good.damn.editor.vector.interfaces.VEIOptionable
-import good.damn.editor.vector.options.VEOptionPrimitivable
+import good.damn.editor.vector.actions.VEDataActionShape
+import good.damn.editor.vector.actions.VEDataActionSkeletonPoint
+import good.damn.editor.vector.actions.VEIActionable
+import good.damn.editor.vector.options.VEIOptionable
+import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddShape
+import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
+import good.damn.editor.vector.lists.VEListShapes
 import good.damn.editor.vector.paints.VEPaintBase
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
@@ -17,7 +21,9 @@ class VEViewVector(
     startOption: VEIOptionable
 ): View(
     context
-) {
+), VEICallbackOnAddSkeletonPoint,
+VEICallbackOnAddShape {
+
     companion object {
         private const val TAG = "VEViewVector"
     }
@@ -27,11 +33,15 @@ class VEViewVector(
     var isAlignedHorizontal = false
     var isAlignedVertical = false
 
-    val primitives = LinkedList<
-        VEPaintBase
-    >()
+    val shapes = VEListShapes().apply {
+        onAddShape = this@VEViewVector
+    }
 
-    private val mSkeleton2D = VESkeleton2D()
+    private val mActions = LinkedList<VEIActionable>()
+
+    private val mSkeleton2D = VESkeleton2D().apply {
+        onAddSkeletonPoint = this@VEViewVector
+    }
 
     private var mSelectedPoint: PointF? = null
 
@@ -49,7 +59,7 @@ class VEViewVector(
             canvas
         )
 
-        primitives.forEach {
+        shapes.forEach {
             it.onDraw(
                 canvas
             )
@@ -88,13 +98,12 @@ class VEViewVector(
                             tempY
                         )
                     )
-
                     mSelectedPoint = mSkeleton2D
                         .getLastPoint()
                 }
 
                 optionable.runOption(
-                    primitives,
+                    shapes,
                     mSelectedPoint,
                     mSkeleton2D
                 )
@@ -128,12 +137,39 @@ class VEViewVector(
         return true
     }
 
-    fun undoVector() {
-        primitives.removeLastOrNull()
+    fun undoAction() {
+        mActions
+            .removeLastOrNull()
+            ?.removeAction()
+        invalidate()
     }
 
-    fun clearVector() {
-        primitives.clear()
+    fun clearActions() {
+        while (
+            mActions
+                .removeLastOrNull()
+                ?.removeAction() != null
+        ) {}
         invalidate()
+    }
+
+    override fun onAddSkeletonPoint(
+        point: PointF
+    ) {
+        mActions.add(
+            VEDataActionSkeletonPoint(
+                mSkeleton2D
+            )
+        )
+    }
+
+    override fun onAddShape(
+        shape: VEPaintBase
+    ) {
+        mActions.add(
+            VEDataActionShape(
+                shapes
+            )
+        )
     }
 }

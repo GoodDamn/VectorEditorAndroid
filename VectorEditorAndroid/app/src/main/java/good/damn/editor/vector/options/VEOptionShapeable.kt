@@ -2,16 +2,14 @@ package good.damn.editor.vector.options
 
 import android.graphics.Canvas
 import android.graphics.PointF
-import android.util.Log
-import androidx.annotation.ColorInt
 import good.damn.editor.vector.extensions.interpolate
-import good.damn.editor.vector.interfaces.VEIOptionable
+import good.damn.editor.vector.lists.VEListShapes
 import good.damn.editor.vector.paints.VEPaintBase
 import good.damn.editor.vector.paints.VEPaintLine
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
 
-class VEOptionPrimitivable(
+class VEOptionShapeable(
     val canvasWidth: Float,
     val canvasHeight: Float
 ): VEIOptionable {
@@ -39,7 +37,7 @@ class VEOptionPrimitivable(
     ) = Unit
 
     override fun runOption(
-        primitives: LinkedList<VEPaintBase>,
+        shapes: VEListShapes,
         selectedPoint: PointF?,
         skeleton: VESkeleton2D
     ) {
@@ -74,7 +72,7 @@ class VEOptionPrimitivable(
             }
 
             if (mPrevPoint != null) {
-                primitives.add(
+                shapes.add(
                     this
                 )
             }

@@ -2,7 +2,7 @@ package good.damn.editor.vector.options
 
 import android.graphics.Canvas
 import android.graphics.PointF
-import good.damn.editor.vector.interfaces.VEIOptionable
+import good.damn.editor.vector.lists.VEListShapes
 import good.damn.editor.vector.paints.VEPaintBase
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
@@ -13,7 +13,7 @@ class VEOptionHookPointer
     private var mHookedPoint: PointF? = null
 
     override fun runOption(
-        primitives: LinkedList<VEPaintBase>,
+        shapes: VEListShapes,
         selectedPoint: PointF?,
         skeleton: VESkeleton2D
     ) {
