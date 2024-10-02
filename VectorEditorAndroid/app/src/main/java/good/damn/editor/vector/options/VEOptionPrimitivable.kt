@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import android.util.Log
 import androidx.annotation.ColorInt
+import good.damn.editor.vector.extensions.interpolate
 import good.damn.editor.vector.interfaces.VEIOptionable
 import good.damn.editor.vector.paints.VEPaintBase
 import good.damn.editor.vector.paints.VEPaintLine
@@ -34,18 +35,12 @@ class VEOptionPrimitivable(
 
     override fun onDraw(
         canvas: Canvas
-    ) {
-        currentPrimitive?.onDraw(
-            canvas
-        )
-    }
+    ) = Unit
 
     override fun runOption(
         primitives: LinkedList<VEPaintBase>,
         selectedPoint: PointF?
     ) {
-        Log.d(TAG, "runOption: $mPrevPoint $selectedPoint")
-
         if (mPrevPoint == null) {
             mPrevPoint = selectedPoint
             return
@@ -63,6 +58,14 @@ class VEOptionPrimitivable(
 
             points[0] = mPrevPoint
             points[1] = selectedPoint
+
+            if (points.size == 3) {
+                points[1] = mPrevPoint?.interpolate(
+                    0.5f,
+                    selectedPoint
+                )
+                points[2] = selectedPoint
+            }
 
             if (mPrevPoint != null) {
                 primitives.add(

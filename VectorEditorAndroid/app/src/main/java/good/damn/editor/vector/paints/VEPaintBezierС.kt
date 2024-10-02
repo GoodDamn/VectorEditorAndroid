@@ -1,6 +1,7 @@
 package good.damn.editor.vector.paints
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 import good.damn.editor.vector.extensions.cubicTo
@@ -21,6 +22,12 @@ class VEPaintBezierС(
 
     override val points = Array<PointF?>(3) {null}
 
+    init {
+        mPaint.apply {
+            style = Paint.Style.STROKE
+        }
+    }
+
     override fun onDraw(
         canvas: Canvas
     ) {
@@ -30,10 +37,10 @@ class VEPaintBezierС(
             val p0 = points[0]
                 ?: return@apply
 
-            val p1 = points[0]
+            val p1 = points[1]
                 ?: return@apply
 
-            val p2 = points[0]
+            val p2 = points[2]
                 ?: return@apply
 
             moveTo(p0)

@@ -128,10 +128,11 @@ class VEViewVector(
     }
 
     fun undoVector() {
-
+        primitives.removeLastOrNull()
     }
 
     fun clearVector() {
+        primitives.clear()
         invalidate()
     }
 }
