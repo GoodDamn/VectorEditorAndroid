@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.View
+import good.damn.editor.vector.actions.VEDataActionPosition
 import good.damn.editor.vector.actions.VEDataActionShape
 import good.damn.editor.vector.actions.VEDataActionSkeletonPoint
 import good.damn.editor.vector.actions.VEIActionable
@@ -102,6 +103,14 @@ VEICallbackOnAddShape {
                         .getLastPoint()
                 }
 
+                mSelectedPoint?.let {
+                    mActions.add(
+                        VEDataActionPosition(
+                            it
+                        )
+                    )
+                }
+
                 optionable.runOption(
                     shapes,
                     mSelectedPoint,
@@ -125,10 +134,6 @@ VEICallbackOnAddShape {
                     moveY
                 )
 
-                invalidate()
-            }
-
-            MotionEvent.ACTION_UP -> {
                 invalidate()
             }
         }
