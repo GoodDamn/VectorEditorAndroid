@@ -95,7 +95,8 @@ class VEViewVector(
 
                 optionable.runOption(
                     primitives,
-                    mSelectedPoint
+                    mSelectedPoint,
+                    mSkeleton2D
                 )
 
                 invalidate()

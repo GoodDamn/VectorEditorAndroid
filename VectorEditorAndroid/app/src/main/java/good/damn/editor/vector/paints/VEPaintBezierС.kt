@@ -25,6 +25,7 @@ class VEPaintBezierС(
     init {
         mPaint.apply {
             style = Paint.Style.STROKE
+            strokeCap = Paint.Cap.ROUND
         }
     }
 

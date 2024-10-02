@@ -8,6 +8,7 @@ import good.damn.editor.vector.extensions.interpolate
 import good.damn.editor.vector.interfaces.VEIOptionable
 import good.damn.editor.vector.paints.VEPaintBase
 import good.damn.editor.vector.paints.VEPaintLine
+import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
 
 class VEOptionPrimitivable(
@@ -39,7 +40,8 @@ class VEOptionPrimitivable(
 
     override fun runOption(
         primitives: LinkedList<VEPaintBase>,
-        selectedPoint: PointF?
+        selectedPoint: PointF?,
+        skeleton: VESkeleton2D
     ) {
         if (mPrevPoint == null) {
             mPrevPoint = selectedPoint
@@ -63,7 +65,11 @@ class VEOptionPrimitivable(
                 points[1] = mPrevPoint?.interpolate(
                     0.5f,
                     selectedPoint
-                )
+                )?.apply {
+                    skeleton.addSkeletonPoint(
+                        this
+                    )
+                }
                 points[2] = selectedPoint
             }
 

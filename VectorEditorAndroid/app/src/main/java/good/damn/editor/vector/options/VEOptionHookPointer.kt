@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import good.damn.editor.vector.interfaces.VEIOptionable
 import good.damn.editor.vector.paints.VEPaintBase
+import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
 
 class VEOptionHookPointer
@@ -13,7 +14,8 @@ class VEOptionHookPointer
 
     override fun runOption(
         primitives: LinkedList<VEPaintBase>,
-        selectedPoint: PointF?
+        selectedPoint: PointF?,
+        skeleton: VESkeleton2D
     ) {
         if (mHookedPoint == null) {
             mHookedPoint = selectedPoint
