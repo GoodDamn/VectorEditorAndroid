@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.annotation.ColorInt
 import good.damn.editor.vector.interfaces.VEIOptionable
 import good.damn.editor.vector.paints.VEPaintBase
+import good.damn.editor.vector.paints.VEPaintLine
 import java.util.LinkedList
 
 class VEOptionPrimitivable(
@@ -17,21 +18,10 @@ class VEOptionPrimitivable(
         private const val TAG = "VEOptionPrimitivable"
     }
 
-    var currentPrimitive: VEPaintBase? = null
-
-    @get:ColorInt
-    @setparam:ColorInt
-    var color: Int = 0
-        set(v) {
-            field = v
-            currentPrimitive?.color = v
-        }
-
-    var strokeWidth: Float = 5f
-        set(v) {
-            field = v
-            currentPrimitive?.strokeWidth = v
-        }
+    var currentPrimitive: VEPaintBase = VEPaintLine(
+        canvasWidth,
+        canvasHeight
+    )
 
     private var mPrevPoint: PointF? = null
 
@@ -61,12 +51,15 @@ class VEOptionPrimitivable(
             return
         }
 
-        currentPrimitive = currentPrimitive?.newInstance(
+        val savedColor = currentPrimitive.color
+        val savedStrokeWidth = currentPrimitive.strokeWidth
+
+        currentPrimitive = currentPrimitive.newInstance(
             canvasWidth,
             canvasHeight
-        )?.apply {
-            color = this@VEOptionPrimitivable.color
-            strokeWidth = this@VEOptionPrimitivable.strokeWidth
+        ).apply {
+            color = savedColor
+            strokeWidth = savedStrokeWidth
 
             points[0] = mPrevPoint
             points[1] = selectedPoint

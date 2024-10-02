@@ -64,10 +64,9 @@ VEListenerOnGetBrowserContent {
             )
         }
 
-        val sizeCanvas = VEApp.height * 0.3f
-
         mViewVector = VEViewVector(
-            context
+            context,
+            mOptionPrimitive
         ).apply {
 
             setBackgroundColor(
@@ -78,8 +77,8 @@ VEListenerOnGetBrowserContent {
             isAlignedHorizontal = true
 
             boundsFrame(
-                width = sizeCanvas,
-                height = sizeCanvas
+                width = mOptionPrimitive.canvasWidth,
+                height = mOptionPrimitive.canvasHeight
             )
 
             root.addView(
@@ -162,7 +161,7 @@ VEListenerOnGetBrowserContent {
             boundsFrame(
                 width = s,
                 height = s,
-                top = sizeCanvas
+                top = mOptionPrimitive.canvasHeight
             )
 
             setOnClickListener {
@@ -185,7 +184,7 @@ VEListenerOnGetBrowserContent {
             boundsFrame(
                 width = s * 1.5f,
                 height = s,
-                top = sizeCanvas,
+                top = mOptionPrimitive.canvasHeight,
                 start = s
             )
 
@@ -210,7 +209,7 @@ VEListenerOnGetBrowserContent {
                 gravity = Gravity.END,
                 width = s,
                 height = s,
-                top = sizeCanvas,
+                top = mOptionPrimitive.canvasHeight,
                 end = 0f
             )
 
@@ -236,7 +235,7 @@ VEListenerOnGetBrowserContent {
                 gravity = Gravity.END,
                 width = s,
                 height = s,
-                top = sizeCanvas,
+                top = mOptionPrimitive.canvasHeight,
                 end = s
             )
 
@@ -267,7 +266,9 @@ VEListenerOnGetBrowserContent {
                         fromUser: Boolean
                     ) {
                         val n = progress / 100f
-                        mOptionPrimitive.strokeWidth = n * VEApp.width
+                        mOptionPrimitive
+                            .currentPrimitive
+                            .strokeWidth = n * VEApp.width
                     }
                     override fun onStartTrackingTouch(
                         seekBar: SeekBar?
@@ -299,7 +300,9 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnPickColorListener {
-                mOptionPrimitive.color = it
+                mOptionPrimitive
+                    .currentPrimitive
+                    .color = it
             }
 
             root.addView(

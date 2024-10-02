@@ -7,12 +7,14 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
 import good.damn.editor.vector.interfaces.VEIOptionable
+import good.damn.editor.vector.options.VEOptionPrimitivable
 import good.damn.editor.vector.paints.VEPaintBase
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
 
 class VEViewVector(
-    context: Context
+    context: Context,
+    startOption: VEIOptionable
 ): View(
     context
 ) {
@@ -20,7 +22,7 @@ class VEViewVector(
         private const val TAG = "VEViewVector"
     }
 
-    var optionable: VEIOptionable? = null
+    var optionable: VEIOptionable = startOption
 
     var isAlignedHorizontal = false
     var isAlignedVertical = false
@@ -53,7 +55,7 @@ class VEViewVector(
             )
         }
 
-        optionable?.onDraw(
+        optionable.onDraw(
             canvas
         )
     }
@@ -91,7 +93,7 @@ class VEViewVector(
                         .getLastPoint()
                 }
 
-                optionable?.runOption(
+                optionable.runOption(
                     primitives,
                     mSelectedPoint
                 )
