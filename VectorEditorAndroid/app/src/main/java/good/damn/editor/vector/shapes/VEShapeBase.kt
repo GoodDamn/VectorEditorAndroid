@@ -1,17 +1,13 @@
-package good.damn.editor.vector.paints
+package good.damn.editor.vector.shapes
 
 import android.graphics.Paint
-import android.graphics.PointF
 import androidx.annotation.ColorInt
 import good.damn.editor.vector.interfaces.VEIAnchorable
-import good.damn.editor.vector.interfaces.VEIInstansable
 import good.damn.editor.vector.interfaces.VEIDecodable
 import good.damn.editor.vector.interfaces.VEIDrawable
 import good.damn.editor.vector.interfaces.VEIEncodable
-import kotlin.math.abs
-import kotlin.math.hypot
 
-abstract class VEPaintBase(
+abstract class VEShapeBase(
     protected val mCanvasWidth: Float,
     protected val mCanvasHeight: Float
 ): VEIEncodable,
@@ -45,5 +41,5 @@ VEIAnchorable {
     abstract fun newInstance(
         width: Float,
         height: Float
-    ): VEPaintBase
+    ): VEShapeBase
 }

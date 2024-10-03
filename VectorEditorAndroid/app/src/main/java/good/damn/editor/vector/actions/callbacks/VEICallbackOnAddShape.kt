@@ -1,9 +1,9 @@
 package good.damn.editor.vector.actions.callbacks
 
-import good.damn.editor.vector.paints.VEPaintBase
+import good.damn.editor.vector.shapes.VEShapeBase
 
 interface VEICallbackOnAddShape {
     fun onAddShape(
-        shape: VEPaintBase
+        shape: VEShapeBase
     )
 }

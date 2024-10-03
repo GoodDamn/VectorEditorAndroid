@@ -1,14 +1,12 @@
 package good.damn.editor.vector.options
 
 import android.graphics.Canvas
-import android.graphics.PointF
 import good.damn.editor.vector.extensions.interpolate
 import good.damn.editor.vector.lists.VEListShapes
-import good.damn.editor.vector.paints.VEPaintBase
-import good.damn.editor.vector.paints.VEPaintLine
+import good.damn.editor.vector.shapes.VEShapeBase
+import good.damn.editor.vector.shapes.VEShapeLine
 import good.damn.editor.vector.points.VEPointIndexed
 import good.damn.editor.vector.skeleton.VESkeleton2D
-import java.util.LinkedList
 
 class VEOptionShapeable(
     val canvasWidth: Float,
@@ -19,7 +17,7 @@ class VEOptionShapeable(
         private const val TAG = "VEOptionPrimitivable"
     }
 
-    var currentPrimitive: VEPaintBase = VEPaintLine(
+    var currentPrimitive: VEShapeBase = VEShapeLine(
         canvasWidth,
         canvasHeight
     )

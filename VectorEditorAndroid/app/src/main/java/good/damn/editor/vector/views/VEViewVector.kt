@@ -13,7 +13,7 @@ import good.damn.editor.vector.options.VEIOptionable
 import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddShape
 import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
 import good.damn.editor.vector.lists.VEListShapes
-import good.damn.editor.vector.paints.VEPaintBase
+import good.damn.editor.vector.shapes.VEShapeBase
 import good.damn.editor.vector.points.VEPointIndexed
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
@@ -39,9 +39,14 @@ VEICallbackOnAddShape {
         onAddShape = this@VEViewVector
     }
 
+    val skeleton: VESkeleton2D
+        get() = mSkeleton2D
+
     private val mActions = LinkedList<VEIActionable>()
 
-    private val mSkeleton2D = VESkeleton2D().apply {
+    private val mSkeleton2D = VESkeleton2D(
+        LinkedList()
+    ).apply {
         onAddSkeletonPoint = this@VEViewVector
     }
 
@@ -159,6 +164,14 @@ VEICallbackOnAddShape {
         invalidate()
     }
 
+    fun setSkeleton(
+        points: MutableList<VEPointIndexed>
+    ) {
+        mSkeleton2D.resetSkeleton(
+            points
+        )
+    }
+
     override fun onAddSkeletonPoint(
         point: PointF
     ) {
@@ -170,7 +183,7 @@ VEICallbackOnAddShape {
     }
 
     override fun onAddShape(
-        shape: VEPaintBase
+        shape: VEShapeBase
     ) {
         mActions.add(
             VEDataActionShape(

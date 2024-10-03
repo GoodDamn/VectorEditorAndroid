@@ -1,9 +1,15 @@
 package good.damn.editor.vector.porters
 
+import good.damn.editor.vector.extensions.fillPointsWithSkeleton
+import good.damn.editor.vector.extensions.io.readFraction
 import good.damn.editor.vector.extensions.io.readU
-import good.damn.editor.vector.paints.VEPaintBase
-import good.damn.editor.vector.paints.VEPaintBezierС
-import good.damn.editor.vector.paints.VEPaintLine
+import good.damn.editor.vector.lists.VEListShapes
+import good.damn.editor.vector.models.VEModelImport
+import good.damn.editor.vector.shapes.VEShapeBase
+import good.damn.editor.vector.points.VEPointIndexed
+import good.damn.editor.vector.shapes.VEShapeBezierС
+import good.damn.editor.vector.shapes.VEShapeLine
+import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.io.InputStream
 import java.util.LinkedList
 
@@ -17,37 +23,63 @@ class VEImporter {
         inp: InputStream,
         canvasWidth: Float,
         canvasHeight: Float
-    ): LinkedList<VEPaintBase>? {
+    ): VEModelImport? {
         val version = inp.readU()
         if (version != mVersionImporter) {
             return null
         }
 
-        val vectorsCount = inp.readU()
-        val list = LinkedList<VEPaintBase>()
+        val pointsCount = inp.readU()
+        val skeletonPoints = ArrayList<VEPointIndexed>(
+            pointsCount
+        )
 
-        var vectorType: Int
+        for (i in 0..<pointsCount) {
+            skeletonPoints.add(
+                VEPointIndexed(
+                    inp.readFraction() * canvasWidth,
+                    inp.readFraction() * canvasHeight
+                ).apply {
+                    index = i
+                }
+            )
+        }
 
-        for (i in 0..<vectorsCount) {
-            vectorType = inp.readU()
-            list.add(
-                when (vectorType) {
-                    VEPaintLine.ENCODE_TYPE -> VEPaintLine(
+        val shapesCount = inp.readU()
+        val shapes = VEListShapes()
+
+        for (i in 0..<shapesCount) {
+            shapes.add(
+                when (
+                    inp.readU()
+                ) {
+                    VEShapeLine.ENCODE_TYPE -> VEShapeBezierС(
                         canvasWidth,
                         canvasHeight
                     )
-                    else -> VEPaintBezierС(
+                    else -> VEShapeLine(
                         canvasWidth,
                         canvasHeight
                     )
                 }.apply {
-                    onDecodeObject(inp)
+                    points.fillPointsWithSkeleton(
+                        skeletonPoints,
+                        inp,
+                        points.size
+                    )
+                    onDecodeObject(
+                        inp
+                    )
                 }
             )
         }
 
         inp.close()
-        return list
+
+        return VEModelImport(
+            skeletonPoints,
+            shapes
+        )
     }
 
 }

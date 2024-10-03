@@ -11,8 +11,9 @@ import java.util.LinkedList
 import kotlin.math.abs
 import kotlin.math.hypot
 
-class VESkeleton2D
-: VEIDrawable {
+class VESkeleton2D(
+    dataStruct: MutableList<VEPointIndexed>
+): VEIDrawable {
 
     companion object {
         private const val TAG = "VESkeleton2D"
@@ -27,9 +28,7 @@ class VESkeleton2D
         color = 0x55ffffff
     }
 
-    private val mPoints = LinkedList<
-        VEPointIndexed
-    >()
+    private val mPoints = dataStruct
 
     private val mRadius = 50f
 
@@ -52,6 +51,10 @@ class VESkeleton2D
         return null
     }
 
+    fun getPointIndexed(
+        i: Int
+    ) = mPoints[i]
+
     fun forEach(
         block: (PointF) -> Unit
     ) = mPoints.forEach(
@@ -68,6 +71,13 @@ class VESkeleton2D
         onAddSkeletonPoint?.onAddSkeletonPoint(
             point
         )
+    }
+
+    fun resetSkeleton(
+        points: MutableList<VEPointIndexed>
+    ) = mPoints.run {
+        clear()
+        addAll(points)
     }
 
     fun removeLast() = mPoints

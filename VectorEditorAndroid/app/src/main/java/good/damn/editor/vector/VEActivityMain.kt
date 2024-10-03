@@ -15,11 +15,12 @@ import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
+import good.damn.editor.vector.files.VEFileDocument
 import good.damn.editor.vector.options.VEOptionFreeMove
 import good.damn.editor.vector.options.VEOptionHookPointer
 import good.damn.editor.vector.options.VEOptionShapeable
-import good.damn.editor.vector.paints.VEPaintBezierС
-import good.damn.editor.vector.paints.VEPaintLine
+import good.damn.editor.vector.shapes.VEShapeBezierС
+import good.damn.editor.vector.shapes.VEShapeLine
 import good.damn.editor.vector.porters.VEImporter
 import good.damn.editor.vector.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
@@ -164,7 +165,7 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-                mOptionPrimitive.currentPrimitive = VEPaintLine(
+                mOptionPrimitive.currentPrimitive = VEShapeLine(
                     0f,0f
                 )
             }
@@ -188,7 +189,7 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnClickListener {
-                mOptionPrimitive.currentPrimitive = VEPaintBezierС(
+                mOptionPrimitive.currentPrimitive = VEShapeBezierС(
                     0f,0f
                 )
             }
@@ -372,15 +373,21 @@ VEListenerOnGetBrowserContent {
     private fun onClickExportVector(
         v: View
     ) {
-        /*val data = mViewVector?.primitives
+        val shapes = mViewVector?.shapes
+            ?: return
+
+        val skeleton = mViewVector?.skeleton
             ?: return
 
         mExporter.exportTo(
             VEFileDocument(
                 "myVector.sav"
             ),
-            data
-        )*/
+            shapes,
+            skeleton,
+            mOptionPrimitive.canvasWidth,
+            mOptionPrimitive.canvasHeight
+        )
     }
 
     private fun onClickImportVector(
@@ -415,13 +422,22 @@ VEListenerOnGetBrowserContent {
             uri
         ) ?: return
 
-        mImporter.importFrom(
-            stream,
-            vectorCanvas.width.toFloat(),
-            vectorCanvas.height.toFloat()
-        )?.let {
-            vectorCanvas.invalidate()
+        vectorCanvas.apply {
+            mImporter.importFrom(
+                stream,
+                width.toFloat(),
+                height.toFloat()
+            )?.let {
+                shapes.resetList(
+                    it.shapes
+                )
+
+                setSkeleton(
+                    it.skeletonPoints
+                )
+
+                invalidate()
+            }
         }
     }
-
 }

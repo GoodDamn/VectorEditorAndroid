@@ -1,9 +1,9 @@
 package good.damn.editor.vector.interfaces
 
-import good.damn.editor.vector.paints.VEPaintBase
+import good.damn.editor.vector.shapes.VEShapeBase
 
 interface VEIInstansable {
     fun onReadInstance(
-        instance: VEPaintBase
+        instance: VEShapeBase
     )
 }
