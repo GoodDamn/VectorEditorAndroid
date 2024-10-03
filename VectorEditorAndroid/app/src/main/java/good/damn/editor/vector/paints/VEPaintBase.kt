@@ -39,6 +39,7 @@ VEIAnchorable {
             mPaint.style = v
         }
 
+
     protected val mPaint = Paint()
 
     abstract fun newInstance(

@@ -6,7 +6,13 @@ import android.graphics.Path
 import android.graphics.PointF
 import good.damn.editor.vector.extensions.cubicTo
 import good.damn.editor.vector.extensions.drawCircle
+import good.damn.editor.vector.extensions.io.write
 import good.damn.editor.vector.extensions.moveTo
+import good.damn.editor.vector.extensions.primitives.toByteArray
+import good.damn.editor.vector.extensions.primitives.toDigitalFraction
+import good.damn.editor.vector.extensions.writeToStream
+import good.damn.editor.vector.extensions.writeToStreamIndexed
+import good.damn.editor.vector.points.VEPointIndexed
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -18,9 +24,13 @@ class VEPaintBezierС(
     canvasHeight
 ) {
 
+    companion object {
+        const val ENCODE_TYPE = 1
+    }
+
     private val mPath = Path()
 
-    override val points = Array<PointF?>(3) {null}
+    override val points = Array<VEPointIndexed?>(3) {null}
 
     init {
         mPaint.apply {
@@ -63,13 +73,31 @@ class VEPaintBezierС(
 
     override fun onEncodeObject(
         os: OutputStream
-    ) {
+    ) = os.run {
+        write(
+            ENCODE_TYPE
+        )
 
+        points.forEach {
+            it?.writeToStreamIndexed(
+                this
+            )
+        }
+
+        write(
+            color.toByteArray()
+        )
+
+        write(
+            strokeWidth.toDigitalFraction(
+                mCanvasWidth
+            )
+        )
     }
 
     override fun onDecodeObject(
         inp: InputStream
-    ) {
+    ) = inp.run {
 
     }
 

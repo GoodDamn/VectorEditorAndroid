@@ -32,7 +32,7 @@ class VEImporter {
             vectorType = inp.readU()
             list.add(
                 when (vectorType) {
-                    VEPaintLine.ENCODE_TYPE.toInt() -> VEPaintLine(
+                    VEPaintLine.ENCODE_TYPE -> VEPaintLine(
                         canvasWidth,
                         canvasHeight
                     )

@@ -14,6 +14,7 @@ import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddShape
 import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
 import good.damn.editor.vector.lists.VEListShapes
 import good.damn.editor.vector.paints.VEPaintBase
+import good.damn.editor.vector.points.VEPointIndexed
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
 
@@ -44,7 +45,7 @@ VEICallbackOnAddShape {
         onAddSkeletonPoint = this@VEViewVector
     }
 
-    private var mSelectedPoint: PointF? = null
+    private var mSelectedPoint: VEPointIndexed? = null
 
     private var moveX = 0f
     private var moveY = 0f
@@ -94,7 +95,7 @@ VEICallbackOnAddShape {
                     // New point
                     // New primitive
                     mSkeleton2D.addSkeletonPoint(
-                        PointF(
+                        VEPointIndexed(
                             tempX,
                             tempY
                         )

@@ -6,6 +6,7 @@ import android.graphics.PointF
 import good.damn.editor.vector.extensions.drawCircle
 import good.damn.editor.vector.interfaces.VEIDrawable
 import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
+import good.damn.editor.vector.points.VEPointIndexed
 import java.util.LinkedList
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -19,12 +20,15 @@ class VESkeleton2D
 
     var onAddSkeletonPoint: VEICallbackOnAddSkeletonPoint? = null
 
+    val size: Int
+        get() = mPoints.size
+
     private val mPaintPoint = Paint().apply {
         color = 0x55ffffff
     }
 
     private val mPoints = LinkedList<
-        PointF
+        VEPointIndexed
     >()
 
     private val mRadius = 50f
@@ -35,7 +39,7 @@ class VESkeleton2D
     fun find(
         withX: Float,
         withY: Float
-    ): PointF? {
+    ): VEPointIndexed? {
         mPoints.forEach {
             if (abs(hypot(
                 it.x - withX,
@@ -48,9 +52,16 @@ class VESkeleton2D
         return null
     }
 
+    fun forEach(
+        block: (PointF) -> Unit
+    ) = mPoints.forEach(
+        block
+    )
+
     fun addSkeletonPoint(
-        point: PointF
+        point: VEPointIndexed
     ) {
+        point.index = size
         mPoints.add(
             point
         )
