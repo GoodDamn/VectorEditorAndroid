@@ -54,7 +54,7 @@ class VEShapeLine(
         os: OutputStream
     ) = os.run {
         write(
-            VEShapeBezierС.ENCODE_TYPE
+            ENCODE_TYPE
         )
 
         points.forEach {

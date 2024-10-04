@@ -1,5 +1,6 @@
 package good.damn.editor.vector.porters
 
+import android.util.Log
 import good.damn.editor.vector.extensions.file.write
 import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import good.damn.editor.vector.extensions.writeToStream
@@ -12,6 +13,7 @@ class VEExporter {
 
     companion object {
         private const val mVersionExporter = 1
+        private const val TAG = "VEExporter"
     }
 
     fun exportTo(
@@ -26,6 +28,7 @@ class VEExporter {
         baos.write(skeleton.size)
 
         skeleton.forEach {
+            Log.d(TAG, "exportTo: POINT: $it")
             it.writeToStream(
                 baos,
                 canvasWidth,

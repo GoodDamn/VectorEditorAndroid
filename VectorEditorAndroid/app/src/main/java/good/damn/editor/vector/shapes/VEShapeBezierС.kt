@@ -29,7 +29,9 @@ class VEShapeBezierС(
 
     private val mPath = Path()
 
-    override val points = Array<VEPointIndexed?>(3) {null}
+    override val points = Array<
+       VEPointIndexed?
+    >(3) {null}
 
     init {
         mPaint.apply {
