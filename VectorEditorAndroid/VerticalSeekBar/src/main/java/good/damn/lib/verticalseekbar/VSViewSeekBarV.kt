@@ -34,6 +34,12 @@ class VSViewSeekBarV(
         set(v) {
             mPaintBack.strokeWidth = v
             mPaintProgress.strokeWidth = v
+
+            minProgressY = v
+            maxProgressY = layoutParams.height - v
+            mDtProgress = maxProgressY - minProgressY
+
+            mofx = v * 0.5f
         }
 
     var progress = 0.5f
@@ -52,24 +58,28 @@ class VSViewSeekBarV(
         strokeCap = Paint.Cap.ROUND
     }
 
+    private var mofx = 0f
+
+    private var minProgressY = 0f
+    private var maxProgressY = 0f
+    private var mDtProgress = 0f
+
     override fun onDraw(
         canvas: Canvas
     ) {
-        val x = mPaintProgress.strokeWidth * 0.5f
-        val ofx = height - mPaintProgress.strokeWidth
         canvas.drawLine(
-            x,
+            mofx,
             mPaintProgress.strokeWidth,
-            x,
-            ofx,
+            mofx,
+            maxProgressY,
             mPaintBack
         )
 
         canvas.drawLine(
-            x,
-            ofx,
-            x,
-            height * progress,
+            mofx,
+            maxProgressY,
+            mofx,
+            minProgressY + mDtProgress * (1.0f-progress),
             mPaintProgress
         )
     }
@@ -81,7 +91,13 @@ class VSViewSeekBarV(
             return false
         }
 
-        progress = event.y / height
+        progress = 1.0f - event.y / height
+
+        if (progress > 1.0f) {
+            progress = 1.0f
+        } else if (progress < 0.0f) {
+            progress = 0.0f
+        }
         return true
     }
 

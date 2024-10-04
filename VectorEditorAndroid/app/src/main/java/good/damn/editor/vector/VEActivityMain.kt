@@ -256,9 +256,9 @@ VEListenerOnGetBrowserContent {
 
             boundsFrame(
                 gravity = Gravity.END,
-                height = VEApp.height * 0.2f,
-                top = VEApp.height * 0.8f,
-                width = VEApp.width * 0.2f
+                height = VEApp.height * 0.13f,
+                top = VEApp.width * 0.42f,
+                width = VEApp.width * 0.1f
             )
 
             strokeWidth = layoutParams.width * 0.25f
