@@ -23,6 +23,7 @@ class VEOptionShapeable(
     )
 
     private var mPrevPoint: VEPointIndexed? = null
+    private var mSkeleton: VESkeleton2D? = null
 
     constructor(
         size: Float
@@ -31,15 +32,12 @@ class VEOptionShapeable(
         size
     )
 
-    override fun onDraw(
-        canvas: Canvas
-    ) = Unit
-
     override fun runOption(
         shapes: VEListShapes,
         selectedPoint: VEPointIndexed?,
         skeleton: VESkeleton2D
     ) {
+        mSkeleton = skeleton
         if (mPrevPoint == null) {
             mPrevPoint = selectedPoint
             return
@@ -78,6 +76,10 @@ class VEOptionShapeable(
 
             mPrevPoint = selectedPoint
         }
+    }
+
+    override fun onClear() {
+        mPrevPoint = mSkeleton?.getLastPoint()
     }
 
 }

@@ -13,7 +13,5 @@ interface VEIOptionable {
         skeleton: VESkeleton2D
     )
 
-    fun onDraw(
-        canvas: Canvas
-    )
+    fun onClear()
 }

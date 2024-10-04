@@ -14,7 +14,5 @@ class VEOptionFreeMove
         skeleton: VESkeleton2D
     ) = Unit
 
-    override fun onDraw(
-        canvas: Canvas
-    ) = Unit
+    override fun onClear() = Unit
 }

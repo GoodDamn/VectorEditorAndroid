@@ -11,6 +11,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.porters.VEExporter
@@ -24,6 +25,7 @@ import good.damn.editor.vector.shapes.VEShapeLine
 import good.damn.editor.vector.porters.VEImporter
 import good.damn.editor.vector.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
+import good.damn.lib.verticalseekbar.VSViewSeekBarV
 
 class VEActivityMain
 : AppCompatActivity(),
@@ -39,7 +41,7 @@ VEListenerOnGetBrowserContent {
     }
 
     private val mOptionPrimitive = VEOptionShapeable(
-        VEApp.height * 0.3f
+        VEApp.width.toFloat()
     )
     private val mOptionHook = VEOptionHookPointer()
     private val mOptionFreeMove = VEOptionFreeMove()
@@ -54,8 +56,8 @@ VEListenerOnGetBrowserContent {
         mBrowserContent.register(
             this
         )
-
         val context = this
+
         val root = FrameLayout(
             context
         ).apply {
@@ -160,8 +162,7 @@ VEListenerOnGetBrowserContent {
             val s = VEApp.width * 0.1f
             boundsFrame(
                 width = s,
-                height = s,
-                top = mOptionPrimitive.canvasHeight
+                height = s
             )
 
             setOnClickListener {
@@ -184,7 +185,6 @@ VEListenerOnGetBrowserContent {
             boundsFrame(
                 width = s * 1.5f,
                 height = s,
-                top = mOptionPrimitive.canvasHeight,
                 start = s
             )
 
@@ -250,39 +250,24 @@ VEListenerOnGetBrowserContent {
             )
         }
 
-
-
-        SeekBar(
+        VSViewSeekBarV(
             context
         ).apply {
-            progress = 0
-            max = 100
-
-            setOnSeekBarChangeListener(
-                object : OnSeekBarChangeListener {
-                    override fun onProgressChanged(
-                        seekBar: SeekBar?,
-                        progress: Int,
-                        fromUser: Boolean
-                    ) {
-                        val n = progress / 100f
-                        mOptionPrimitive
-                            .currentPrimitive
-                            .strokeWidth = n * VEApp.width
-                    }
-                    override fun onStartTrackingTouch(
-                        seekBar: SeekBar?
-                    ) = Unit
-                    override fun onStopTrackingTouch(
-                        seekBar: SeekBar?
-                    ) = Unit
-                }
-            )
 
             boundsFrame(
-                top = VEApp.height * 0.4f,
-                width = VEApp.width.toFloat()
+                gravity = Gravity.END,
+                height = VEApp.height * 0.2f,
+                top = VEApp.height * 0.8f,
+                width = VEApp.width * 0.2f
             )
+
+            strokeWidth = layoutParams.width * 0.25f
+            setBackgroundColor(
+                0xffff0000.toInt()
+            )
+            progressColor = 0xffffff00.toInt()
+
+            progress = 0.65f
 
             root.addView(
                 this

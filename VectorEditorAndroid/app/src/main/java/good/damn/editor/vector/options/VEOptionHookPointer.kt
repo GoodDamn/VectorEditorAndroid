@@ -28,7 +28,7 @@ class VEOptionHookPointer
         mHookedPoint = null
     }
 
-    override fun onDraw(
-        canvas: Canvas
-    ) = Unit
+    override fun onClear() {
+        mHookedPoint = null
+    }
 }
