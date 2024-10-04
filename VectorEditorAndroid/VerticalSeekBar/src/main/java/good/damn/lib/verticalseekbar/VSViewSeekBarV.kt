@@ -6,12 +6,14 @@ import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
+import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
 
 class VSViewSeekBarV(
     context: Context
 ): View(
     context
 ) {
+    var onSeekProgress: VSIListenerSeekBarProgress? = null
 
     @setparam:ColorInt
     @get:ColorInt
@@ -91,13 +93,18 @@ class VSViewSeekBarV(
             return false
         }
 
-        progress = 1.0f - event.y / height
+        progress = 1.0f - event.y / maxProgressY
 
         if (progress > 1.0f) {
             progress = 1.0f
         } else if (progress < 0.0f) {
             progress = 0.0f
         }
+
+        onSeekProgress?.onSeekProgress(
+            progress
+        )
+
         return true
     }
 

@@ -26,10 +26,12 @@ import good.damn.editor.vector.porters.VEImporter
 import good.damn.editor.vector.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
+import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
 
 class VEActivityMain
 : AppCompatActivity(),
-VEListenerOnGetBrowserContent {
+VEListenerOnGetBrowserContent,
+VSIListenerSeekBarProgress {
 
     private var mViewVector: VEViewVector? = null
 
@@ -256,10 +258,12 @@ VEListenerOnGetBrowserContent {
 
             boundsFrame(
                 gravity = Gravity.END,
-                height = VEApp.height * 0.13f,
+                height = VEApp.height * 0.2f,
                 top = VEApp.width * 0.42f,
                 width = VEApp.width * 0.1f
             )
+
+            onSeekProgress = this@VEActivityMain
 
             strokeWidth = layoutParams.width * 0.25f
             setBackgroundColor(
@@ -423,6 +427,15 @@ VEListenerOnGetBrowserContent {
 
                 invalidate()
             }
+        }
+    }
+
+    override fun onSeekProgress(
+        progress: Float
+    ) {
+        mOptionPrimitive.apply {
+            currentPrimitive.strokeWidth =
+                progress * canvasWidth
         }
     }
 }
