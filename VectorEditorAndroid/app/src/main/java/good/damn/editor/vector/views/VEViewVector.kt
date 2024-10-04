@@ -145,7 +145,6 @@ VEICallbackOnAddShape {
     }
 
     fun undoAction() {
-        optionable.onClear()
         mActions
             .removeLastOrNull()
             ?.removeAction()
@@ -153,7 +152,6 @@ VEICallbackOnAddShape {
     }
 
     fun clearActions() {
-        optionable.onClear()
         while (
             mActions
                 .removeLastOrNull()

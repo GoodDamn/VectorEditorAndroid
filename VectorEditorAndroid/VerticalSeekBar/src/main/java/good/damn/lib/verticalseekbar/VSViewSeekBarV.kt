@@ -81,7 +81,9 @@ class VSViewSeekBarV(
             mofx,
             maxProgressY,
             mofx,
-            minProgressY + mDtProgress * (1.0f-progress),
+            minProgressY + mDtProgress * (
+               1.0f - progress
+            ),
             mPaintProgress
         )
     }

@@ -281,7 +281,6 @@ VSIListenerSeekBarProgress {
         GradientColorPicker(
             context
         ).apply {
-
             boundsFrame(
                 top = VEApp.height * 0.5f,
                 width = VEApp.width.toFloat(),
@@ -389,12 +388,20 @@ VSIListenerSeekBarProgress {
         v: View
     ) {
         mViewVector?.clearActions()
+        clearOptions()
     }
 
     private fun onClickUndoAction(
         v: View
     ) {
         mViewVector?.undoAction()
+        clearOptions()
+    }
+
+    private fun clearOptions() {
+        mOptionPrimitive.onClear()
+        mOptionFreeMove.onClear()
+        mOptionHook.onClear()
     }
 
     override fun onGetBrowserContent(
