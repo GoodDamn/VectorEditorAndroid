@@ -78,9 +78,6 @@ VSIListenerSeekBarProgress {
                 0xff565656.toInt()
             )
 
-            isAlignedVertical = true
-            isAlignedHorizontal = true
-
             boundsFrame(
                 width = mOptionPrimitive.canvasWidth,
                 height = mOptionPrimitive.canvasHeight
@@ -195,57 +192,6 @@ VSIListenerSeekBarProgress {
                 mOptionPrimitive.currentPrimitive = VEShapeBezierС(
                     0f,0f
                 )
-            }
-
-            root.addView(
-                this
-            )
-        }
-
-        Button(
-            context
-        ).apply {
-
-            text = "H"
-            val s = VEApp.width * 0.1f
-            boundsFrame(
-                gravity = Gravity.END,
-                width = s,
-                height = s,
-                top = mOptionPrimitive.canvasHeight,
-                end = 0f
-            )
-
-            setOnClickListener {
-                mViewVector?.apply {
-                    isAlignedHorizontal = !isAlignedHorizontal
-                }
-            }
-
-            root.addView(
-                this
-            )
-        }
-
-        Button(
-            context
-        ).apply {
-
-            text = "V"
-
-            val s = VEApp.width * 0.1f
-            boundsFrame(
-                gravity = Gravity.END,
-                width = s,
-                height = s,
-                top = mOptionPrimitive.canvasHeight,
-                end = s
-            )
-
-            setOnClickListener {
-                mViewVector?.apply {
-                    isAlignedVertical = !isAlignedVertical
-                }
             }
 
             root.addView(

@@ -16,7 +16,7 @@ class VEAnchorStraightVertical
         y2: Float
     ) = abs(
         x - x2
-    ) < 25
+    ) < 30 // px
 
     override fun onDraw(
         canvas: Canvas,
@@ -25,6 +25,10 @@ class VEAnchorStraightVertical
         x2: Float,
         y2: Float
     ) {
+        onAnchorPoint?.onAnchorPoint(
+            x,
+            y2
+        )
         canvas.drawLine(
             x,
             y,

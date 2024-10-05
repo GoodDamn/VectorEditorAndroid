@@ -7,7 +7,6 @@ import good.damn.editor.vector.extensions.drawCircle
 import good.damn.editor.vector.interfaces.VEIDrawable
 import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
 import good.damn.editor.vector.points.VEPointIndexed
-import java.util.LinkedList
 import kotlin.math.abs
 import kotlin.math.hypot
 
@@ -23,6 +22,9 @@ class VESkeleton2D(
 
     val size: Int
         get() = mPoints.size
+
+    val points: MutableList<VEPointIndexed>
+        get() = mPoints
 
     private val mPaintPoint = Paint().apply {
         color = 0x55ffffff
@@ -55,7 +57,7 @@ class VESkeleton2D(
         i: Int
     ) = mPoints[i]
 
-    fun forEach(
+    fun forEachh(
         block: (PointF) -> Unit
     ) = mPoints.forEach(
         block

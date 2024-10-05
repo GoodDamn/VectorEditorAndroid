@@ -2,7 +2,6 @@ package good.damn.editor.vector.porters
 
 import android.util.Log
 import good.damn.editor.vector.extensions.file.write
-import good.damn.editor.vector.extensions.primitives.toDigitalFraction
 import good.damn.editor.vector.extensions.writeToStream
 import good.damn.editor.vector.interfaces.VEIEncodable
 import good.damn.editor.vector.skeleton.VESkeleton2D
@@ -27,7 +26,7 @@ class VEExporter {
         baos.write(mVersionExporter)
         baos.write(skeleton.size)
 
-        skeleton.forEach {
+        skeleton.forEachh {
             Log.d(TAG, "exportTo: POINT: $it")
             it.writeToStream(
                 baos,

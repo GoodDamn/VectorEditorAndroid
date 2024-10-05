@@ -3,6 +3,7 @@ package good.damn.editor.vector.views
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.PointF
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.vector.actions.VEDataActionPosition
@@ -14,6 +15,8 @@ import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddShape
 import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
 import good.damn.editor.vector.anchors.VEAnchor
 import good.damn.editor.vector.anchors.VEAnchorStraightVertical
+import good.damn.editor.vector.anchors.VEIAnchorable
+import good.damn.editor.vector.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.lists.VEListShapes
 import good.damn.editor.vector.shapes.VEShapeBase
 import good.damn.editor.vector.points.VEPointIndexed
@@ -26,16 +29,13 @@ class VEViewVector(
 ): View(
     context
 ), VEICallbackOnAddSkeletonPoint,
-VEICallbackOnAddShape {
+VEICallbackOnAddShape, VEIListenerOnAnchorPoint {
 
     companion object {
         private const val TAG = "VEViewVector"
     }
 
     var optionable: VEIOptionable = startOption
-
-    var isAlignedHorizontal = false
-    var isAlignedVertical = false
 
     val shapes = VEListShapes().apply {
         onAddShape = this@VEViewVector
@@ -52,10 +52,14 @@ VEICallbackOnAddShape {
         onAddSkeletonPoint = this@VEViewVector
     }
 
-    private val mAnchor = VEAnchor()
+    private val mAnchor = VEAnchor().apply {
+        onAnchorPoint = this@VEViewVector
+    }
+
     private var mSelectedPoint: VEPointIndexed? = null
 
-    private val mPointMove = PointF()
+    private var mTouchX = 0f
+    private var mTouchY = 0f
 
     override fun onDraw(
         canvas: Canvas
@@ -73,14 +77,9 @@ VEICallbackOnAddShape {
                 canvas
             )
         }
-
-        mSelectedPoint?.let {
-            mAnchor.checkAnchors(
-                canvas,
-                mSkeleton2D,
-                it
-            )
-        }
+        mAnchor.draw(
+            canvas
+        )
     }
 
     override fun onTouchEvent(
@@ -90,12 +89,15 @@ VEICallbackOnAddShape {
             return false
         }
 
+        mTouchX = event.x
+        mTouchY = event.y
+
         when (
             event.action
         ) {
             MotionEvent.ACTION_DOWN -> {
-                val tempX = event.x
-                val tempY = event.y
+                val tempX = mTouchX
+                val tempY = mTouchY
 
                 mSelectedPoint = mSkeleton2D.find(
                     tempX,
@@ -133,18 +135,11 @@ VEICallbackOnAddShape {
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (isAlignedHorizontal) {
-                    mPointMove.x = event.x
-                }
-
-                if (isAlignedVertical) {
-                    mPointMove.y = event.y
-                }
-
-                mSelectedPoint?.set(
-                    mPointMove
+                mAnchor.checkAnchors(
+                    mSkeleton2D,
+                    mTouchX,
+                    mTouchY
                 )
-
                 invalidate()
             }
         }
@@ -194,6 +189,16 @@ VEICallbackOnAddShape {
             VEDataActionShape(
                 shapes
             )
+        )
+    }
+
+    override fun onAnchorPoint(
+        x: Float,
+        y: Float
+    ) {
+        mSelectedPoint?.set(
+            x,
+            y
         )
     }
 }
