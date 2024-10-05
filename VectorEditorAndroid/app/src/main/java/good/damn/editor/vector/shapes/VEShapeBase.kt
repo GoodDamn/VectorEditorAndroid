@@ -2,7 +2,7 @@ package good.damn.editor.vector.shapes
 
 import android.graphics.Paint
 import androidx.annotation.ColorInt
-import good.damn.editor.vector.interfaces.VEIAnchorable
+import good.damn.editor.vector.interfaces.VEIPointIndexable
 import good.damn.editor.vector.interfaces.VEIDecodable
 import good.damn.editor.vector.interfaces.VEIDrawable
 import good.damn.editor.vector.interfaces.VEIEncodable
@@ -13,7 +13,7 @@ abstract class VEShapeBase(
 ): VEIEncodable,
 VEIDecodable,
 VEIDrawable,
-VEIAnchorable {
+VEIPointIndexable {
 
     @get:ColorInt
     @setparam:ColorInt

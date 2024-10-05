@@ -45,6 +45,7 @@ VSIListenerSeekBarProgress {
     private val mOptionPrimitive = VEOptionShapeable(
         VEApp.width.toFloat()
     )
+
     private val mOptionHook = VEOptionHookPointer()
     private val mOptionFreeMove = VEOptionFreeMove()
 

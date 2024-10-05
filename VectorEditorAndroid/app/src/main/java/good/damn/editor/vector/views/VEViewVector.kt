@@ -12,6 +12,8 @@ import good.damn.editor.vector.actions.VEIActionable
 import good.damn.editor.vector.options.VEIOptionable
 import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddShape
 import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
+import good.damn.editor.vector.anchors.VEAnchor
+import good.damn.editor.vector.anchors.VEAnchorStraightVertical
 import good.damn.editor.vector.lists.VEListShapes
 import good.damn.editor.vector.shapes.VEShapeBase
 import good.damn.editor.vector.points.VEPointIndexed
@@ -50,10 +52,10 @@ VEICallbackOnAddShape {
         onAddSkeletonPoint = this@VEViewVector
     }
 
+    private val mAnchor = VEAnchor()
     private var mSelectedPoint: VEPointIndexed? = null
 
-    private var moveX = 0f
-    private var moveY = 0f
+    private val mPointMove = PointF()
 
     override fun onDraw(
         canvas: Canvas
@@ -69,6 +71,14 @@ VEICallbackOnAddShape {
         shapes.forEach {
             it.onDraw(
                 canvas
+            )
+        }
+
+        mSelectedPoint?.let {
+            mAnchor.checkAnchors(
+                canvas,
+                mSkeleton2D,
+                it
             )
         }
     }
@@ -124,16 +134,15 @@ VEICallbackOnAddShape {
 
             MotionEvent.ACTION_MOVE -> {
                 if (isAlignedHorizontal) {
-                    moveX = event.x
+                    mPointMove.x = event.x
                 }
 
                 if (isAlignedVertical) {
-                    moveY = event.y
+                    mPointMove.y = event.y
                 }
 
                 mSelectedPoint?.set(
-                    moveX,
-                    moveY
+                    mPointMove
                 )
 
                 invalidate()
