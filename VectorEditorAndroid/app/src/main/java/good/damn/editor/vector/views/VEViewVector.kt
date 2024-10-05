@@ -192,13 +192,15 @@ VEICallbackOnAddShape, VEIListenerOnAnchorPoint {
         )
     }
 
-    override fun onAnchorPoint(
-        x: Float,
+    override fun onAnchorX(
+        x: Float
+    ) {
+        mSelectedPoint?.x = x
+    }
+
+    override fun onAnchorY(
         y: Float
     ) {
-        mSelectedPoint?.set(
-            x,
-            y
-        )
+        mSelectedPoint?.y = y
     }
 }

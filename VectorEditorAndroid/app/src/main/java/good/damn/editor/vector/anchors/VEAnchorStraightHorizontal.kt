@@ -18,10 +18,10 @@ class VEAnchorStraightHorizontal
         x2: Float,
         y2: Float
     ) {
-        onAnchorPoint?.onAnchorPoint(
-            x2,
-            y
-        )
+        onAnchorPoint?.apply {
+            onAnchorX(x2)
+            onAnchorY(y)
+        }
         
         canvas.drawLine(
             x,

@@ -5,6 +5,7 @@ import android.graphics.PointF
 import android.util.Log
 import good.damn.editor.vector.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.skeleton.VESkeleton2D
+import java.util.LinkedList
 import kotlin.math.log
 
 class VEAnchor {
@@ -26,55 +27,68 @@ class VEAnchor {
         VEAnchorStraightHorizontal()
     )
 
-    private var mx = 0f
-    private var my = 0f
     private var mx2 = 0f
     private var my2 = 0f
 
-    private var mAnchor: VEIAnchorable? = null
+    private val mAnchorsDetected = LinkedList<Anchor>()
 
     fun draw(
         canvas: Canvas
     ) {
-        mAnchor?.onDraw(
-            canvas,
-            mx,
-            my,
-            mx2,
-            my2
-        )
+        mAnchorsDetected.forEach {
+            it.apply {
+                anchor.onDraw(
+                    canvas,
+                    anchorPoint.x,
+                    anchorPoint.y,
+                    mx2,
+                    my2
+                )
+            }
+        }
     }
 
     fun checkAnchors(
         skeleton: VESkeleton2D,
         onX: Float,
         onY: Float
-    ): VEIAnchorable? {
+    ) {
         mx2 = onX
         my2 = onY
 
-        mAnchor = null
-        skeleton.points.forEach { p ->
-            mAnchors.forEach {
-                if (it.checkAnchor(
-                        p.x,
-                        p.y,
-                        mx2,
-                        my2
+        mAnchorsDetected.clear()
+
+        skeleton.points.apply {
+            for (i in 0..<size-1) {
+                val p = get(i)
+                mAnchors.forEach {
+                    if (it.checkAnchor(
+                       p.x,
+                       p.y,
+                       mx2,
+                       my2
                     )) {
-                    mAnchor = it
-                    mx = p.x
-                    my = p.y
-                    return it
+                        mAnchorsDetected.add(
+                            Anchor(
+                                p,
+                                it
+                            )
+                        )
+                    }
                 }
             }
         }
 
-        onAnchorPoint?.onAnchorPoint(
-            mx2,
-            my2
-        )
-
-        return mAnchor
+        if (mAnchorsDetected.isEmpty()) {
+            onAnchorPoint?.apply {
+                onAnchorX(mx2)
+                onAnchorY(my2)
+            }
+        }
     }
+
+    private data class Anchor(
+        val anchorPoint: PointF,
+        val anchor: VEIAnchorable
+    )
 }
