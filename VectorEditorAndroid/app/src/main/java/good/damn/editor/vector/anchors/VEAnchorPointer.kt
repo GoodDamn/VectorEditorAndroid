@@ -2,12 +2,16 @@ package good.damn.editor.vector.anchors
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.PointF
-import good.damn.editor.vector.extensions.drawLine
 import kotlin.math.abs
+import kotlin.math.hypot
 
-class VEAnchorStraightVertical
-: VEBaseAnchor() {
+class VEAnchorPointer(
+    private val mRadius: Float
+): VEBaseAnchor() {
+
+    init {
+        mPaint.style = Paint.Style.FILL
+    }
 
     override fun checkAnchor(
         x: Float,
@@ -15,13 +19,15 @@ class VEAnchorStraightVertical
         x2: Float,
         y2: Float
     ): Boolean {
-        val b = abs(
-            x - x2
-        ) < 30 // px
+        val b = hypot(
+            x - x2,
+            y - y2
+        ) < mRadius
 
         if (b) {
             onAnchorPoint?.apply {
                 onAnchorX(x)
+                onAnchorY(y)
             }
         }
 
@@ -35,13 +41,11 @@ class VEAnchorStraightVertical
         x2: Float,
         y2: Float
     ) {
-        canvas.drawLine(
+        canvas.drawCircle(
             x,
             y,
-            x,
-            y2,
+            mRadius,
             mPaint
         )
     }
-
 }

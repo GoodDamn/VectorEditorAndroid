@@ -18,11 +18,6 @@ class VEAnchorStraightHorizontal
         x2: Float,
         y2: Float
     ) {
-        onAnchorPoint?.apply {
-            onAnchorX(x2)
-            onAnchorY(y)
-        }
-        
         canvas.drawLine(
             x,
             y,
@@ -37,7 +32,17 @@ class VEAnchorStraightHorizontal
         y: Float,
         x2: Float,
         y2: Float
-    ) = abs(
-        y - y2
-    ) < 30 // px
+    ): Boolean {
+        val b = abs(
+            y - y2
+        ) < 30 // px
+
+        if (b) {
+            onAnchorPoint?.apply {
+                onAnchorY(y)
+            }
+        }
+
+        return b
+    }
 }

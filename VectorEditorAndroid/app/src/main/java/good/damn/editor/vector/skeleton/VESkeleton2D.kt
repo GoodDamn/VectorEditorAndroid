@@ -32,7 +32,7 @@ class VESkeleton2D(
 
     private val mPoints = dataStruct
 
-    private val mRadius = 50f
+    val radius = 50f
 
     fun getLastPoint() = mPoints
         .lastOrNull()
@@ -45,7 +45,7 @@ class VESkeleton2D(
             if (abs(hypot(
                 it.x - withX,
                 it.y - withY
-            )) < mRadius) {
+            )) < radius) {
                 return it
             }
         }
@@ -91,7 +91,7 @@ class VESkeleton2D(
         mPoints.forEach {
             canvas.drawCircle(
                 it,
-                mRadius,
+                radius,
                 mPaintPoint
             )
         }

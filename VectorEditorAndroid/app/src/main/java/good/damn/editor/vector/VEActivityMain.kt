@@ -18,7 +18,6 @@ import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.files.VEFileDocument
 import good.damn.editor.vector.options.VEOptionFreeMove
-import good.damn.editor.vector.options.VEOptionHookPointer
 import good.damn.editor.vector.options.VEOptionShapeable
 import good.damn.editor.vector.shapes.VEShapeBezierС
 import good.damn.editor.vector.shapes.VEShapeLine
@@ -46,7 +45,6 @@ VSIListenerSeekBarProgress {
         VEApp.width.toFloat()
     )
 
-    private val mOptionHook = VEOptionHookPointer()
     private val mOptionFreeMove = VEOptionFreeMove()
 
     override fun onCreate(
@@ -113,28 +111,6 @@ VSIListenerSeekBarProgress {
         Button(
             context
         ).apply {
-            text = "HOK"
-
-            val s = VEApp.width * 0.15f
-
-            setOnClickListener {
-                mViewVector?.optionable = mOptionHook
-            }
-
-            boundsFrame(
-                gravity = Gravity.END,
-                width = s,
-                top = s
-            )
-
-            root.addView(
-                this
-            )
-        }
-
-        Button(
-            context
-        ).apply {
             text = "MOV"
 
             val s = VEApp.width * 0.15f
@@ -146,7 +122,7 @@ VSIListenerSeekBarProgress {
             boundsFrame(
                 gravity = Gravity.END,
                 width = s,
-                top = 2*s
+                top = s
             )
 
             root.addView(
@@ -348,7 +324,6 @@ VSIListenerSeekBarProgress {
     private fun clearOptions() {
         mOptionPrimitive.onClear()
         mOptionFreeMove.onClear()
-        mOptionHook.onClear()
     }
 
     override fun onGetBrowserContent(

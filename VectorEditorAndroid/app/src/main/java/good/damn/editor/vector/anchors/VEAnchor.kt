@@ -8,7 +8,9 @@ import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
 import kotlin.math.log
 
-class VEAnchor {
+class VEAnchor(
+    radiusPointer: Float
+) {
 
     companion object {
         private const val TAG = "VEAnchor"
@@ -23,10 +25,10 @@ class VEAnchor {
         }
 
     private val mAnchors = arrayOf(
+        VEAnchorPointer(radiusPointer),
         VEAnchorStraightVertical(),
         VEAnchorStraightHorizontal()
     )
-
     private var mx2 = 0f
     private var my2 = 0f
 
@@ -51,39 +53,40 @@ class VEAnchor {
     fun checkAnchors(
         skeleton: VESkeleton2D,
         onX: Float,
-        onY: Float
+        onY: Float,
+        selectedIndex: Int
     ) {
         mx2 = onX
         my2 = onY
 
         mAnchorsDetected.clear()
 
-        skeleton.points.apply {
-            for (i in 0..<size-1) {
-                val p = get(i)
-                mAnchors.forEach {
-                    if (it.checkAnchor(
-                       p.x,
-                       p.y,
-                       mx2,
-                       my2
-                    )) {
-                        mAnchorsDetected.add(
-                            Anchor(
-                                p,
-                                it
-                            )
-                        )
-                    }
-                }
-            }
+        onAnchorPoint?.apply {
+            onAnchorX(mx2)
+            onAnchorY(my2)
         }
 
-        if (mAnchorsDetected.isEmpty()) {
-            onAnchorPoint?.apply {
-                onAnchorX(mx2)
-                onAnchorY(my2)
+        var i = 0
+        skeleton.points.forEach { p ->
+            if (p.index == selectedIndex) {
+                return@forEach
             }
+            mAnchors.forEach {
+                if (it.checkAnchor(
+                    p.x,
+                    p.y,
+                    mx2,
+                    my2
+                )) {
+                    mAnchorsDetected.add(
+                        Anchor(
+                            p,
+                            it
+                        )
+                    )
+                }
+            }
+            i++
         }
     }
 

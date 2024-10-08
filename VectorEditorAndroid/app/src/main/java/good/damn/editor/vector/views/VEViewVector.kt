@@ -52,7 +52,9 @@ VEICallbackOnAddShape, VEIListenerOnAnchorPoint {
         onAddSkeletonPoint = this@VEViewVector
     }
 
-    private val mAnchor = VEAnchor().apply {
+    private val mAnchor = VEAnchor(
+        mSkeleton2D.radius
+    ).apply {
         onAnchorPoint = this@VEViewVector
     }
 
@@ -138,7 +140,8 @@ VEICallbackOnAddShape, VEIListenerOnAnchorPoint {
                 mAnchor.checkAnchors(
                     mSkeleton2D,
                     mTouchX,
-                    mTouchY
+                    mTouchY,
+                    mSelectedPoint?.index ?: 0
                 )
                 invalidate()
             }
