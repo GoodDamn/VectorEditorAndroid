@@ -284,18 +284,12 @@ VSIListenerSeekBarProgress {
     private fun onClickExportVector(
         v: View
     ) {
-        val shapes = mViewVector?.shapes
-            ?: return
-
-        val skeleton = mViewVector?.skeleton
-            ?: return
-
         mExporter.exportTo(
             VEFileDocument(
                 "myVector.sav"
             ),
-            shapes,
-            skeleton,
+            mOptionPrimitive.shapes,
+            mOptionPrimitive.skeleton,
             mOptionPrimitive.canvasWidth,
             mOptionPrimitive.canvasHeight
         )
@@ -310,21 +304,15 @@ VSIListenerSeekBarProgress {
     private fun onClickDeleteAll(
         v: View
     ) {
-        mViewVector?.clearActions()
-        clearOptions()
+        mOptionPrimitive.clearActions()
     }
 
     private fun onClickUndoAction(
         v: View
     ) {
-        mViewVector?.undoAction()
-        clearOptions()
+        mOptionPrimitive.undoAction()
     }
 
-    private fun clearOptions() {
-        mOptionPrimitive.onClear()
-        mOptionFreeMove.onClear()
-    }
 
     override fun onGetBrowserContent(
         uri: Uri?
@@ -346,11 +334,11 @@ VSIListenerSeekBarProgress {
                 width.toFloat(),
                 height.toFloat()
             )?.let {
-                shapes.resetList(
+                mOptionPrimitive.shapes.resetList(
                     it.shapes
                 )
 
-                setSkeleton(
+                mOptionPrimitive.skeleton.resetSkeleton(
                     it.skeletonPoints
                 )
 

@@ -1,17 +1,32 @@
 package good.damn.editor.vector.options
 
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.PointF
+import android.view.MotionEvent
+import good.damn.editor.vector.actions.VEDataActionPosition
+import good.damn.editor.vector.actions.VEDataActionShape
+import good.damn.editor.vector.actions.VEDataActionSkeletonPoint
+import good.damn.editor.vector.actions.VEIActionable
+import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddShape
+import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
+import good.damn.editor.vector.anchors.VEAnchor
+import good.damn.editor.vector.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.extensions.interpolate
 import good.damn.editor.vector.lists.VEListShapes
 import good.damn.editor.vector.shapes.VEShapeBase
 import good.damn.editor.vector.shapes.VEShapeLine
 import good.damn.editor.vector.points.VEPointIndexed
 import good.damn.editor.vector.skeleton.VESkeleton2D
+import java.util.LinkedList
 
 class VEOptionShapeable(
     val canvasWidth: Float,
     val canvasHeight: Float
-): VEIOptionable {
+): VEIOptionable,
+VEICallbackOnAddSkeletonPoint,
+VEICallbackOnAddShape,
+VEIListenerOnAnchorPoint {
 
     companion object {
         private const val TAG = "VEOptionPrimitivable"
@@ -22,8 +37,32 @@ class VEOptionShapeable(
         canvasHeight
     )
 
-    private var mPrevPoint: VEPointIndexed? = null
-    private var mSkeleton: VESkeleton2D? = null
+    val shapes = VEListShapes().apply {
+        onAddShape = this@VEOptionShapeable
+    }
+
+    var vectorStrokeWidth = 5f
+    var vectorColor = Color.RED
+
+    private val mActions = LinkedList<VEIActionable>()
+
+    val skeleton = VESkeleton2D(
+        LinkedList()
+    ).apply {
+        onAddSkeletonPoint = this@VEOptionShapeable
+    }
+
+    private val mAnchor = VEAnchor(
+        skeleton.radius
+    ).apply {
+        onAnchorPoint = this@VEOptionShapeable
+    }
+
+    private var mPointFrom: VEPointIndexed? = null
+    private var mPointTo: VEPointIndexed? = null
+
+    private var mTouchX = 0f
+    private var mTouchY = 0f
 
     constructor(
         size: Float
@@ -32,54 +71,175 @@ class VEOptionShapeable(
         size
     )
 
-    override fun runOption(
-        shapes: VEListShapes,
-        selectedPoint: VEPointIndexed?,
-        skeleton: VESkeleton2D
-    ) {
-        mSkeleton = skeleton
-        if (mPrevPoint == null) {
-            mPrevPoint = selectedPoint
-            return
-        }
+    override fun onTouchEvent(
+        event: MotionEvent
+    ): Boolean {
+        mTouchX = event.x
+        mTouchY = event.y
 
-        val savedColor = currentPrimitive.color
-        val savedStrokeWidth = currentPrimitive.strokeWidth
+        when(
+            event.action
+        ) {
+            MotionEvent.ACTION_DOWN -> {
+                val tempX = mTouchX
+                val tempY = mTouchY
 
-        currentPrimitive = currentPrimitive.newInstance(
-            canvasWidth,
-            canvasHeight
-        ).apply {
-            color = savedColor
-            strokeWidth = savedStrokeWidth
-
-            points[0] = mPrevPoint
-            points[1] = selectedPoint
-
-            if (points.size == 3) {
-                points[1] = mPrevPoint?.interpolate(
-                    0.5f,
-                    selectedPoint
+                mPointFrom = skeleton.find(
+                    tempX,
+                    tempY
                 )?.apply {
+                    mActions.add(
+                        VEDataActionPosition(
+                            this
+                        )
+                    )
+                }
+
+                if (mPointFrom == null) {
+                    mPointFrom = VEPointIndexed(
+                        tempX,
+                        tempY
+                    ).apply {
+                        skeleton.addSkeletonPoint(
+                            this
+                        )
+
+                        mActions.add(
+                            VEDataActionPosition(
+                                this
+                            )
+                        )
+                    }
+                }
+
+                mPointTo = VEPointIndexed(
+                    tempX,
+                    tempY
+                ).apply {
+                    // New point
+                    // New primitive
                     skeleton.addSkeletonPoint(
                         this
                     )
+
+                    mActions.add(
+                        VEDataActionPosition(
+                            this
+                        )
+                    )
                 }
-                points[2] = selectedPoint
+
+                currentPrimitive = currentPrimitive.newInstance(
+                    canvasWidth,
+                    canvasHeight
+                ).apply {
+                    color = vectorColor
+                    strokeWidth = vectorStrokeWidth
+
+                    points[0] = mPointFrom
+                    points[1] = mPointTo
+
+                    if (points.size == 3) {
+                        points[1] = mPointFrom?.interpolate(
+                            0.5f,
+                            mPointTo
+                        )?.apply {
+                            skeleton.addSkeletonPoint(
+                                this
+                            )
+                        }
+                        points[2] = mPointFrom
+                    }
+
+                    if (mPointFrom != null) {
+                        shapes.add(
+                            this
+                        )
+                    }
+                }
             }
 
-            if (mPrevPoint != null) {
-                shapes.add(
-                    this
+            MotionEvent.ACTION_MOVE -> {
+                mAnchor.checkAnchors(
+                    skeleton,
+                    mTouchX,
+                    mTouchY,
+                    mPointTo?.index ?: 0
                 )
             }
 
-            mPrevPoint = selectedPoint
+            else -> {
+
+            }
         }
+
+        return true
     }
 
-    override fun onClear() {
-        mPrevPoint = mSkeleton?.getLastPoint()
+    override fun onDraw(
+        canvas: Canvas
+    ) {
+        skeleton.onDraw(
+            canvas
+        )
+
+        shapes.forEach {
+            it.onDraw(
+                canvas
+            )
+        }
+
+        mAnchor.draw(
+            canvas
+        )
     }
+
+    override fun onAddSkeletonPoint(
+        point: PointF
+    ) {
+        mActions.add(
+            VEDataActionSkeletonPoint(
+                skeleton
+            )
+        )
+    }
+
+    override fun onAddShape(
+        shape: VEShapeBase
+    ) {
+        mActions.add(
+            VEDataActionShape(
+                shapes
+            )
+        )
+    }
+
+    override fun onAnchorX(
+        x: Float
+    ) {
+        mPointTo?.x = x
+    }
+
+    override fun onAnchorY(
+        y: Float
+    ) {
+        mPointTo?.y = y
+    }
+
+
+    fun undoAction() {
+        mActions
+            .removeLastOrNull()
+            ?.removeAction()
+    }
+
+    fun clearActions() {
+        while (
+            mActions
+                .removeLastOrNull()
+                ?.removeAction() != null
+        ) {}
+    }
+
 
 }
