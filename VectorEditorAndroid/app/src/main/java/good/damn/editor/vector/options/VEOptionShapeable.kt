@@ -23,6 +23,7 @@ import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
 
 class VEOptionShapeable(
+    private val mAnchor: VEAnchor,
     val canvasWidth: Float,
     val canvasHeight: Float
 ): VEITouchable,
@@ -55,24 +56,11 @@ VEIListenerOnAnchorPoint {
         onAddSkeletonPoint = this@VEOptionShapeable
     }
 
-    private val mAnchor = VEAnchor(
-        skeleton.radius
-    ).apply {
-        onAnchorPoint = this@VEOptionShapeable
-    }
-
     private var mPointFrom: VEPointIndexed? = null
     private var mPointTo: VEPointIndexed? = null
 
     private var mTouchX = 0f
     private var mTouchY = 0f
-
-    constructor(
-        size: Float
-    ): this(
-        size,
-        size
-    )
 
     override fun onTouchEvent(
         event: MotionEvent
@@ -166,12 +154,12 @@ VEIListenerOnAnchorPoint {
             }
 
             MotionEvent.ACTION_MOVE -> {
-                mPointTo?.let {
+                mPointTo?.apply {
                     mAnchor.checkAnchors(
                         skeleton,
                         mTouchX,
                         mTouchY,
-                        it.index
+                        index
                     )
                 }
             }

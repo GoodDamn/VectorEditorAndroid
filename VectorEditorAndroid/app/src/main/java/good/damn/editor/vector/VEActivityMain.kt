@@ -1,6 +1,7 @@
 package good.damn.editor.vector
 
 import android.graphics.Canvas
+import android.graphics.PointF
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
@@ -8,11 +9,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
-import androidx.viewpager2.widget.ViewPager2
+import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
+import good.damn.editor.vector.anchors.VEAnchor
+import good.damn.editor.vector.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.porters.VEExporter
@@ -24,15 +25,19 @@ import good.damn.editor.vector.options.VEOptionShapeable
 import good.damn.editor.vector.shapes.VEShapeBezierС
 import good.damn.editor.vector.shapes.VEShapeLine
 import good.damn.editor.vector.porters.VEImporter
+import good.damn.editor.vector.skeleton.VESkeleton2D
 import good.damn.editor.vector.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
+import java.util.LinkedList
 
 class VEActivityMain
 : AppCompatActivity(),
 VEListenerOnGetBrowserContent,
-VSIListenerSeekBarProgress, VEIDrawable {
+VSIListenerSeekBarProgress,
+VEIDrawable,
+VEIListenerOnAnchorPoint {
 
     private var mViewVector: VEViewVector? = null
 
@@ -43,11 +48,24 @@ VSIListenerSeekBarProgress, VEIDrawable {
         onGetContent = this@VEActivityMain
     }
 
-    private val mOptionPrimitive = VEOptionShapeable(
+    private val mAnchor = VEAnchor(
+        50f
+    ).apply {
+        onAnchorPoint = this@VEActivityMain
+    }
+
+    private val mOptionShape = VEOptionShapeable(
+        mAnchor,
+        VEApp.width.toFloat(),
         VEApp.width.toFloat()
     )
 
-    private val mOptionFreeMove = VEOptionFreeMove()
+    private val mOptionFreeMove = VEOptionFreeMove(
+        mAnchor,
+        mOptionShape.skeleton
+    )
+
+    private var mCurrentAnchor: VEIListenerOnAnchorPoint? = null
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -69,9 +87,10 @@ VSIListenerSeekBarProgress, VEIDrawable {
             )
         }
 
+        mCurrentAnchor = mOptionShape
         mViewVector = VEViewVector(
             context,
-            mOptionPrimitive
+            mOptionShape
         ).apply {
 
             setBackgroundColor(
@@ -79,8 +98,8 @@ VSIListenerSeekBarProgress, VEIDrawable {
             )
 
             boundsFrame(
-                width = mOptionPrimitive.canvasWidth,
-                height = mOptionPrimitive.canvasHeight
+                width = mOptionShape.canvasWidth,
+                height = mOptionShape.canvasHeight
             )
 
             canvasRenderer = this@VEActivityMain
@@ -94,12 +113,13 @@ VSIListenerSeekBarProgress, VEIDrawable {
         Button(
             context
         ).apply {
-            text = "SER"
+            text = "SHP"
 
             val s = VEApp.width * 0.15f
 
             setOnClickListener {
-                mViewVector?.optionable = mOptionPrimitive
+                mViewVector?.optionable = mOptionShape
+                mCurrentAnchor = mOptionShape
             }
 
             boundsFrame(
@@ -121,6 +141,7 @@ VSIListenerSeekBarProgress, VEIDrawable {
 
             setOnClickListener {
                 mViewVector?.optionable = mOptionFreeMove
+                mCurrentAnchor = mOptionFreeMove
             }
 
             boundsFrame(
@@ -146,8 +167,8 @@ VSIListenerSeekBarProgress, VEIDrawable {
             )
 
             setOnClickListener {
-                mOptionPrimitive.currentPrimitive = VEShapeLine(
-                    0f,0f
+                mOptionShape.currentPrimitive = VEShapeLine(
+                    0f, 0f
                 )
             }
 
@@ -169,8 +190,8 @@ VSIListenerSeekBarProgress, VEIDrawable {
             )
 
             setOnClickListener {
-                mOptionPrimitive.currentPrimitive = VEShapeBezierС(
-                    0f,0f
+                mOptionShape.currentPrimitive = VEShapeBezierС(
+                    0f, 0f
                 )
             }
 
@@ -215,7 +236,7 @@ VSIListenerSeekBarProgress, VEIDrawable {
             )
 
             setOnPickColorListener {
-                mOptionPrimitive
+                mOptionShape
                     .currentPrimitive
                     .color = it
 
@@ -294,10 +315,10 @@ VSIListenerSeekBarProgress, VEIDrawable {
             VEFileDocument(
                 "myVector.sav"
             ),
-            mOptionPrimitive.shapes,
-            mOptionPrimitive.skeleton,
-            mOptionPrimitive.canvasWidth,
-            mOptionPrimitive.canvasHeight
+            mOptionShape.shapes,
+            mOptionShape.skeleton,
+            mOptionShape.canvasWidth,
+            mOptionShape.canvasHeight
         )
         mViewVector?.invalidate()
     }
@@ -311,14 +332,14 @@ VSIListenerSeekBarProgress, VEIDrawable {
     private fun onClickDeleteAll(
         v: View
     ) {
-        mOptionPrimitive.clearActions()
+        mOptionShape.clearActions()
         mViewVector?.invalidate()
     }
 
     private fun onClickUndoAction(
         v: View
     ) {
-        mOptionPrimitive.undoAction()
+        mOptionShape.undoAction()
         mViewVector?.invalidate()
     }
 
@@ -343,11 +364,11 @@ VSIListenerSeekBarProgress, VEIDrawable {
                 width.toFloat(),
                 height.toFloat()
             )?.let {
-                mOptionPrimitive.shapes.resetList(
+                mOptionShape.shapes.resetList(
                     it.shapes
                 )
 
-                mOptionPrimitive.skeleton.resetSkeleton(
+                mOptionShape.skeleton.resetSkeleton(
                     it.skeletonPoints
                 )
 
@@ -359,7 +380,7 @@ VSIListenerSeekBarProgress, VEIDrawable {
     override fun onSeekProgress(
         progress: Float
     ) {
-        mOptionPrimitive.apply {
+        mOptionShape.apply {
             currentPrimitive.strokeWidth =
                 progress * canvasWidth
         }
@@ -369,7 +390,7 @@ VSIListenerSeekBarProgress, VEIDrawable {
 
     override fun onDraw(
         canvas: Canvas
-    ) = mOptionPrimitive.run {
+    ) = mOptionShape.run {
         skeleton.onDraw(
             canvas
         )
@@ -380,8 +401,20 @@ VSIListenerSeekBarProgress, VEIDrawable {
             )
         }
 
-        mOptionPrimitive.onDraw(
+        mOptionShape.onDraw(
             canvas
         )
+    }
+
+    override fun onAnchorX(
+        x: Float
+    ) {
+        mCurrentAnchor?.onAnchorX(x)
+    }
+
+    override fun onAnchorY(
+        y: Float
+    ) {
+        mCurrentAnchor?.onAnchorY(y)
     }
 }
