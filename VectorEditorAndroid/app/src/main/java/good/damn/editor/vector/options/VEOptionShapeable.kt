@@ -13,6 +13,8 @@ import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
 import good.damn.editor.vector.anchors.VEAnchor
 import good.damn.editor.vector.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.extensions.interpolate
+import good.damn.editor.vector.interfaces.VEIDrawable
+import good.damn.editor.vector.interfaces.VEITouchable
 import good.damn.editor.vector.lists.VEListShapes
 import good.damn.editor.vector.shapes.VEShapeBase
 import good.damn.editor.vector.shapes.VEShapeLine
@@ -23,7 +25,8 @@ import java.util.LinkedList
 class VEOptionShapeable(
     val canvasWidth: Float,
     val canvasHeight: Float
-): VEIOptionable,
+): VEITouchable,
+VEIDrawable,
 VEICallbackOnAddSkeletonPoint,
 VEICallbackOnAddShape,
 VEIListenerOnAnchorPoint {
@@ -129,6 +132,9 @@ VEIListenerOnAnchorPoint {
                     )
                 }
 
+                vectorColor = currentPrimitive.color
+                vectorStrokeWidth = currentPrimitive.strokeWidth
+
                 currentPrimitive = currentPrimitive.newInstance(
                     canvasWidth,
                     canvasHeight
@@ -160,12 +166,19 @@ VEIListenerOnAnchorPoint {
             }
 
             MotionEvent.ACTION_MOVE -> {
-                mAnchor.checkAnchors(
-                    skeleton,
-                    mTouchX,
-                    mTouchY,
-                    mPointTo?.index ?: 0
-                )
+                mPointTo?.let {
+                    mAnchor.checkAnchors(
+                        skeleton,
+                        mTouchX,
+                        mTouchY,
+                        it.index
+                    )
+                }
+            }
+
+            MotionEvent.ACTION_UP -> {
+                mPointFrom = null
+                mPointTo = null
             }
 
             else -> {
@@ -179,16 +192,6 @@ VEIListenerOnAnchorPoint {
     override fun onDraw(
         canvas: Canvas
     ) {
-        skeleton.onDraw(
-            canvas
-        )
-
-        shapes.forEach {
-            it.onDraw(
-                canvas
-            )
-        }
-
         mAnchor.draw(
             canvas
         )

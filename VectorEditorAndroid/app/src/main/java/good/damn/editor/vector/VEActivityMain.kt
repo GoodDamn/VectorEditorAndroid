@@ -1,5 +1,6 @@
 package good.damn.editor.vector
 
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
@@ -17,6 +18,7 @@ import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.files.VEFileDocument
+import good.damn.editor.vector.interfaces.VEIDrawable
 import good.damn.editor.vector.options.VEOptionFreeMove
 import good.damn.editor.vector.options.VEOptionShapeable
 import good.damn.editor.vector.shapes.VEShapeBezierС
@@ -30,7 +32,7 @@ import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
 class VEActivityMain
 : AppCompatActivity(),
 VEListenerOnGetBrowserContent,
-VSIListenerSeekBarProgress {
+VSIListenerSeekBarProgress, VEIDrawable {
 
     private var mViewVector: VEViewVector? = null
 
@@ -80,6 +82,8 @@ VSIListenerSeekBarProgress {
                 width = mOptionPrimitive.canvasWidth,
                 height = mOptionPrimitive.canvasHeight
             )
+
+            canvasRenderer = this@VEActivityMain
 
             root.addView(
                 this
@@ -214,6 +218,8 @@ VSIListenerSeekBarProgress {
                 mOptionPrimitive
                     .currentPrimitive
                     .color = it
+
+                mViewVector?.invalidate()
             }
 
             root.addView(
@@ -293,6 +299,7 @@ VSIListenerSeekBarProgress {
             mOptionPrimitive.canvasWidth,
             mOptionPrimitive.canvasHeight
         )
+        mViewVector?.invalidate()
     }
 
     private fun onClickImportVector(
@@ -305,12 +312,14 @@ VSIListenerSeekBarProgress {
         v: View
     ) {
         mOptionPrimitive.clearActions()
+        mViewVector?.invalidate()
     }
 
     private fun onClickUndoAction(
         v: View
     ) {
         mOptionPrimitive.undoAction()
+        mViewVector?.invalidate()
     }
 
 
@@ -354,5 +363,25 @@ VSIListenerSeekBarProgress {
             currentPrimitive.strokeWidth =
                 progress * canvasWidth
         }
+
+        mViewVector?.invalidate()
+    }
+
+    override fun onDraw(
+        canvas: Canvas
+    ) = mOptionPrimitive.run {
+        skeleton.onDraw(
+            canvas
+        )
+
+        shapes.forEach {
+            it.onDraw(
+                canvas
+            )
+        }
+
+        mOptionPrimitive.onDraw(
+            canvas
+        )
     }
 }

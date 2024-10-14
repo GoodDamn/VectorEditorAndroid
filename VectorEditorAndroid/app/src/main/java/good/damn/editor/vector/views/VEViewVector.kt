@@ -2,27 +2,14 @@ package good.damn.editor.vector.views
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.View
-import good.damn.editor.vector.actions.VEDataActionPosition
-import good.damn.editor.vector.actions.VEDataActionShape
-import good.damn.editor.vector.actions.VEDataActionSkeletonPoint
-import good.damn.editor.vector.actions.VEIActionable
-import good.damn.editor.vector.options.VEIOptionable
-import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddShape
-import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
-import good.damn.editor.vector.anchors.VEAnchor
-import good.damn.editor.vector.anchors.listeners.VEIListenerOnAnchorPoint
-import good.damn.editor.vector.lists.VEListShapes
-import good.damn.editor.vector.shapes.VEShapeBase
-import good.damn.editor.vector.points.VEPointIndexed
-import good.damn.editor.vector.skeleton.VESkeleton2D
-import java.util.LinkedList
+import good.damn.editor.vector.interfaces.VEIDrawable
+import good.damn.editor.vector.interfaces.VEITouchable
 
 class VEViewVector(
     context: Context,
-    startOption: VEIOptionable
+    startOption: VEITouchable
 ): View(
     context
 ) {
@@ -31,7 +18,9 @@ class VEViewVector(
         private const val TAG = "VEViewVector"
     }
 
-    var optionable: VEIOptionable = startOption
+    var optionable: VEITouchable = startOption
+
+    var canvasRenderer: VEIDrawable? = null
 
     override fun onDraw(
         canvas: Canvas
@@ -40,7 +29,7 @@ class VEViewVector(
             canvas
         )
 
-        optionable.onDraw(
+        canvasRenderer?.onDraw(
             canvas
         )
     }
