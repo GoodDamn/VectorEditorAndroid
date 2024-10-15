@@ -1,12 +1,9 @@
 package good.damn.editor.vector.anchors
 
 import android.graphics.Canvas
-import android.graphics.PointF
-import android.util.Log
 import good.damn.editor.vector.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import java.util.LinkedList
-import kotlin.math.log
 
 class VEAnchor(
     radiusPointer: Float
@@ -25,28 +22,24 @@ class VEAnchor(
         }
 
     private val mAnchors = arrayOf(
-        VEAnchorPointer(radiusPointer),
         VEAnchorStraightVertical(),
-        VEAnchorStraightHorizontal()
+        VEAnchorStraightHorizontal(),
+        VEAnchorPoint(radiusPointer)
     )
     private var mx2 = 0f
     private var my2 = 0f
 
-    private val mAnchorsDetected = LinkedList<Anchor>()
+    private val mAnchorsDetected = LinkedList<VEIAnchorable>()
 
     fun draw(
         canvas: Canvas
     ) {
         mAnchorsDetected.forEach {
-            it.apply {
-                anchor.onDraw(
-                    canvas,
-                    anchorPoint.x,
-                    anchorPoint.y,
-                    mx2,
-                    my2
-                )
-            }
+            it.onDraw(
+                canvas,
+                mx2,
+                my2
+            )
         }
     }
 
@@ -66,32 +59,16 @@ class VEAnchor(
             onAnchorY(my2)
         }
 
-        var i = 0
-        skeleton.points.forEach { p ->
-            if (p.index == selectedIndex) {
-                return@forEach
+        mAnchors.forEach {
+            if (it.checkAnchor(
+               skeleton,
+               mx2,
+               my2
+            )) {
+                mAnchorsDetected.add(
+                    it
+                )
             }
-            mAnchors.forEach {
-                if (it.checkAnchor(
-                    p.x,
-                    p.y,
-                    mx2,
-                    my2
-                )) {
-                    mAnchorsDetected.add(
-                        Anchor(
-                            p,
-                            it
-                        )
-                    )
-                }
-            }
-            i++
         }
     }
-
-    private data class Anchor(
-        val anchorPoint: PointF,
-        val anchor: VEIAnchorable
-    )
 }

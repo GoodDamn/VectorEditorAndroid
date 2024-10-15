@@ -7,6 +7,7 @@ import good.damn.editor.vector.extensions.drawCircle
 import good.damn.editor.vector.interfaces.VEIDrawable
 import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
 import good.damn.editor.vector.points.VEPointIndexed
+import good.damn.editor.vector.structures.BinaryTree
 import kotlin.math.abs
 import kotlin.math.hypot
 
@@ -56,12 +57,6 @@ class VESkeleton2D(
     fun getPointIndexed(
         i: Int
     ) = mPoints[i]
-
-    fun forEachh(
-        block: (PointF) -> Unit
-    ) = mPoints.forEach(
-        block
-    )
 
     fun addSkeletonPoint(
         point: VEPointIndexed

@@ -16,6 +16,7 @@ class VEOptionFreeMove(
     private val mSkeleton: VESkeleton2D
 ): VEITouchable,
 VEIListenerOnAnchorPoint {
+
     private var mFoundPoint: VEPointIndexed? = null
 
     override fun onTouchEvent(
@@ -30,7 +31,6 @@ VEIListenerOnAnchorPoint {
                     event.x,
                     event.y
                 )
-
             }
 
             MotionEvent.ACTION_MOVE -> {

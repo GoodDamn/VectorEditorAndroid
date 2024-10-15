@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PointF
 import android.view.MotionEvent
+import androidx.core.content.res.TypedArrayUtils
 import good.damn.editor.vector.actions.VEDataActionPosition
 import good.damn.editor.vector.actions.VEDataActionShape
 import good.damn.editor.vector.actions.VEDataActionSkeletonPoint

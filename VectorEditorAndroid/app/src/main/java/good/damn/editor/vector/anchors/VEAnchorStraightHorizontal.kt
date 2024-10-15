@@ -1,7 +1,9 @@
 package good.damn.editor.vector.anchors
 
 import android.graphics.Canvas
-import android.util.Log
+import android.graphics.PointF
+import good.damn.editor.vector.extensions.drawLine
+import good.damn.editor.vector.skeleton.VESkeleton2D
 import kotlin.math.abs
 
 class VEAnchorStraightHorizontal
@@ -11,38 +13,57 @@ class VEAnchorStraightHorizontal
         private const val TAG = "VEAnchorStraightHorizon"
     }
 
+    private var mPointFrom: PointF? = null
+    private var mPointTo: PointF? = null
+
     override fun onDraw(
         canvas: Canvas,
-        x: Float,
-        y: Float,
-        x2: Float,
-        y2: Float
+        touchX: Float,
+        touchY: Float
     ) {
-        canvas.drawLine(
-            x,
-            y,
-            x2,
-            y,
-            mPaint
-        )
+        mPointFrom?.let { from ->
+            mPointTo?.let {
+                canvas.drawLine(
+                    from,
+                    it,
+                    mPaint
+                )
+
+            }
+        }
     }
 
     override fun checkAnchor(
-        x: Float,
-        y: Float,
-        x2: Float,
-        y2: Float
+        skeleton: VESkeleton2D,
+        touchX: Float,
+        touchY: Float
     ): Boolean {
-        val b = abs(
-            y - y2
-        ) < 30 // px
+        var minRightX = Float.MAX_VALUE
+        var minLeftX = 0f
 
-        if (b) {
-            onAnchorPoint?.apply {
-                onAnchorY(y)
+        for (it in skeleton.points) {
+            if (abs(it.y - touchY) < 30) { // px
+
+                if (minRightX > it.x && minRightX > touchX) {
+                    minRightX = it.x
+                    mPointTo = it
+                }
+
+                if (minLeftX < it.x && minLeftX < touchX) {
+                    minLeftX = it.x
+                    mPointFrom = it
+                }
             }
         }
 
-        return b
+        mPointFrom?.let {
+            onAnchorPoint?.onAnchorY(it.y)
+        }
+
+        mPointTo?.let {
+            onAnchorPoint?.onAnchorY(it.y)
+        }
+
+        return !(mPointFrom == null && mPointTo == null)
     }
 }

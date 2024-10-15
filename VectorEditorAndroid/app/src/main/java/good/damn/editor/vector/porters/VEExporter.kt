@@ -26,7 +26,7 @@ class VEExporter {
         baos.write(mVersionExporter)
         baos.write(skeleton.size)
 
-        skeleton.forEachh {
+        skeleton.points.forEach {
             Log.d(TAG, "exportTo: POINT: $it")
             it.writeToStream(
                 baos,
