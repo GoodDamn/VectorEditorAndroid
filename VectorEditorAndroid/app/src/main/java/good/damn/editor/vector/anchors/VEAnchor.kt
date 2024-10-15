@@ -24,6 +24,7 @@ class VEAnchor(
     private val mAnchors = arrayOf(
         VEAnchorStraightVertical(),
         VEAnchorStraightHorizontal(),
+        VEAnchorPropLenHorizontal(radiusPointer),
         VEAnchorPoint(radiusPointer)
     )
     private var mx2 = 0f
