@@ -8,6 +8,8 @@ abstract class VEBaseAnchor
 
     var onAnchorPoint: VEIListenerOnAnchorPoint? = null
 
+    var selectedIndex: Int = 0
+
     protected val mPaint = Paint().apply {
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND

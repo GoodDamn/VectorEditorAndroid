@@ -2,6 +2,8 @@ package good.damn.editor.vector.anchors
 
 import android.graphics.Canvas
 import android.graphics.PointF
+import android.util.Log
+import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.extensions.drawLine
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import kotlin.math.abs
@@ -16,6 +18,8 @@ class VEAnchorStraightHorizontal
     private var mPointFrom: PointF? = null
     private var mPointTo: PointF? = null
 
+    private val mPointTouch = PointF()
+
     override fun onDraw(
         canvas: Canvas,
         touchX: Float,
@@ -28,7 +32,6 @@ class VEAnchorStraightHorizontal
                     it,
                     mPaint
                 )
-
             }
         }
     }
@@ -41,29 +44,45 @@ class VEAnchorStraightHorizontal
         var minRightX = Float.MAX_VALUE
         var minLeftX = 0f
 
+        mPointFrom = null
+        mPointTo = null
+
+        mPointTouch.set(
+            touchX,
+            touchY
+        )
+
         for (it in skeleton.points) {
             if (abs(it.y - touchY) < 30) { // px
+                mPointTouch.y = it.y
+                onAnchorPoint?.onAnchorY(
+                    it.y
+                )
 
-                if (minRightX > it.x && minRightX > touchX) {
+                if (minRightX > it.x && it.x > touchX) {
                     minRightX = it.x
                     mPointTo = it
                 }
 
-                if (minLeftX < it.x && minLeftX < touchX) {
+                if (minLeftX < it.x && it.x < touchX) {
                     minLeftX = it.x
                     mPointFrom = it
                 }
             }
         }
 
-        mPointFrom?.let {
-            onAnchorPoint?.onAnchorY(it.y)
+        if (mPointFrom == null && mPointTo == null) {
+            return false
         }
 
-        mPointTo?.let {
-            onAnchorPoint?.onAnchorY(it.y)
+        if (mPointFrom == null) {
+            mPointFrom = mPointTouch
         }
 
-        return !(mPointFrom == null && mPointTo == null)
+        if (mPointTo == null) {
+            mPointTo = mPointTouch
+        }
+
+        return true
     }
 }

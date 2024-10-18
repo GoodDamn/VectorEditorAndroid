@@ -21,11 +21,8 @@ class VEAnchor(
             }
         }
 
-    private val mAnchors = arrayOf(
-        VEAnchorStraightVertical(),
-        VEAnchorStraightHorizontal(),
-        VEAnchorPropLenHorizontal(radiusPointer),
-        VEAnchorPoint(radiusPointer)
+    private val mAnchors: Array<VEBaseAnchor> = arrayOf(
+        VEAnchorStraightHorizontal()
     )
     private var mx2 = 0f
     private var my2 = 0f
@@ -61,10 +58,11 @@ class VEAnchor(
         }
 
         mAnchors.forEach {
+            it.selectedIndex = selectedIndex
             if (it.checkAnchor(
-               skeleton,
-               mx2,
-               my2
+                skeleton,
+                mx2,
+                my2
             )) {
                 mAnchorsDetected.add(
                     it
