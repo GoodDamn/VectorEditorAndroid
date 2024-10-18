@@ -8,6 +8,8 @@ abstract class VEBaseAnchor
 
     var onAnchorPoint: VEIListenerOnAnchorPoint? = null
 
+    var isPreparedToDraw = false
+
     var selectedIndex: Int = 0
 
     protected val mPaint = Paint().apply {

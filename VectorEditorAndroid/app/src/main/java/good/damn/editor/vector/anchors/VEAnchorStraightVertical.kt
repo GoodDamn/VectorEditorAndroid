@@ -2,18 +2,13 @@ package good.damn.editor.vector.anchors
 
 import android.graphics.Canvas
 import android.graphics.PointF
-import android.util.Log
-import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.extensions.drawLine
+import good.damn.editor.vector.points.VEPointIndexed
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import kotlin.math.abs
 
-class VEAnchorStraightHorizontal
+class VEAnchorStraightVertical
 : VEBaseAnchor() {
-
-    companion object {
-        private const val TAG = "VEAnchorStraightHorizon"
-    }
 
     private var mPointFrom: PointF? = null
     private var mPointTo: PointF? = null
@@ -39,31 +34,31 @@ class VEAnchorStraightHorizontal
         touchX: Float,
         touchY: Float
     ): Boolean {
-        var minRightX = Float.MAX_VALUE
-        var minLeftX = 0f
-
-        mPointFrom = null
-        mPointTo = null
+        var minDownY = Float.MAX_VALUE
+        var minUpY = 0f
 
         mPointTouch.set(
             touchX,
             touchY
         )
 
+        mPointFrom = null
+        mPointTo = null
+
         for (it in skeleton.points) {
-            if (abs(it.y - mPointTouch.y) < 30) { // px
-                mPointTouch.y = it.y
-                onAnchorPoint?.onAnchorY(
-                    it.y
+            if (abs(it.x - mPointTouch.x) < 30) { // px
+                mPointTouch.x = it.x
+                onAnchorPoint?.onAnchorX(
+                    it.x
                 )
 
-                if (minRightX > it.x && it.x > mPointTouch.x) {
-                    minRightX = it.x
+                if (minUpY > it.y && it.y > mPointTouch.y) {
+                    minUpY = it.y
                     mPointTo = it
                 }
 
-                if (minLeftX < it.x && it.x < mPointTouch.x) {
-                    minLeftX = it.x
+                if (minDownY < it.y && it.y < mPointTouch.y) {
+                    minDownY = it.y
                     mPointFrom = it
                 }
             }
@@ -83,4 +78,5 @@ class VEAnchorStraightHorizontal
 
         return true
     }
+
 }

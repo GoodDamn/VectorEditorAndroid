@@ -6,9 +6,7 @@ import good.damn.editor.vector.skeleton.VESkeleton2D
 
 interface VEIAnchorable {
     fun onDraw(
-        canvas: Canvas,
-        touchX: Float,
-        touchY: Float
+        canvas: Canvas
     )
 
     fun checkAnchor(

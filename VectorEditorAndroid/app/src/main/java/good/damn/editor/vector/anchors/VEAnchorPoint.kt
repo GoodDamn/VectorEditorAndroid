@@ -1,6 +1,8 @@
 package good.damn.editor.vector.anchors
 
 import android.graphics.Canvas
+import android.graphics.Point
+import android.graphics.PointF
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -10,9 +12,7 @@ class VEAnchorPoint(
 ): VEBaseAnchor() {
 
     override fun onDraw(
-        canvas: Canvas,
-        touchX: Float,
-        touchY: Float
+        canvas: Canvas
     ) = Unit
 
     override fun checkAnchor(
@@ -21,6 +21,10 @@ class VEAnchorPoint(
         touchY: Float
     ): Boolean {
         for (it in skeleton.points) {
+            if (selectedIndex == it.index) {
+                continue
+            }
+
             if (abs(hypot(
                 it.x - touchX,
                 it.y - touchY
