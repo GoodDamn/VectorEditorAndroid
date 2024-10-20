@@ -3,22 +3,33 @@ package good.damn.editor.vector.anchors
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.util.Log
+import good.damn.editor.vector.anchors.internal.VEAnchorInternalBase
+import good.damn.editor.vector.anchors.internal.VEAnchorInternalPropLenVertical
 import good.damn.editor.vector.extensions.drawLine
 import good.damn.editor.vector.points.VEPointIndexed
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import kotlin.math.abs
+import kotlin.math.cos
 
 class VEAnchorStraightVertical
 : VEBaseAnchor() {
+
+    companion object {
+        private const val TAG = "VEAnchorStraightVertica"
+    }
 
     private var mPointFrom: PointF? = null
     private var mPointTo: PointF? = null
 
     private val mPointTouch = PointF()
 
-    companion object {
-        private const val TAG = "VEAnchorStraightVertica"
-    }
+    private val mAnchorsInternal: Array<
+        VEAnchorInternalBase
+    > = arrayOf(
+        VEAnchorInternalPropLenVertical(
+            lineWidth = 20f
+        )
+    )
 
     override fun onDraw(
         canvas: Canvas
@@ -30,6 +41,12 @@ class VEAnchorStraightVertical
                     it,
                     mPaint
                 )
+            }
+        }
+
+        mAnchorsInternal.forEach {
+            if (it.isPreparedToDraw) {
+                it.draw(canvas)
             }
         }
     }
@@ -84,6 +101,26 @@ class VEAnchorStraightVertical
 
         if (mPointTo == null) {
             mPointTo = mPointTouch
+        }
+
+        for (it in mAnchorsInternal) {
+            val p = it.checkAnchor(
+                mPointFrom!!,
+                mPointTo!!,
+                mPointTouch
+            )
+
+            if (p == null) {
+                it.isPreparedToDraw = false
+                continue
+            }
+            it.isPreparedToDraw = true
+
+            onAnchorPoint?.apply {
+                onAnchorX(p.x)
+                onAnchorY(p.y)
+            }
+
         }
 
         return true
