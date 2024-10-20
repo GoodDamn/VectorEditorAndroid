@@ -2,8 +2,8 @@ package good.damn.editor.vector.anchors
 
 import android.graphics.Canvas
 import android.graphics.PointF
-import android.util.Log
-import good.damn.editor.vector.VEApp
+import good.damn.editor.vector.anchors.internal.VEAnchorInternalBase
+import good.damn.editor.vector.anchors.internal.VEAnchorInternalPropLenHorizontal
 import good.damn.editor.vector.extensions.drawLine
 import good.damn.editor.vector.skeleton.VESkeleton2D
 import kotlin.math.abs
@@ -20,6 +20,14 @@ class VEAnchorStraightHorizontal
 
     private val mPointTouch = PointF()
 
+    private val mInternalAnchors: Array<
+        VEAnchorInternalBase
+    > = arrayOf(
+        VEAnchorInternalPropLenHorizontal(
+            lineWidth = 15f
+        )
+    )
+
     override fun onDraw(
         canvas: Canvas
     ) {
@@ -30,6 +38,13 @@ class VEAnchorStraightHorizontal
                     it,
                     mPaint
                 )
+            }
+        }
+
+
+        mInternalAnchors.forEach {
+            if (it.isPreparedToDraw) {
+                it.draw(canvas)
             }
         }
     }
@@ -79,6 +94,25 @@ class VEAnchorStraightHorizontal
 
         if (mPointTo == null) {
             mPointTo = mPointTouch
+        }
+
+        for (it in mInternalAnchors) {
+            val p = it.checkAnchor(
+                mPointFrom!!,
+                mPointTo!!,
+                mPointTouch
+            )
+
+            if (p == null) {
+                it.isPreparedToDraw = false
+                continue
+            }
+            it.isPreparedToDraw = true
+
+            onAnchorPoint?.apply {
+                onAnchorX(p.x)
+                onAnchorY(p.y)
+            }
         }
 
         return true
