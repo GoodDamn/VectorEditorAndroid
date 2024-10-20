@@ -2,6 +2,7 @@ package good.damn.editor.vector.anchors
 
 import android.graphics.Canvas
 import android.graphics.PointF
+import android.util.Log
 import good.damn.editor.vector.extensions.drawLine
 import good.damn.editor.vector.points.VEPointIndexed
 import good.damn.editor.vector.skeleton.VESkeleton2D
@@ -14,6 +15,10 @@ class VEAnchorStraightVertical
     private var mPointTo: PointF? = null
 
     private val mPointTouch = PointF()
+
+    companion object {
+        private const val TAG = "VEAnchorStraightVertica"
+    }
 
     override fun onDraw(
         canvas: Canvas
@@ -46,19 +51,24 @@ class VEAnchorStraightVertical
         mPointTo = null
 
         for (it in skeleton.points) {
+
+            if (selectedIndex == it.index) {
+                continue
+            }
+
             if (abs(it.x - mPointTouch.x) < 30) { // px
                 mPointTouch.x = it.x
                 onAnchorPoint?.onAnchorX(
                     it.x
                 )
 
-                if (minUpY > it.y && it.y > mPointTouch.y) {
-                    minUpY = it.y
+                if (minDownY > it.y && it.y > mPointTouch.y) {
+                    minDownY = it.y
                     mPointTo = it
                 }
 
-                if (minDownY < it.y && it.y < mPointTouch.y) {
-                    minDownY = it.y
+                if (minUpY < it.y && it.y < mPointTouch.y) {
+                    minUpY = it.y
                     mPointFrom = it
                 }
             }

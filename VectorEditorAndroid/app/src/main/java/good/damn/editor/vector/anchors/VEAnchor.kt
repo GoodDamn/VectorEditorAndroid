@@ -32,9 +32,11 @@ class VEAnchor(
         canvas: Canvas
     ) {
         mAnchors.forEach {
-            it.onDraw(
-                canvas
-            )
+            if (it.isPreparedToDraw) {
+                it.onDraw(
+                    canvas
+                )
+            }
         }
     }
 
