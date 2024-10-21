@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PointF
 import android.view.MotionEvent
-import androidx.core.content.res.TypedArrayUtils
 import good.damn.editor.vector.actions.VEDataActionPosition
 import good.damn.editor.vector.actions.VEDataActionShape
 import good.damn.editor.vector.actions.VEDataActionSkeletonPoint
@@ -14,6 +13,7 @@ import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
 import good.damn.editor.vector.anchors.VEAnchor
 import good.damn.editor.vector.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.extensions.interpolate
+import good.damn.editor.vector.extensions.interpolateWith
 import good.damn.editor.vector.interfaces.VEIDrawable
 import good.damn.editor.vector.interfaces.VEITouchable
 import good.damn.editor.vector.lists.VEListShapes
@@ -34,7 +34,7 @@ VEICallbackOnAddShape,
 VEIListenerOnAnchorPoint {
 
     companion object {
-        private const val TAG = "VEOptionPrimitivable"
+        private val TAG = VEOptionShapeable::class.simpleName
     }
 
     var currentPrimitive: VEShapeBase = VEShapeLine(
@@ -59,6 +59,8 @@ VEIListenerOnAnchorPoint {
 
     private var mPointFrom: VEPointIndexed? = null
     private var mPointTo: VEPointIndexed? = null
+
+    private var mPointMiddle: VEPointIndexed? = null
 
     private var mTouchX = 0f
     private var mTouchY = 0f
@@ -135,7 +137,7 @@ VEIListenerOnAnchorPoint {
                     points[1] = mPointTo
 
                     if (points.size == 3) {
-                        points[1] = mPointFrom?.interpolate(
+                        mPointMiddle = mPointFrom?.interpolateWith(
                             0.5f,
                             mPointTo
                         )?.apply {
@@ -143,7 +145,9 @@ VEIListenerOnAnchorPoint {
                                 this
                             )
                         }
-                        points[2] = mPointFrom
+
+                        points[1] = mPointMiddle
+                        points[2] = mPointTo
                     }
 
                     if (mPointFrom != null) {
@@ -155,19 +159,28 @@ VEIListenerOnAnchorPoint {
             }
 
             MotionEvent.ACTION_MOVE -> {
-                mPointTo?.apply {
+                mPointTo?.let { to ->
                     mAnchor.checkAnchors(
                         skeleton,
                         mTouchX,
                         mTouchY,
-                        index
+                        to.index
                     )
+
+                    mPointFrom?.let { from ->
+                        mPointMiddle?.interpolate(
+                            0.5f,
+                            from,
+                            to
+                        )
+                    }
                 }
             }
 
             MotionEvent.ACTION_UP -> {
                 mPointFrom = null
                 mPointTo = null
+                mPointMiddle = null
             }
 
             else -> {

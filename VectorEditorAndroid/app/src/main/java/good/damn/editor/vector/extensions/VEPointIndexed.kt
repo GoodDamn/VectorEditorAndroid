@@ -1,6 +1,5 @@
 package good.damn.editor.vector.extensions
 
-import android.graphics.PointF
 import good.damn.editor.vector.points.VEPointIndexed
 import java.io.OutputStream
 
@@ -12,7 +11,7 @@ inline fun VEPointIndexed.writeToStreamIndexed(
     )
 }
 
-inline fun VEPointIndexed.interpolate(
+inline fun VEPointIndexed.interpolateWith(
     f: Float,
     point2: VEPointIndexed?
 ) = if (point2 == null) {

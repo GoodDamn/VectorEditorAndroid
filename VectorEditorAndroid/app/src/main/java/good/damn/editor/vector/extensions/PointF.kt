@@ -26,6 +26,15 @@ inline fun PointF.writeToStream(
 
 inline fun PointF.interpolate(
     f: Float,
+    p: PointF,
+    p2: PointF
+) {
+    x = (p.x + p2.x) * f
+    y = (p.y + p2.y) * f
+}
+
+inline fun PointF.interpolateWith(
+    f: Float,
     point2: PointF?
 ) = if (point2 == null) {
     null

@@ -19,7 +19,6 @@ class VEViewVector(
     }
 
     var optionable: VEITouchable = startOption
-
     var canvasRenderer: VEIDrawable? = null
 
     override fun onDraw(

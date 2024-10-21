@@ -3,6 +3,7 @@ package good.damn.editor.vector.shapes
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.util.Log
 import good.damn.editor.vector.extensions.cubicTo
 import good.damn.editor.vector.extensions.io.readFraction
 import good.damn.editor.vector.extensions.io.readInt32
@@ -24,6 +25,7 @@ class VEShapeBezierС(
 ) {
 
     companion object {
+        private val TAG = VEShapeBezierС::class.simpleName
         const val ENCODE_TYPE = 1
     }
 
@@ -42,33 +44,32 @@ class VEShapeBezierС(
 
     override fun onDraw(
         canvas: Canvas
-    ) {
-        mPath.apply {
-            reset()
+    ) = mPath.run {
+        reset()
 
-            val p0 = points[0]
-                ?: return@apply
+        val p0 = points[0]
+            ?: return@run
 
-            val p1 = points[1]
-                ?: return@apply
+        val p1 = points[1]
+            ?: return@run
 
-            val p2 = points[2]
-                ?: return@apply
+        val p2 = points[2]
+            ?: return@run
 
-            moveTo(p0)
+        Log.d(TAG, "onDraw: $p0 $p1 $p2")
+        
+        moveTo(p0)
 
-            cubicTo(
-                p0,
-                p1,
-                p2
-            )
-        }
-
-        canvas.drawPath(
-            mPath,
-            mPaint
+        cubicTo(
+            p0,
+            p1,
+            p2
         )
 
+        canvas.drawPath(
+            this,
+            mPaint
+        )
     }
 
 
