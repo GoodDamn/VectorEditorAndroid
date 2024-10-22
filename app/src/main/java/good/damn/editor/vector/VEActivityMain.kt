@@ -1,5 +1,7 @@
 package good.damn.editor.vector
 
+import android.graphics.Canvas
+import android.graphics.PointF
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
@@ -7,27 +9,35 @@ import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
+import good.damn.editor.vector.anchors.VEAnchor
+import good.damn.editor.vector.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
-import good.damn.editor.vector.enums.VEEnumOptions
-import good.damn.editor.vector.enums.VEEnumPrimitives
 import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.files.VEFileDocument
-import good.damn.editor.vector.paints.VEPaintArc
-import good.damn.editor.vector.paints.VEPaintBezierQ
-import good.damn.editor.vector.paints.VEPaintLine
+import good.damn.editor.vector.interfaces.VEIDrawable
+import good.damn.editor.vector.options.VEOptionFreeMove
+import good.damn.editor.vector.options.VEOptionShapeable
+import good.damn.editor.vector.shapes.VEShapeBezierС
+import good.damn.editor.vector.shapes.VEShapeLine
 import good.damn.editor.vector.porters.VEImporter
+import good.damn.editor.vector.skeleton.VESkeleton2D
 import good.damn.editor.vector.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
+import good.damn.lib.verticalseekbar.VSViewSeekBarV
+import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
+import java.util.LinkedList
 
 class VEActivityMain
 : AppCompatActivity(),
-VEListenerOnGetBrowserContent {
+VEListenerOnGetBrowserContent,
+VSIListenerSeekBarProgress,
+VEIDrawable,
+VEIListenerOnAnchorPoint {
 
     private var mViewVector: VEViewVector? = null
 
@@ -37,6 +47,25 @@ VEListenerOnGetBrowserContent {
     private val mBrowserContent = VEBrowserContent().apply {
         onGetContent = this@VEActivityMain
     }
+
+    private val mAnchor = VEAnchor(
+        50f
+    ).apply {
+        onAnchorPoint = this@VEActivityMain
+    }
+
+    private val mOptionShape = VEOptionShapeable(
+        mAnchor,
+        VEApp.width.toFloat(),
+        VEApp.width.toFloat()
+    )
+
+    private val mOptionFreeMove = VEOptionFreeMove(
+        mAnchor,
+        mOptionShape.skeleton
+    )
+
+    private var mCurrentAnchor: VEIListenerOnAnchorPoint? = null
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -48,8 +77,8 @@ VEListenerOnGetBrowserContent {
         mBrowserContent.register(
             this
         )
-
         val context = this
+
         val root = FrameLayout(
             context
         ).apply {
@@ -58,23 +87,22 @@ VEListenerOnGetBrowserContent {
             )
         }
 
-        val sizeCanvas = VEApp.height * 0.3f
-
+        mCurrentAnchor = mOptionShape
         mViewVector = VEViewVector(
-            context
+            context,
+            mOptionShape
         ).apply {
 
             setBackgroundColor(
                 0xff565656.toInt()
             )
 
-            isAlignedVertical = true
-            isAlignedHorizontal = true
-
             boundsFrame(
-                width = sizeCanvas,
-                height = sizeCanvas
+                width = mOptionShape.canvasWidth,
+                height = mOptionShape.canvasHeight
             )
+
+            canvasRenderer = this@VEActivityMain
 
             root.addView(
                 this
@@ -85,13 +113,13 @@ VEListenerOnGetBrowserContent {
         Button(
             context
         ).apply {
-
-            text = "MOV"
+            text = "SHP"
 
             val s = VEApp.width * 0.15f
 
             setOnClickListener {
-                mViewVector?.anchorOption = VEEnumOptions.MOVE
+                mViewVector?.optionable = mOptionShape
+                mCurrentAnchor = mOptionShape
             }
 
             boundsFrame(
@@ -107,12 +135,13 @@ VEListenerOnGetBrowserContent {
         Button(
             context
         ).apply {
-            text = "HOK"
+            text = "MOV"
 
             val s = VEApp.width * 0.15f
 
             setOnClickListener {
-                mViewVector?.anchorOption = VEEnumOptions.HOOK
+                mViewVector?.optionable = mOptionFreeMove
+                mCurrentAnchor = mOptionFreeMove
             }
 
             boundsFrame(
@@ -129,42 +158,17 @@ VEListenerOnGetBrowserContent {
         Button(
             context
         ).apply {
-            text = "SER"
-            val s = VEApp.width * 0.15f
-
-            setOnClickListener {
-                mViewVector?.apply {
-                    isSerialDraw = !isSerialDraw
-                }
-            }
-
-            boundsFrame(
-                gravity = Gravity.END,
-                width = s,
-                top = s*2
-            )
-
-            root.addView(
-                this
-            )
-        }
-
-        Button(
-            context
-        ).apply {
             text = "|"
 
             val s = VEApp.width * 0.1f
             boundsFrame(
                 width = s,
-                height = s,
-                top = sizeCanvas
+                height = s
             )
 
             setOnClickListener {
-                mViewVector?.currentPrimitive = VEPaintLine(
-                    0f,
-                    0f
+                mOptionShape.currentPrimitive = VEShapeLine(
+                    0f, 0f
                 )
             }
 
@@ -176,47 +180,18 @@ VEListenerOnGetBrowserContent {
         Button(
             context
         ).apply {
-
-            text = "O"
-
-            val s = VEApp.width * 0.1f
-            boundsFrame(
-                width = s,
-                height = s,
-                top = sizeCanvas,
-                start = s
-            )
-
-            setOnClickListener {
-                mViewVector?.currentPrimitive = VEPaintArc(
-                    0f,
-                    0f
-                )
-            }
-
-            root.addView(
-                this
-            )
-        }
-
-        Button(
-            context
-        ).apply {
-
             text = "CB"
 
             val s = VEApp.width * 0.1f
             boundsFrame(
                 width = s * 1.5f,
                 height = s,
-                top = sizeCanvas,
-                start = s * 2
+                start = s
             )
 
             setOnClickListener {
-                mViewVector?.currentPrimitive = VEPaintBezierQ(
-                    0f,
-                    0f
+                mOptionShape.currentPrimitive = VEShapeBezierС(
+                    0f, 0f
                 )
             }
 
@@ -225,88 +200,26 @@ VEListenerOnGetBrowserContent {
             )
         }
 
-        Button(
+        VSViewSeekBarV(
             context
         ).apply {
 
-            text = "H"
-            val s = VEApp.width * 0.1f
             boundsFrame(
                 gravity = Gravity.END,
-                width = s,
-                height = s,
-                top = sizeCanvas,
-                end = 0f
+                height = VEApp.height * 0.2f,
+                top = VEApp.width * 0.42f,
+                width = VEApp.width * 0.1f
             )
 
-            setOnClickListener {
-                mViewVector?.apply {
-                    isAlignedHorizontal = !isAlignedHorizontal
-                }
-            }
+            onSeekProgress = this@VEActivityMain
 
-            root.addView(
-                this
+            strokeWidth = layoutParams.width * 0.25f
+            setBackgroundColor(
+                0xffff0000.toInt()
             )
-        }
+            progressColor = 0xffffff00.toInt()
 
-        Button(
-            context
-        ).apply {
-
-            text = "V"
-
-            val s = VEApp.width * 0.1f
-            boundsFrame(
-                gravity = Gravity.END,
-                width = s,
-                height = s,
-                top = sizeCanvas,
-                end = s
-            )
-
-            setOnClickListener {
-                mViewVector?.apply {
-                    isAlignedVertical = !isAlignedVertical
-                }
-            }
-
-            root.addView(
-                this
-            )
-        }
-
-
-
-        SeekBar(
-            context
-        ).apply {
-            progress = 0
-            max = 100
-
-            setOnSeekBarChangeListener(
-                object : OnSeekBarChangeListener {
-                    override fun onProgressChanged(
-                        seekBar: SeekBar?,
-                        progress: Int,
-                        fromUser: Boolean
-                    ) {
-                        val n = progress / 100f
-                        mViewVector?.strokeWidth = n * VEApp.width
-                    }
-                    override fun onStartTrackingTouch(
-                        seekBar: SeekBar?
-                    ) = Unit
-                    override fun onStopTrackingTouch(
-                        seekBar: SeekBar?
-                    ) = Unit
-                }
-            )
-
-            boundsFrame(
-                top = VEApp.height * 0.4f,
-                width = VEApp.width.toFloat()
-            )
+            progress = 0.65f
 
             root.addView(
                 this
@@ -316,7 +229,6 @@ VEListenerOnGetBrowserContent {
         GradientColorPicker(
             context
         ).apply {
-
             boundsFrame(
                 top = VEApp.height * 0.5f,
                 width = VEApp.width.toFloat(),
@@ -324,7 +236,11 @@ VEListenerOnGetBrowserContent {
             )
 
             setOnPickColorListener {
-                mViewVector?.color = it
+                mOptionShape
+                    .currentPrimitive
+                    .color = it
+
+                mViewVector?.invalidate()
             }
 
             root.addView(
@@ -395,15 +311,16 @@ VEListenerOnGetBrowserContent {
     private fun onClickExportVector(
         v: View
     ) {
-        val data = mViewVector?.primitives
-            ?: return
-
         mExporter.exportTo(
             VEFileDocument(
                 "myVector.sav"
             ),
-            data
+            mOptionShape.shapes,
+            mOptionShape.skeleton,
+            mOptionShape.canvasWidth,
+            mOptionShape.canvasHeight
         )
+        mViewVector?.invalidate()
     }
 
     private fun onClickImportVector(
@@ -415,14 +332,17 @@ VEListenerOnGetBrowserContent {
     private fun onClickDeleteAll(
         v: View
     ) {
-        mViewVector?.clearVector()
+        mOptionShape.clearActions()
+        mViewVector?.invalidate()
     }
 
     private fun onClickUndoAction(
         v: View
     ) {
-        mViewVector?.undoVector()
+        mOptionShape.undoAction()
+        mViewVector?.invalidate()
     }
+
 
     override fun onGetBrowserContent(
         uri: Uri?
@@ -438,14 +358,63 @@ VEListenerOnGetBrowserContent {
             uri
         ) ?: return
 
-        mImporter.importFrom(
-            stream,
-            vectorCanvas.width.toFloat(),
-            vectorCanvas.height.toFloat()
-        )?.let {
-            vectorCanvas.primitives = it
-            vectorCanvas.invalidate()
+        vectorCanvas.apply {
+            mImporter.importFrom(
+                stream,
+                width.toFloat(),
+                height.toFloat()
+            )?.let {
+                mOptionShape.shapes.resetList(
+                    it.shapes
+                )
+
+                mOptionShape.skeleton.resetSkeleton(
+                    it.skeletonPoints
+                )
+
+                invalidate()
+            }
         }
     }
 
+    override fun onSeekProgress(
+        progress: Float
+    ) {
+        mOptionShape.apply {
+            currentPrimitive.strokeWidth =
+                progress * canvasWidth
+        }
+
+        mViewVector?.invalidate()
+    }
+
+    override fun onDraw(
+        canvas: Canvas
+    ) = mOptionShape.run {
+        skeleton.onDraw(
+            canvas
+        )
+
+        shapes.forEach {
+            it.onDraw(
+                canvas
+            )
+        }
+
+        mOptionShape.onDraw(
+            canvas
+        )
+    }
+
+    override fun onAnchorX(
+        x: Float
+    ) {
+        mCurrentAnchor?.onAnchorX(x)
+    }
+
+    override fun onAnchorY(
+        y: Float
+    ) {
+        mCurrentAnchor?.onAnchorY(y)
+    }
 }

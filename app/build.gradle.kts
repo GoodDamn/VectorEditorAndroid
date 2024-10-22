@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.gradientcolorpicker)
+    implementation(project(":VerticalSeekBar"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

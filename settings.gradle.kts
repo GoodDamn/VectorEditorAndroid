@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "VectorEditor"
 include(":app")
- 
+include(":VerticalSeekBar")
