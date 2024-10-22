@@ -1,9 +1,10 @@
-package good.damn.editor.vector.views
+package good.damn.editor.vector.views.animator
 
 import android.content.Context
 import android.graphics.Canvas
+import android.view.MotionEvent
 import android.view.View
-import good.damn.editor.vector.views.animator.options.VEOptionAnimatorBase
+import good.damn.editor.vector.views.animator.options.VEOptionAnimatorData
 
 class VEViewAnimator(
     context: Context
@@ -12,7 +13,7 @@ class VEViewAnimator(
 ) {
 
     var options: Array<
-        VEOptionAnimatorBase
+        VEOptionAnimatorData
     >? = null
 
     override fun onLayout(
@@ -34,12 +35,25 @@ class VEViewAnimator(
         val ww = width * 0.25f
         val hh = height * 0.1f
 
+        val wTimer = width - ww
+
         options?.forEach {
-            it.x = 0f
-            it.y = y
-            it.layout(
-                ww, hh
-            )
+            it.option.let {
+                it.x = 0f
+                it.y = y
+                it.layout(
+                    ww, hh
+                )
+            }
+
+            it.tickTimer.let {
+                it.x = ww
+                it.y = y
+                it.layoutGrid(
+                    wTimer, hh
+                )
+            }
+
             y += hh
         }
     }
@@ -49,9 +63,17 @@ class VEViewAnimator(
     ) {
         super.onDraw(canvas)
         options?.forEach {
-            it.draw(canvas)
+            it.option.draw(canvas)
+            it.tickTimer.drawGrid(canvas)
         }
-
     }
+
+    override fun onTouchEvent(
+        event: MotionEvent?
+    ): Boolean {
+
+        return true
+    }
+
 
 }

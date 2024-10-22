@@ -2,6 +2,7 @@ package good.damn.editor.vector.views.animator.options
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import good.damn.editor.vector.views.animator.options.base.VEOptionAnimatorBase
 
 class VEOptionAnimatorPositionX
 : VEOptionAnimatorBase() {

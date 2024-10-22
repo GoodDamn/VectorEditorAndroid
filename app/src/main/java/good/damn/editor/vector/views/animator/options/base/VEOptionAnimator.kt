@@ -1,10 +1,8 @@
-package good.damn.editor.vector.views.animator.options
+package good.damn.editor.vector.views.animator.options.base
 
 import android.graphics.Canvas
 
 interface VEOptionAnimator {
-
-
     fun layout(
         width: Float,
         height: Float
@@ -13,5 +11,4 @@ interface VEOptionAnimator {
     fun draw(
         canvas: Canvas
     )
-
 }

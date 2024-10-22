@@ -2,9 +2,11 @@ package good.damn.editor.vector
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import good.damn.editor.vector.views.VEViewAnimator
+import good.damn.editor.vector.views.animator.VEViewAnimator
 import good.damn.editor.vector.views.animator.options.VEOptionAnimatorColor
+import good.damn.editor.vector.views.animator.options.VEOptionAnimatorData
 import good.damn.editor.vector.views.animator.options.VEOptionAnimatorPositionX
+import good.damn.editor.vector.views.animator.options.tickTimer.VETickTimerAnimatorColor
 
 class VEActivityAnimation
 : AppCompatActivity() {
@@ -22,8 +24,10 @@ class VEActivityAnimation
             context
         ).apply {
             options = arrayOf(
-                VEOptionAnimatorColor(),
-                VEOptionAnimatorPositionX()
+                VEOptionAnimatorData(
+                    VEOptionAnimatorColor(),
+                    VETickTimerAnimatorColor()
+                )
             )
 
             setBackgroundColor(

@@ -1,12 +1,9 @@
 package good.damn.editor.vector.views.animator.options
 
 import android.graphics.Canvas
-import android.graphics.LinearGradient
 import android.graphics.Paint
-import android.graphics.RadialGradient
-import android.graphics.RectF
-import android.graphics.Shader
-import good.damn.editor.vector.extensions.drawCircle
+import good.damn.editor.vector.views.animator.options.base.VEOptionAnimatorBase
+import good.damn.editor.vector.views.animator.options.tickTimer.VETickTimerAnimatorColor
 
 class VEOptionAnimatorColor
 : VEOptionAnimatorBase() {
@@ -47,27 +44,27 @@ class VEOptionAnimatorColor
 
     override fun draw(
         canvas: Canvas
-    ) {
-        canvas.save()
+    ) = canvas.run {
+        save()
 
-        canvas.clipRect(
+        clipRect(
             mRect
         )
 
-        canvas.drawCircle(
+        drawCircle(
             c25x,
             c25y,
             c25radius,
             mPaintGradient25
         )
 
-        canvas.drawCircle(
+        drawCircle(
             c76x,
             c76y,
             c76radius,
             mPaintGradient76
         )
 
-        canvas.restore()
+        restore()
     }
 }

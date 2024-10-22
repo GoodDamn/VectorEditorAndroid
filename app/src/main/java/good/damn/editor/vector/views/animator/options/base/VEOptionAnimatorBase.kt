@@ -1,16 +1,10 @@
-package good.damn.editor.vector.views.animator.options
+package good.damn.editor.vector.views.animator.options.base
 
 import android.graphics.RectF
-import androidx.core.graphics.xor
+import good.damn.editor.vector.views.animator.options.tickTimer.VETickTimerAnimator
 
 abstract class VEOptionAnimatorBase
 : VEOptionAnimator {
-
-    var width = 0f
-        private set
-
-    var height = 0f
-        private set
 
     var x: Float
         get() = mRect.left
@@ -24,6 +18,18 @@ abstract class VEOptionAnimatorBase
             mRect.top = v
         }
 
+    var width: Float
+        get() = mRect.width()
+        set(v) {
+            mRect.right = mRect.left + v
+        }
+
+    var height: Float
+        get() = mRect.height()
+        set(v) {
+            mRect.bottom = mRect.top + v
+        }
+
     protected val mRect = RectF()
 
     override fun layout(
@@ -32,11 +38,6 @@ abstract class VEOptionAnimatorBase
     ) {
         this.width = width
         this.height = height
-
-        mRect.apply {
-            right = left + width
-            bottom = top + height
-        }
     }
 
 }
