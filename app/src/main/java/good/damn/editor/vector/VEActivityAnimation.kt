@@ -21,7 +21,9 @@ class VEActivityAnimation
         val context = this
 
         VEViewAnimator(
-            context
+            context,
+            0.1f,
+            0.25f
         ).apply {
             options = arrayOf(
                 VEOptionAnimatorData(

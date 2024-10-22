@@ -10,17 +10,6 @@ class VETickTimerAnimatorColor
         color = 0xffffff00.toInt()
     }
 
-    override fun layoutGrid(
-        width: Float,
-        height: Float
-    ) {
-        super.layoutGrid(
-            width,
-            height
-        )
-
-    }
-
     override fun drawGrid(
         canvas: Canvas
     ) = canvas.run {

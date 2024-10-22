@@ -4,10 +4,14 @@ import android.content.Context
 import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.View
+import good.damn.editor.vector.interfaces.VEITouchable
 import good.damn.editor.vector.views.animator.options.VEOptionAnimatorData
+import good.damn.editor.vector.views.animator.ticker.VEAnimatorTicker
 
 class VEViewAnimator(
-    context: Context
+    context: Context,
+    private val heightOptionFactor: Float,
+    private val widthOptionFactor: Float
 ): View(
     context
 ) {
@@ -15,6 +19,10 @@ class VEViewAnimator(
     var options: Array<
         VEOptionAnimatorData
     >? = null
+
+    private var mCurrentTouch: VEITouchable? = null
+
+    private val mTicker = VEAnimatorTicker()
 
     override fun onLayout(
         changed: Boolean,
@@ -32,9 +40,8 @@ class VEViewAnimator(
         )
 
         var y = 0f
-        val ww = width * 0.25f
-        val hh = height * 0.1f
-
+        val ww = width * widthOptionFactor
+        val hh = height * heightOptionFactor
         val wTimer = width - ww
 
         options?.forEach {
@@ -56,22 +63,50 @@ class VEViewAnimator(
 
             y += hh
         }
+
+        mTicker.layout(
+            wTimer,
+            ww
+        )
     }
 
     override fun onDraw(
         canvas: Canvas
     ) {
         super.onDraw(canvas)
+
         options?.forEach {
             it.option.draw(canvas)
             it.tickTimer.drawGrid(canvas)
         }
+
+        mTicker.onDraw(
+            canvas
+        )
     }
 
     override fun onTouchEvent(
         event: MotionEvent?
     ): Boolean {
+        if (event == null) {
+            return false
+        }
 
+        mCurrentTouch?.apply {
+            if (!onTouchEvent(event)) {
+                mCurrentTouch = null
+            }
+            invalidate()
+            return true
+        }
+
+        if (mTicker.onTouchEvent(
+            event
+        )) {
+            mCurrentTouch = mTicker
+        }
+
+        invalidate()
         return true
     }
 
