@@ -37,13 +37,13 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.gradientcolorpicker)
     implementation(project(":VerticalSeekBar"))
     implementation(project(":misc"))
     implementation(project(":editor"))
     implementation(project(":core"))
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.appcompat)
 
 
     testImplementation(libs.junit)

@@ -1,5 +1,6 @@
 package good.damn.editor.vector
 
+import android.app.Activity
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
@@ -9,7 +10,6 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.browsers.VEBrowserContent
@@ -243,7 +243,7 @@ VEIListenerOnAnchorPoint {
         ).apply {
             orientation = LinearLayout.HORIZONTAL
 
-            AppCompatButton(
+            Button(
                 context
             ).apply {
                 text = "Export"
@@ -255,7 +255,7 @@ VEIListenerOnAnchorPoint {
                 )
             }
 
-            AppCompatButton(
+            Button(
                 context
             ).apply {
                 text = "Import"
@@ -265,7 +265,7 @@ VEIListenerOnAnchorPoint {
                 addView(this)
             }
 
-            AppCompatButton(
+            Button(
                 context
             ).apply {
                 text = "Delete all"
@@ -275,7 +275,7 @@ VEIListenerOnAnchorPoint {
                 addView(this)
             }
 
-            AppCompatButton(
+            Button(
                 context
             ).apply {
                 text = "Undo"
