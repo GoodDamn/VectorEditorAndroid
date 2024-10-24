@@ -1,7 +1,6 @@
 package good.damn.editor.vector
 
 import android.graphics.Canvas
-import android.graphics.PointF
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
@@ -11,26 +10,19 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
-import good.damn.editor.vector.actions.callbacks.VEICallbackOnAddSkeletonPoint
-import good.damn.editor.vector.anchors.VEAnchor
-import good.damn.editor.vector.anchors.listeners.VEIListenerOnAnchorPoint
+import good.damn.editor.anchors.VEAnchor
+import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
-import good.damn.editor.vector.porters.VEExporter
 import good.damn.editor.vector.extensions.views.boundsFrame
-import good.damn.editor.vector.files.VEFileDocument
-import good.damn.editor.vector.interfaces.VEIDrawable
-import good.damn.editor.vector.options.VEOptionFreeMove
-import good.damn.editor.vector.options.VEOptionShapeable
-import good.damn.editor.vector.shapes.VEShapeBezierС
-import good.damn.editor.vector.shapes.VEShapeLine
-import good.damn.editor.vector.porters.VEImporter
-import good.damn.editor.vector.skeleton.VESkeleton2D
-import good.damn.editor.vector.views.VEViewVector
+import good.damn.editor.options.VEOptionFreeMove
+import good.damn.editor.options.VEOptionShapeable
+import good.damn.editor.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
-import java.util.LinkedList
+import good.damn.sav.core.shapes.VEShapeLine
+import good.damn.sav.misc.interfaces.VEIDrawable
 
 class VEActivityMain
 : AppCompatActivity(),
@@ -40,9 +32,6 @@ VEIDrawable,
 VEIListenerOnAnchorPoint {
 
     private var mViewVector: VEViewVector? = null
-
-    private val mExporter = VEExporter()
-    private val mImporter = VEImporter()
 
     private val mBrowserContent = VEBrowserContent().apply {
         onGetContent = this@VEActivityMain
@@ -88,6 +77,7 @@ VEIListenerOnAnchorPoint {
         }
 
         mCurrentAnchor = mOptionShape
+
         mViewVector = VEViewVector(
             context,
             mOptionShape
@@ -190,7 +180,7 @@ VEIListenerOnAnchorPoint {
             )
 
             setOnClickListener {
-                mOptionShape.currentPrimitive = VEShapeBezierС(
+                mOptionShape.currentPrimitive = good.damn.sav.core.shapes.VEShapeBezierС(
                     0f, 0f
                 )
             }
@@ -310,18 +300,7 @@ VEIListenerOnAnchorPoint {
 
     private fun onClickExportVector(
         v: View
-    ) {
-        mExporter.exportTo(
-            VEFileDocument(
-                "myVector.sav"
-            ),
-            mOptionShape.shapes,
-            mOptionShape.skeleton,
-            mOptionShape.canvasWidth,
-            mOptionShape.canvasHeight
-        )
-        mViewVector?.invalidate()
-    }
+    ) = Unit
 
     private fun onClickImportVector(
         v: View
@@ -346,36 +325,7 @@ VEIListenerOnAnchorPoint {
 
     override fun onGetBrowserContent(
         uri: Uri?
-    ) {
-        if (uri == null) {
-            return
-        }
-
-        val vectorCanvas = mViewVector
-            ?: return
-
-        val stream = contentResolver.openInputStream(
-            uri
-        ) ?: return
-
-        vectorCanvas.apply {
-            mImporter.importFrom(
-                stream,
-                width.toFloat(),
-                height.toFloat()
-            )?.let {
-                mOptionShape.shapes.resetList(
-                    it.shapes
-                )
-
-                mOptionShape.skeleton.resetSkeleton(
-                    it.skeletonPoints
-                )
-
-                invalidate()
-            }
-        }
-    }
+    ) = Unit
 
     override fun onSeekProgress(
         progress: Float

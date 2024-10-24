@@ -11,6 +11,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/VerticalSeekBar" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/editor" />
+            <option value="$PROJECT_DIR$/misc" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />
