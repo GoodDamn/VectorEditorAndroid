@@ -2,6 +2,7 @@ package good.damn.editor.vector.views.animator.options
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import good.damn.editor.vector.extensions.drawCircle
 import good.damn.editor.vector.views.animator.options.base.VEOptionAnimatorBase
 import good.damn.editor.vector.views.animator.options.tickTimer.VETickTimerAnimatorColor
 
@@ -64,7 +65,6 @@ class VEOptionAnimatorColor
             c76radius,
             mPaintGradient76
         )
-
         restore()
     }
 }

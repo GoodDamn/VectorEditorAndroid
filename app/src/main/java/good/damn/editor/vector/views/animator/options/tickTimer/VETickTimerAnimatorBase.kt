@@ -2,8 +2,9 @@
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import java.util.LinkedList
 
-abstract class VETickTimerAnimatorBase
+ abstract class VETickTimerAnimatorBase
 : VETickTimerAnimator {
 
     var x: Float
@@ -32,6 +33,8 @@ abstract class VETickTimerAnimatorBase
 
     protected val mRect = RectF()
 
+     val tickList = LinkedList<Float>()
+
     override fun layoutGrid(
         width: Float,
         height: Float
@@ -39,4 +42,14 @@ abstract class VETickTimerAnimatorBase
         this.width = width
         this.height = height
     }
+
+    override fun tick(
+        tickTimeMs: Int,
+        tickTimeFactor: Float
+    ) {
+        tickList.add(
+            tickTimeFactor
+        )
+    }
+
 }

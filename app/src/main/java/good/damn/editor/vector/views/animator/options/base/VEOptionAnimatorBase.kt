@@ -1,7 +1,9 @@
 package good.damn.editor.vector.views.animator.options.base
 
 import android.graphics.RectF
+import android.view.MotionEvent
 import good.damn.editor.vector.views.animator.options.tickTimer.VETickTimerAnimator
+import java.util.LinkedList
 
 abstract class VEOptionAnimatorBase
 : VEOptionAnimator {
@@ -30,6 +32,8 @@ abstract class VEOptionAnimatorBase
             mRect.bottom = mRect.top + v
         }
 
+
+
     protected val mRect = RectF()
 
     override fun layout(
@@ -39,5 +43,4 @@ abstract class VEOptionAnimatorBase
         this.width = width
         this.height = height
     }
-
 }

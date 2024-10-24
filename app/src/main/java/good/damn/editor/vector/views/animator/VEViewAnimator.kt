@@ -20,9 +20,9 @@ class VEViewAnimator(
         VEOptionAnimatorData
     >? = null
 
-    private var mCurrentTouch: VEITouchable? = null
-
     private val mTicker = VEAnimatorTicker()
+
+    var duration: Int = 500
 
     override fun onLayout(
         changed: Boolean,
@@ -92,18 +92,19 @@ class VEViewAnimator(
             return false
         }
 
-        mCurrentTouch?.apply {
-            if (!onTouchEvent(event)) {
-                mCurrentTouch = null
-            }
-            invalidate()
-            return true
-        }
-
-        if (mTicker.onTouchEvent(
+        mTicker.onTouchEvent(
             event
-        )) {
-            mCurrentTouch = mTicker
+        )
+
+        if (event.action == MotionEvent.ACTION_UP) {
+            options?.forEach {
+                if (event.x < it.option.width) {
+                    it.tickTimer.tick(
+                        duration,
+                        mTicker.tickPosition
+                    )
+                }
+            }
         }
 
         invalidate()
