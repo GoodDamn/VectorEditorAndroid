@@ -11,60 +11,58 @@ class BinaryTree<T>(
     ) {
         if (root == null) {
             root = Node(
-                element,
-                null,
-                null,
-                null
+                element
             )
             return
         }
 
         searchAdd(
-            root!!,
+            root,
             element
         )
-
     }
 
-    fun search(
-        node: Node<T> = root!!,
-        data: T
-    ): Node<T>? {
-        if (equality.invoke(node.data, data)) {
-            return node
+    fun forEach(
+        node: Node<T>? = root,
+        action: (T) -> Unit
+    ) {
+        if (node == null) {
+            return
         }
 
-        if (moreThan.invoke(node.data, data)) {
-            node.rightNode?.let {
-                return search(it,data)
-            }
-            return node
-        }
+        forEach(
+            node.leftNode,
+            action
+        )
 
-        node.leftNode?.let {
-            return search(it,data)
-        }
+        action.invoke(
+            node.data
+        )
 
-        return node
+        forEach(
+            node.rightNode,
+            action
+        )
     }
 
     private fun searchAdd(
-        node: Node<T>,
+        node: Node<T>? = null,
         data: T
     ) {
-        if (moreThan.invoke(node.data, data)) {
+        if (node == null) {
+            return
+        }
+
+        if (moreThan.invoke(data, node.data)) {
             if (node.rightNode == null) {
                 node.rightNode = Node(
-                    data,
-                    node,
-                    null,
-                    null
+                    data
                 )
                 return
             }
 
             searchAdd(
-                node.rightNode!!,
+                node.rightNode,
                 data
             )
             return
@@ -72,16 +70,13 @@ class BinaryTree<T>(
 
         if (node.leftNode == null) {
             node.leftNode = Node(
-                data,
-                node,
-                null,
-                null
+                data
             )
             return
         }
 
         searchAdd(
-            node.leftNode!!,
+            node.leftNode,
             data
         )
     }
@@ -89,8 +84,7 @@ class BinaryTree<T>(
 
     data class Node<T>(
         var data: T,
-        val parent: Node<T>?,
-        var leftNode: Node<T>?,
-        var rightNode: Node<T>?
+        var leftNode: Node<T>? = null,
+        var rightNode: Node<T>? = null
     )
 }

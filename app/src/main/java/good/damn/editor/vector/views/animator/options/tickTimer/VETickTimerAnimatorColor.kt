@@ -15,6 +15,26 @@ class VETickTimerAnimatorColor
         color = 0xffff0000.toInt()
     }
 
+    private val mPaintTickBack = Paint().apply {
+        color = 0x99ff0000.toInt()
+    }
+
+    private var mRadius = 0f
+    private var mRadiusBack = 0f
+
+    override fun layoutGrid(
+        width: Float,
+        height: Float
+    ) {
+        super.layoutGrid(
+            width,
+            height
+        )
+
+        mRadiusBack = height * 0.15f
+        mRadius = mRadiusBack * 0.50f
+    }
+
     override fun drawGrid(
         canvas: Canvas
     ) = canvas.run {
@@ -30,11 +50,21 @@ class VETickTimerAnimatorColor
 
         val x = mRect.width()
         val y = (mRect.top + mRect.bottom) * 0.5f
+        var cx: Float
         tickList.forEach {
+            cx = mRect.left + x * it
+
             drawCircle(
-                mRect.left + x * it,
+                cx,
                 y,
-                25f,
+                mRadiusBack,
+                mPaintTickBack
+            )
+
+            drawCircle(
+                cx,
+                y,
+                mRadius,
                 mPaintTick
             )
         }

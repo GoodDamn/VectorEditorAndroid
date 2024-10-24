@@ -2,10 +2,16 @@
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import android.util.Log
+import good.damn.editor.vector.structures.BinaryTree
 import java.util.LinkedList
 
  abstract class VETickTimerAnimatorBase
 : VETickTimerAnimator {
+
+    companion object {
+        private val TAG = VETickTimerAnimatorBase::class.simpleName
+    }
 
     var x: Float
         get() = mRect.left
@@ -33,7 +39,14 @@ import java.util.LinkedList
 
     protected val mRect = RectF()
 
-     val tickList = LinkedList<Float>()
+     val tickList = BinaryTree<Float>(
+         equality = { v, v2 ->
+             v == v2
+         },
+         moreThan = { v, v2 ->
+             v > v2
+         }
+     )
 
     override fun layoutGrid(
         width: Float,
@@ -50,6 +63,11 @@ import java.util.LinkedList
         tickList.add(
             tickTimeFactor
         )
+
+        Log.d(TAG, "tick: begin forEach")
+        tickList.forEach {
+            Log.d(TAG, "tick: $it")
+        }
     }
 
 }

@@ -56,14 +56,13 @@ VEIDrawable {
         event.action
     ) {
         MotionEvent.ACTION_DOWN -> {
-            true
+            event.x > mStartX
         }
 
         MotionEvent.ACTION_MOVE -> {
             if (event.x > mStartX) {
                 tickPosition = (event.x - mStartX) / width
                 mTickPositionX = mStartX + tickPosition * width
-                Log.d(TAG, "onTouchEvent: ")
             } else {
                 mTickPositionX = mStartX
             }
