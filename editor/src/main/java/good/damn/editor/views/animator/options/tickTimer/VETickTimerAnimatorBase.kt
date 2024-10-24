@@ -3,6 +3,7 @@
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.util.Log
+import good.damn.editor.views.animator.options.tickTimer.VETickTimerAnimatorColor.Companion
 import good.damn.sav.misc.structures.BinaryTree
 import java.util.LinkedList
 
@@ -39,7 +40,7 @@ import java.util.LinkedList
 
     protected val mRect = RectF()
 
-     val tickList = good.damn.sav.misc.structures.BinaryTree<Float>(
+     val tickList = BinaryTree<Float>(
          equality = { v, v2 ->
              v == v2
          },
@@ -63,6 +64,10 @@ import java.util.LinkedList
         tickList.add(
             tickTimeFactor
         )
+
+        tickList.forEach {
+            Log.d(TAG, "tick: $it")
+        }
     }
 
 }

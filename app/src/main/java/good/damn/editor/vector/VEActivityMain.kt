@@ -18,6 +18,10 @@ import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.options.VEOptionFreeMove
 import good.damn.editor.options.VEOptionShapeable
 import good.damn.editor.views.VEViewVector
+import good.damn.editor.views.animator.VEViewAnimator
+import good.damn.editor.views.animator.options.VEOptionAnimatorColor
+import good.damn.editor.views.animator.options.VEOptionAnimatorData
+import good.damn.editor.views.animator.options.tickTimer.VETickTimerAnimatorColor
 import good.damn.gradient_color_picker.GradientColorPicker
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
