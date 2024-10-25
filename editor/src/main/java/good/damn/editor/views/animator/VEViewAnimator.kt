@@ -2,10 +2,14 @@ package good.damn.editor.views.animator
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.views.animator.options.VEOptionAnimatorData
+import good.damn.editor.views.animator.scroller.VEScrollerHorizontal
 import good.damn.editor.views.animator.ticker.VEAnimatorTicker
+import good.damn.sav.misc.interfaces.VEITouchable
+import kotlinx.coroutines.channels.ticker
 
 class VEViewAnimator(
     context: Context,
@@ -15,11 +19,18 @@ class VEViewAnimator(
     context
 ) {
 
+    companion object {
+        private val TAG = VEViewAnimator::class.simpleName
+    }
+
     var options: Array<
             VEOptionAnimatorData
     >? = null
 
     private val mTicker = VEAnimatorTicker()
+    private val mScrollerHorizontal = VEScrollerHorizontal()
+
+    private var mCurrentTouch: VEITouchable? = null
 
     var duration: Int = 500
 
@@ -38,7 +49,8 @@ class VEViewAnimator(
             bottom
         )
 
-        var y = 0f
+        val tickerHeight = height * 0.1f
+        var y = tickerHeight
         val ww = width * widthOptionFactor
         val hh = height * heightOptionFactor
         val wTimer = width - ww
@@ -64,23 +76,38 @@ class VEViewAnimator(
         }
 
         mTicker.layout(
-            wTimer,
-            ww
+            width = wTimer,
+            height = tickerHeight,
+            x = ww
         )
+
+        mScrollerHorizontal.triggerEndY = tickerHeight
+        mScrollerHorizontal.triggerEndX = ww
     }
 
     override fun onDraw(
         canvas: Canvas
-    ) {
-        super.onDraw(canvas)
+    ) = canvas.run {
+        super.onDraw(this)
 
         options?.forEach {
-            it.option.draw(canvas)
-            it.tickTimer.drawGrid(canvas)
+            it.option.draw(this)
+        }
+
+        options?.forEach {
+            it.option.draw(
+                canvas
+            )
+            it.tickTimer.scrollTimer = mScrollerHorizontal
+                .scrollValue
+
+            it.tickTimer.drawGrid(
+                canvas
+            )
         }
 
         mTicker.onDraw(
-            canvas
+            this
         )
     }
 
@@ -91,9 +118,29 @@ class VEViewAnimator(
             return false
         }
 
-        mTicker.onTouchEvent(
+        mCurrentTouch?.let {
+            if (!it.onTouchEvent(event)) {
+                mCurrentTouch = null
+            }
+            invalidate()
+            return true
+        }
+
+        if (mTicker.onTouchEvent(
             event
-        )
+        )) {
+            mCurrentTouch = mTicker
+            invalidate()
+            return true
+        }
+
+        if (mScrollerHorizontal.onTouchEvent(
+            event
+        )) {
+            mCurrentTouch = mScrollerHorizontal
+            invalidate()
+            return true
+        }
 
         if (event.action == MotionEvent.ACTION_UP) {
             options?.forEach {
@@ -104,9 +151,10 @@ class VEViewAnimator(
                     )
                 }
             }
+
+            invalidate()
         }
 
-        invalidate()
         return true
     }
 

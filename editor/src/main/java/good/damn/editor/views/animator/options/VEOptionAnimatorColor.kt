@@ -34,11 +34,11 @@ class VEOptionAnimatorColor
         )
 
         c25x = width * 0.8f
-        c25y = height * 0.5f
+        c25y = y + height * 0.5f
         c25radius = (width + height) * 0.2f
 
         c76x = width * 0.8f
-        c76y = height * 0.5f
+        c76y = y + height * 0.5f
         c76radius = (width + height) * 0.3f
     }
 

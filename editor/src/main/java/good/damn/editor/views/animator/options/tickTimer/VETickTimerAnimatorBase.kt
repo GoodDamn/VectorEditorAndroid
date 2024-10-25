@@ -7,7 +7,7 @@ import good.damn.editor.views.animator.options.tickTimer.VETickTimerAnimatorColo
 import good.damn.sav.misc.structures.BinaryTree
 import java.util.LinkedList
 
- abstract class VETickTimerAnimatorBase
+abstract class VETickTimerAnimatorBase
 : VETickTimerAnimator {
 
     companion object {
@@ -38,16 +38,18 @@ import java.util.LinkedList
             mRect.bottom = mRect.top + v
         }
 
+    var scrollTimer = 0f
+
     protected val mRect = RectF()
 
-     val tickList = BinaryTree<Float>(
-         equality = { v, v2 ->
-             v == v2
-         },
-         moreThan = { v, v2 ->
-             v > v2
-         }
-     )
+    val tickList = BinaryTree<Float>(
+        equality = { v, v2 ->
+            v == v2
+        },
+        moreThan = { v, v2 ->
+            v > v2
+        }
+    )
 
     override fun layoutGrid(
         width: Float,
@@ -64,10 +66,6 @@ import java.util.LinkedList
         tickList.add(
             tickTimeFactor
         )
-
-        tickList.forEach {
-            Log.d(TAG, "tick: $it")
-        }
     }
 
 }

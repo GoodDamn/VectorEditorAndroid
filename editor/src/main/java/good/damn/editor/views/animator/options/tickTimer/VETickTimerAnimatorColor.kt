@@ -52,11 +52,11 @@ class VETickTimerAnimatorColor
             mPaintBack
         )
 
-        val x = mRect.width()
+        val x = mRect.width()it
         val y = (mRect.top + mRect.bottom) * 0.5f
         var cx: Float
         tickList.forEach {
-            cx = mRect.left + x * it
+            cx = mRect.left + scrollTimer + x * it
 
             drawCircle(
                 cx,

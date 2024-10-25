@@ -2,6 +2,7 @@ package good.damn.editor.views.animator.ticker
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.util.Log
 import android.view.MotionEvent
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
@@ -26,15 +27,19 @@ VEIDrawable {
         style = Paint.Style.STROKE
     }
 
+    private var mEndY = 0f
     private var mStartX = 0f
     private var mTickPositionX = 0f
 
     fun layout(
         width: Float,
+        height: Float,
         x: Float
     ) {
         this.width = width
         mStartX = x
+        mEndY = height
+        mTickPositionX = x
     }
 
     override fun onDraw(
@@ -51,24 +56,20 @@ VEIDrawable {
 
     override fun onTouchEvent(
         event: MotionEvent
-    ) = when (
-        event.action
-    ) {
-        MotionEvent.ACTION_DOWN -> {
-            event.x > mStartX
+    ): Boolean {
+
+        if (event.y > mEndY) {
+            return false
         }
 
-        MotionEvent.ACTION_MOVE -> {
-            if (event.x > mStartX) {
-                tickPosition = (event.x - mStartX) / width
-                mTickPositionX = mStartX + tickPosition * width
-            } else {
-                mTickPositionX = mStartX
-            }
-
-            true
+        if (event.x > mStartX) {
+            tickPosition = (event.x - mStartX) / width
+            mTickPositionX = mStartX + tickPosition * width
+        } else {
+            mTickPositionX = mStartX
         }
-        else -> false
+
+        return true
     }
 
 }

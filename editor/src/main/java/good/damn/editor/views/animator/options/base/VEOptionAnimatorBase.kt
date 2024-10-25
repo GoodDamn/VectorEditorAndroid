@@ -32,8 +32,6 @@ abstract class VEOptionAnimatorBase
             mRect.bottom = mRect.top + v
         }
 
-
-
     protected val mRect = RectF()
 
     override fun layout(
