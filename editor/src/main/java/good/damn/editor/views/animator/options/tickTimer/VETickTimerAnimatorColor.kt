@@ -52,7 +52,7 @@ class VETickTimerAnimatorColor
             mPaintBack
         )
 
-        val x = mRect.width()it
+        val x = mRect.width()
         val y = (mRect.top + mRect.bottom) * 0.5f
         var cx: Float
         tickList.forEach {
