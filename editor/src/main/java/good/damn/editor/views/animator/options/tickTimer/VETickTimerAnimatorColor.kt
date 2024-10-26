@@ -42,7 +42,7 @@ class VETickTimerAnimatorColor
     override fun drawGrid(
         canvas: Canvas
     ) = canvas.run {
-        save()
+        gitsave()
 
         clipRect(
             mRect
@@ -55,6 +55,7 @@ class VETickTimerAnimatorColor
         val x = mRect.width()
         val y = (mRect.top + mRect.bottom) * 0.5f
         var cx: Float
+
         tickList.forEach {
             cx = mRect.left + scrollTimer + x * it
 
