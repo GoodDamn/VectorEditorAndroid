@@ -10,6 +10,7 @@ import good.damn.editor.views.animator.scroller.VEScrollerHorizontal
 import good.damn.editor.views.animator.ticker.VEAnimatorTicker
 import good.damn.sav.misc.interfaces.VEITouchable
 import kotlinx.coroutines.channels.ticker
+import kotlin.math.abs
 
 class VEViewAnimator(
     context: Context,
@@ -24,7 +25,7 @@ class VEViewAnimator(
     }
 
     var options: Array<
-            VEOptionAnimatorData
+        VEOptionAnimatorData
     >? = null
 
     private val mTicker = VEAnimatorTicker()
@@ -32,7 +33,21 @@ class VEViewAnimator(
 
     private var mCurrentTouch: VEITouchable? = null
 
-    var duration: Int = 500
+    var duration: Int = 1000 // ms
+        set(v) {
+            field = v
+
+            durationPx = (
+                v / 1000f * width
+            ).toInt()
+
+            options?.forEach {
+                it.tickTimer.durationPx = durationPx
+            }
+        }
+
+    var durationPx: Int = 0
+        private set
 
     override fun onLayout(
         changed: Boolean,
@@ -67,6 +82,7 @@ class VEViewAnimator(
             it.tickTimer.let {
                 it.x = ww
                 it.y = y
+                it.durationPx = width
                 it.layoutGrid(
                     wTimer, hh
                 )
@@ -74,6 +90,8 @@ class VEViewAnimator(
 
             y += hh
         }
+
+        duration = 5000
 
         mTicker.layout(
             width = wTimer,
@@ -145,9 +163,15 @@ class VEViewAnimator(
         if (event.action == MotionEvent.ACTION_UP) {
             options?.forEach {
                 if (event.x < it.option.width) {
+
+                    val fa = (abs(
+                        mScrollerHorizontal
+                        .scrollValue
+                    ) + mTicker.tickPosition) / durationPx
+
                     it.tickTimer.tick(
                         duration,
-                        mTicker.tickPosition
+                        fa
                     )
                 }
             }

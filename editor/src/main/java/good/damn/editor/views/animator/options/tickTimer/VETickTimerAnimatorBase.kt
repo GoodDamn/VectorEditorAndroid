@@ -1,13 +1,14 @@
  package good.damn.editor.views.animator.options.tickTimer
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.RectF
 import android.util.Log
 import good.damn.editor.views.animator.options.tickTimer.VETickTimerAnimatorColor.Companion
 import good.damn.sav.misc.structures.BinaryTree
 import java.util.LinkedList
 
-abstract class VETickTimerAnimatorBase
+open class VETickTimerAnimatorBase
 : VETickTimerAnimator {
 
     companion object {
@@ -39,8 +40,7 @@ abstract class VETickTimerAnimatorBase
         }
 
     var scrollTimer = 0f
-
-    protected val mRect = RectF()
+    var durationPx = 0
 
     val tickList = BinaryTree<Float>(
         equality = { v, v2 ->
@@ -51,12 +51,69 @@ abstract class VETickTimerAnimatorBase
         }
     )
 
+    protected val mRect = RectF()
+
+    protected val mPaintBack = Paint().apply {
+        color = 0x22ffffff
+    }
+
+    protected val mPaintTick = Paint().apply {
+        color = 0xffff0000.toInt()
+    }
+
+    protected val mPaintTickBack = Paint().apply {
+        color = 0x99ff0000.toInt()
+    }
+
+    protected var mRadius = 0f
+    protected var mRadiusBack = 0f
+
     override fun layoutGrid(
         width: Float,
         height: Float
     ) {
         this.width = width
         this.height = height
+
+        mRadiusBack = height * 0.15f
+        mRadius = mRadiusBack * 0.50f
+    }
+
+    override fun drawGrid(
+        canvas: Canvas
+    ) = canvas.run {
+        save()
+
+        clipRect(
+            mRect
+        )
+
+        drawPaint(
+            mPaintBack
+        )
+
+        val y = (mRect.top + mRect.bottom) * 0.5f
+        var cx: Float
+
+        tickList.forEach {
+            cx = mRect.left + scrollTimer + durationPx * it
+
+            drawCircle(
+                cx,
+                y,
+                mRadiusBack,
+                mPaintTickBack
+            )
+
+            drawCircle(
+                cx,
+                y,
+                mRadius,
+                mPaintTick
+            )
+        }
+
+        restore()
     }
 
     override fun tick(

@@ -15,6 +15,9 @@ VEIDrawable {
         private val TAG = VEAnimatorTicker::class.simpleName
     }
 
+    var tickPositionFactor = 0f
+        private set
+
     var tickPosition = 0f
         private set
 
@@ -63,8 +66,9 @@ VEIDrawable {
         }
 
         if (event.x > mStartX) {
-            tickPosition = (event.x - mStartX) / width
-            mTickPositionX = mStartX + tickPosition * width
+            tickPosition = event.x - mStartX
+            tickPositionFactor = tickPosition / width
+            mTickPositionX = event.x
         } else {
             mTickPositionX = mStartX
         }
