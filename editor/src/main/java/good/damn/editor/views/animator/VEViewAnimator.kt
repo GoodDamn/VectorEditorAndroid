@@ -2,6 +2,7 @@ package good.damn.editor.views.animator
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -33,12 +34,16 @@ class VEViewAnimator(
 
     private var mCurrentTouch: VEITouchable? = null
 
+    private var mPaintText = Paint().apply {
+        color = 0xffff00ff.toInt()
+    }
+
     var duration: Int = 1000 // ms
         set(v) {
             field = v
 
             durationPx = (
-                v / 1000f * width
+                v / 1000f * (width - mScrollerHorizontal.triggerEndX)
             ).toInt()
 
             options?.forEach {
@@ -91,8 +96,6 @@ class VEViewAnimator(
             y += hh
         }
 
-        duration = 5000
-
         mTicker.layout(
             width = wTimer,
             height = tickerHeight,
@@ -101,6 +104,10 @@ class VEViewAnimator(
 
         mScrollerHorizontal.triggerEndY = tickerHeight
         mScrollerHorizontal.triggerEndX = ww
+
+        mPaintText.textSize = height * 0.04f
+
+        duration = 5000
     }
 
     override fun onDraw(
@@ -108,21 +115,35 @@ class VEViewAnimator(
     ) = canvas.run {
         super.onDraw(this)
 
-        options?.forEach {
-            it.option.draw(this)
-        }
-
+        var tickX = 0f
+        var tickY = 0f
         options?.forEach {
             it.option.draw(
                 canvas
             )
-            it.tickTimer.scrollTimer = mScrollerHorizontal
-                .scrollValue
 
-            it.tickTimer.drawGrid(
-                canvas
-            )
+            it.tickTimer.apply {
+                scrollTimer = mScrollerHorizontal.scrollValue
+                drawGrid(canvas)
+                tickX = this@apply.x
+                tickY = this@apply.y
+            }
         }
+
+        val scrollDuration = (abs(
+            mScrollerHorizontal.scrollValue
+        ) / durationPx * duration).toInt()
+
+        val ii = (scrollDuration / 1000 + 1) * 1000
+
+        val pos = ii.toFloat() / duration * durationPx
+
+        drawText(
+            ii.toString(),
+            tickX + pos + mScrollerHorizontal.scrollValue,
+            tickY,
+            mPaintText
+        )
 
         mTicker.onDraw(
             this

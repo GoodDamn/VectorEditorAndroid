@@ -14,8 +14,8 @@ class VEScrollerHorizontal
     var scrollValue = 0f
         private set
 
-    var triggerEndY = 0f
     var triggerEndX = 0f
+    var triggerEndY = 0f
 
     private var mAnchorX = 0f
     private var mScrollX = 0f
