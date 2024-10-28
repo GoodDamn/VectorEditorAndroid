@@ -1,15 +1,15 @@
-package good.damn.editor.views.animator
+package good.damn.editor.views
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
-import good.damn.editor.views.animator.options.VEOptionAnimatorBase
-import good.damn.editor.views.animator.scroller.VEScrollerHorizontal
-import good.damn.editor.views.animator.ticker.VEAnimatorTicker
+import good.damn.editor.animator.options.VEOptionAnimatorBase
+import good.damn.editor.animator.scroller.VEScrollerHorizontal
+import good.damn.editor.animator.ticker.VEAnimatorTicker
+import good.damn.sav.misc.extensions.primitives.isInRange
 import good.damn.sav.misc.interfaces.VEITouchable
-import good.damn.sav.misc.interfaces.VERectable
 import kotlin.math.abs
 
 class VEViewAnimator(
@@ -25,7 +25,7 @@ class VEViewAnimator(
     }
 
     var options: Array<
-       VEOptionAnimatorBase
+            VEOptionAnimatorBase
     >? = null
 
     private val mTicker = VEAnimatorTicker()
@@ -181,8 +181,10 @@ class VEViewAnimator(
 
         if (event.action == MotionEvent.ACTION_UP) {
             options?.forEach {
-                if (event.x < it.width) {
-
+                if (event.x < it.width && event.y.isInRange(
+                   it.y,
+                   it.y+it.height
+                )) {
                     val fa = (abs(
                         mScrollerHorizontal
                         .scrollValue

@@ -1,12 +1,12 @@
-package good.damn.editor.views.animator.options.tickTimer
+package good.damn.editor.animator.options.tickTimer
 
 import androidx.annotation.ColorInt
-import good.damn.editor.views.animator.options.tickTimer.base.VETickTimerAnimatorBase
-import good.damn.editor.views.animator.options.tickTimer.data.VETickDataColor
+import good.damn.editor.animator.options.tickTimer.base.VETickTimerAnimatorBase
+import good.damn.editor.animator.options.tickTimer.data.VETickDataColor
 import good.damn.sav.misc.structures.BinaryTree
 
 class VETickTimerAnimatorColor
-: VETickTimerAnimatorBase<VETickDataColor>() {
+: VETickTimerAnimatorBase() {
 
     companion object {
         private val TAG = VETickTimerAnimatorColor::class.simpleName

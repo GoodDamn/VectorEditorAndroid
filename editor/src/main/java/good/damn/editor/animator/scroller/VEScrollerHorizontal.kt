@@ -1,4 +1,4 @@
-package good.damn.editor.views.animator.scroller
+package good.damn.editor.animator.scroller
 
 import android.util.Log
 import android.view.MotionEvent

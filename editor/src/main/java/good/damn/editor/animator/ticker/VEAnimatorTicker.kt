@@ -1,4 +1,4 @@
-package good.damn.editor.views.animator.ticker
+package good.damn.editor.animator.ticker
 
 import android.graphics.Canvas
 import android.graphics.Paint

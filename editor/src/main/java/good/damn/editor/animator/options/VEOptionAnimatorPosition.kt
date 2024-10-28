@@ -1,16 +1,17 @@
-package good.damn.editor.views.animator.options
+package good.damn.editor.animator.options
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import good.damn.editor.animator.options.tickTimer.VETickTimerAnimatorPosition
+import good.damn.editor.animator.options.tickTimer.base.VETickTimerAnimatorBase
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VERectable
 
 class VEOptionAnimatorPosition
-: VERectable(),
-VEIDrawable {
+: VEOptionAnimatorBase() {
 
     private val mPaintBackground = Paint().apply {
-        color = 0xffffff00.toInt()
+        color = 0xffb7730b.toInt()
     }
 
     private val mPaintText = Paint().apply {
@@ -20,6 +21,8 @@ VEIDrawable {
 
     private var mTextX = 0f
     private var mTextY = 0f
+
+    override val tickTimer = VETickTimerAnimatorPosition()
 
     override fun layout(
         width: Float,

@@ -1,17 +1,16 @@
- package good.damn.editor.views.animator.options.tickTimer.base
+ package good.damn.editor.animator.options.tickTimer.base
 
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import good.damn.editor.interfaces.VEITickable
-import good.damn.editor.views.animator.options.tickTimer.data.base.VETickData
+import good.damn.editor.animator.options.tickTimer.data.base.VETickData
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEILayoutable
 import good.damn.sav.misc.structures.BinaryTree
 
-abstract class VETickTimerAnimatorBase<
-    T: VETickData
->: VEITickable,
+abstract class VETickTimerAnimatorBase
+: VEITickable,
 VEIDrawable,
 VEILayoutable {
 
@@ -63,7 +62,7 @@ VEILayoutable {
     protected var mRadius = 0f
     protected var mRadiusBack = 0f
 
-     val tickList = BinaryTree<T>(
+     val tickList = BinaryTree<VETickData>(
          equality = { v, v2 ->
              v == v2
          },
