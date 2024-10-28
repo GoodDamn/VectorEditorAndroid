@@ -1,15 +1,19 @@
- package good.damn.editor.views.animator.options.tickTimer
+ package good.damn.editor.views.animator.options.tickTimer.base
 
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import android.util.Log
-import good.damn.editor.views.animator.options.tickTimer.VETickTimerAnimatorColor.Companion
+import good.damn.editor.interfaces.VEITickable
+import good.damn.editor.views.animator.options.tickTimer.data.base.VETickData
+import good.damn.sav.misc.interfaces.VEIDrawable
+import good.damn.sav.misc.interfaces.VEILayoutable
 import good.damn.sav.misc.structures.BinaryTree
-import java.util.LinkedList
 
-open class VETickTimerAnimatorBase
-: VETickTimerAnimator {
+abstract class VETickTimerAnimatorBase<
+    T: VETickData
+>: VEITickable,
+VEIDrawable,
+VEILayoutable {
 
     companion object {
         private val TAG = VETickTimerAnimatorBase::class.simpleName
@@ -42,15 +46,6 @@ open class VETickTimerAnimatorBase
     var scrollTimer = 0f
     var durationPx = 0
 
-    val tickList = BinaryTree<Float>(
-        equality = { v, v2 ->
-            v == v2
-        },
-        moreThan = { v, v2 ->
-            v > v2
-        }
-    )
-
     protected val mRect = RectF()
 
     protected val mPaintBack = Paint().apply {
@@ -68,7 +63,16 @@ open class VETickTimerAnimatorBase
     protected var mRadius = 0f
     protected var mRadiusBack = 0f
 
-    override fun layoutGrid(
+     val tickList = BinaryTree<T>(
+         equality = { v, v2 ->
+             v == v2
+         },
+         moreThan = { v,v2 ->
+             v.compareMoreThan(v2)
+         }
+     )
+
+    override fun layout(
         width: Float,
         height: Float
     ) {
@@ -79,7 +83,7 @@ open class VETickTimerAnimatorBase
         mRadius = mRadiusBack * 0.50f
     }
 
-    override fun drawGrid(
+    override fun draw(
         canvas: Canvas
     ) = canvas.run {
         save()
@@ -96,7 +100,7 @@ open class VETickTimerAnimatorBase
         var cx: Float
 
         tickList.forEach {
-            cx = mRect.left + scrollTimer + durationPx * it
+            cx = mRect.left + scrollTimer + durationPx * it.tickFactor
 
             drawCircle(
                 cx,
@@ -114,15 +118,6 @@ open class VETickTimerAnimatorBase
         }
 
         restore()
-    }
-
-    override fun tick(
-        tickTimeMs: Int,
-        tickTimeFactor: Float
-    ) {
-        tickList.add(
-            tickTimeFactor
-        )
     }
 
 }

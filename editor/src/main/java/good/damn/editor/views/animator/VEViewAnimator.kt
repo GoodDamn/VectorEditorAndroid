@@ -3,14 +3,13 @@ package good.damn.editor.views.animator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import good.damn.editor.views.animator.options.VEOptionAnimatorData
+import good.damn.editor.views.animator.options.VEOptionAnimatorBase
 import good.damn.editor.views.animator.scroller.VEScrollerHorizontal
 import good.damn.editor.views.animator.ticker.VEAnimatorTicker
 import good.damn.sav.misc.interfaces.VEITouchable
-import kotlinx.coroutines.channels.ticker
+import good.damn.sav.misc.interfaces.VERectable
 import kotlin.math.abs
 
 class VEViewAnimator(
@@ -26,7 +25,7 @@ class VEViewAnimator(
     }
 
     var options: Array<
-        VEOptionAnimatorData
+       VEOptionAnimatorBase
     >? = null
 
     private val mTicker = VEAnimatorTicker()
@@ -35,7 +34,7 @@ class VEViewAnimator(
     private var mCurrentTouch: VEITouchable? = null
 
     private var mPaintText = Paint().apply {
-        color = 0xffff00ff.toInt()
+        color = mTicker.color
     }
 
     var duration: Int = 1000 // ms
@@ -76,7 +75,7 @@ class VEViewAnimator(
         val wTimer = width - ww
 
         options?.forEach {
-            it.option.let {
+            it.let {
                 it.x = 0f
                 it.y = y
                 it.layout(
@@ -88,7 +87,7 @@ class VEViewAnimator(
                 it.x = ww
                 it.y = y
                 it.durationPx = width
-                it.layoutGrid(
+                it.layout(
                     wTimer, hh
                 )
             }
@@ -105,7 +104,7 @@ class VEViewAnimator(
         mScrollerHorizontal.triggerEndY = tickerHeight
         mScrollerHorizontal.triggerEndX = ww
 
-        mPaintText.textSize = height * 0.04f
+        mPaintText.textSize = height * 0.02f
 
         duration = 5000
     }
@@ -118,13 +117,13 @@ class VEViewAnimator(
         var tickX = 0f
         var tickY = 0f
         options?.forEach {
-            it.option.draw(
+            it.draw(
                 canvas
             )
 
             it.tickTimer.apply {
                 scrollTimer = mScrollerHorizontal.scrollValue
-                drawGrid(canvas)
+                draw(canvas)
                 tickX = this@apply.x
                 tickY = this@apply.y
             }
@@ -135,7 +134,6 @@ class VEViewAnimator(
         ) / durationPx * duration).toInt()
 
         val ii = (scrollDuration / 1000 + 1) * 1000
-
         val pos = ii.toFloat() / duration * durationPx
 
         drawText(
@@ -145,7 +143,7 @@ class VEViewAnimator(
             mPaintText
         )
 
-        mTicker.onDraw(
+        mTicker.draw(
             this
         )
     }
@@ -183,7 +181,7 @@ class VEViewAnimator(
 
         if (event.action == MotionEvent.ACTION_UP) {
             options?.forEach {
-                if (event.x < it.option.width) {
+                if (event.x < it.width) {
 
                     val fa = (abs(
                         mScrollerHorizontal

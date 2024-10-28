@@ -28,7 +28,7 @@ class VEShapeLine(
         }
     }
 
-    override fun onDraw(
+    override fun draw(
         canvas: Canvas
     ) {
         points[0]?.let { p1 ->

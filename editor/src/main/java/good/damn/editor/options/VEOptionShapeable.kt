@@ -193,7 +193,7 @@ VEIDrawable,
         return true
     }
 
-    override fun onDraw(
+    override fun draw(
         canvas: Canvas
     ) {
         mAnchor.draw(

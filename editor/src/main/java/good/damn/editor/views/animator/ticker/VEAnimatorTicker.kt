@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.Log
 import android.view.MotionEvent
+import androidx.annotation.ColorInt
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
 
@@ -23,6 +24,14 @@ VEIDrawable {
 
     var width = 0f
         private set
+
+    @setparam:ColorInt
+    @get:ColorInt
+    var color: Int
+        get() = mPaint.color
+        set(v) {
+            mPaint.color = v
+        }
 
     private val mPaint = Paint().apply {
         color = 0xffffaa00.toInt()
@@ -45,7 +54,7 @@ VEIDrawable {
         mTickPositionX = x
     }
 
-    override fun onDraw(
+    override fun draw(
         canvas: Canvas
     ) {
         canvas.drawLine(

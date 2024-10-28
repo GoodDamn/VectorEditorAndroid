@@ -2,11 +2,13 @@ package good.damn.editor.views.animator.options
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import good.damn.editor.views.animator.options.base.VEOptionAnimatorBase
 import good.damn.editor.views.animator.options.tickTimer.VETickTimerAnimatorColor
+import good.damn.sav.misc.interfaces.VEIDrawable
+import good.damn.sav.misc.interfaces.VERectable
 
 class VEOptionAnimatorColor
-: VEOptionAnimatorBase() {
+: VERectable(),
+VEIDrawable {
 
     private val mPaintGradient25 = Paint().apply {
         color = 0x55ffffff

@@ -2,13 +2,15 @@ package good.damn.editor.views.animator.options
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import good.damn.editor.views.animator.options.base.VEOptionAnimatorBase
+import good.damn.sav.misc.interfaces.VEIDrawable
+import good.damn.sav.misc.interfaces.VERectable
 
-class VEOptionAnimatorPositionX
-: VEOptionAnimatorBase() {
+class VEOptionAnimatorPosition
+: VERectable(),
+VEIDrawable {
 
     private val mPaintBackground = Paint().apply {
-        color = 0xffff0000.toInt()
+        color = 0xffffff00.toInt()
     }
 
     private val mPaintText = Paint().apply {
@@ -48,7 +50,7 @@ class VEOptionAnimatorPositionX
         )
 
         drawText(
-            "X",
+            "XY",
             mTextX,
             mTextY,
             mPaintText

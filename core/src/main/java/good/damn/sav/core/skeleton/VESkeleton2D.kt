@@ -78,7 +78,7 @@ class VESkeleton2D(
     fun removeLast() = mPoints
         .removeLastOrNull()
 
-    override fun onDraw(
+    override fun draw(
         canvas: Canvas
     ) {
         mPoints.forEach {

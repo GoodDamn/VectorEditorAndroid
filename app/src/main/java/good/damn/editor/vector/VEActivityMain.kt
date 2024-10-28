@@ -1,6 +1,5 @@
 package good.damn.editor.vector
 
-import android.app.Activity
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
@@ -18,10 +17,6 @@ import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.options.VEOptionFreeMove
 import good.damn.editor.options.VEOptionShapeable
 import good.damn.editor.views.VEViewVector
-import good.damn.editor.views.animator.VEViewAnimator
-import good.damn.editor.views.animator.options.VEOptionAnimatorColor
-import good.damn.editor.views.animator.options.VEOptionAnimatorData
-import good.damn.editor.views.animator.options.tickTimer.VETickTimerAnimatorColor
 import good.damn.gradient_color_picker.GradientColorPicker
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
@@ -342,20 +337,20 @@ VEIListenerOnAnchorPoint {
         mViewVector?.invalidate()
     }
 
-    override fun onDraw(
+    override fun draw(
         canvas: Canvas
     ) = mOptionShape.run {
-        skeleton.onDraw(
+        skeleton.draw(
             canvas
         )
 
         shapes.forEach {
-            it.onDraw(
+            it.draw(
                 canvas
             )
         }
 
-        mOptionShape.onDraw(
+        mOptionShape.draw(
             canvas
         )
     }

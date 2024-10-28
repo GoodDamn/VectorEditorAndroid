@@ -36,7 +36,7 @@ class VEShapeBezierС(
         }
     }
 
-    override fun onDraw(
+    override fun draw(
         canvas: Canvas
     ) = mPath.run {
         reset()

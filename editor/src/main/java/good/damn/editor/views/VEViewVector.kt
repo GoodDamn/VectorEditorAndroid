@@ -28,7 +28,7 @@ class VEViewVector(
             canvas
         )
 
-        canvasRenderer?.onDraw(
+        canvasRenderer?.draw(
             canvas
         )
     }

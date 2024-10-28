@@ -1,12 +1,9 @@
-package good.damn.editor.views.animator.options.base
+package good.damn.sav.misc.interfaces
 
+import android.graphics.Canvas
 import android.graphics.RectF
-import android.view.MotionEvent
-import good.damn.editor.views.animator.options.tickTimer.VETickTimerAnimator
-import java.util.LinkedList
 
-abstract class VEOptionAnimatorBase
-: VEOptionAnimator {
+open class VERectable: VEILayoutable {
 
     var x: Float
         get() = mRect.left
