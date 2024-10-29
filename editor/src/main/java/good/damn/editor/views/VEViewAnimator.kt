@@ -12,6 +12,11 @@ import good.damn.editor.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animator.ticker.VEAnimatorTicker
 import good.damn.sav.misc.extensions.primitives.isInRange
 import good.damn.sav.misc.interfaces.VEITouchable
+import good.damn.sav.misc.scopes.TimeScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 class VEViewAnimator(
@@ -21,35 +26,23 @@ class VEViewAnimator(
     private val heightTickTriggerFactor: Float
 ): View(
     context
-), VEIListenerOnScrollVertical {
+) {
 
     companion object {
         private val TAG = VEViewAnimator::class.simpleName
     }
 
     var options: Array<
-            VEOptionAnimatorBase
+        VEOptionAnimatorBase
     >? = null
-
-    private val mTicker = VEAnimatorTicker()
-    private val mScrollerHorizontal = VEScrollerHorizontal()
-    private val mScrollerVertical = VEScrollerVertical().apply {
-        onScroll = this@VEViewAnimator
-    }
-
-    private var mCurrentTouch: VEITouchable? = null
-
-    private var mPaintText = Paint().apply {
-        color = mTicker.color
-    }
 
     var duration: Int = 1000 // ms
         set(v) {
             field = v
 
             durationPx = (
-                v / 1000f * (width - mScrollerHorizontal.triggerEndX)
-            ).toInt()
+                    v / 1000f * (width - mScrollerHorizontal.triggerEndX)
+                    ).toInt()
 
             options?.forEach {
                 it.tickTimer.durationPx = durationPx
@@ -58,6 +51,63 @@ class VEViewAnimator(
 
     var durationPx: Int = 0
         private set
+
+    var isPlaying: Boolean = false
+        private set
+
+    private val mTicker = VEAnimatorTicker()
+    private val mScrollerHorizontal = VEScrollerHorizontal()
+    private val mScrollerVertical = VEScrollerVertical()
+
+    private var mCurrentTouch: VEITouchable? = null
+
+    private var mPaintText = Paint().apply {
+        color = mTicker.color
+    }
+
+    private val mScope = TimeScope(
+        Dispatchers.IO
+    )
+
+    private var mJobPlay: Job? = null
+
+    fun pause() {
+        isPlaying = false
+        mJobPlay?.cancel()
+    }
+
+    fun play(
+        atTimeMs: Long = 0L
+    ) {
+        if (isPlaying) {
+            pause()
+            return
+        }
+
+        isPlaying = true
+
+        mJobPlay = mScope.launch {
+            var currentMs = atTimeMs
+            var dt: Long
+            mScope.remember()
+
+            while (currentMs < duration && isPlaying) {
+                dt = mScope.deltaTime
+
+                mScrollerHorizontal.scrollValue = currentMs
+                    .toFloat() / duration * -durationPx
+
+                currentMs += dt
+                mScope.remember()
+
+                launch(
+                    Dispatchers.Main
+                ) {
+                    invalidate()
+                }
+            }
+        }
+    }
 
     override fun onLayout(
         changed: Boolean,
@@ -123,6 +173,7 @@ class VEViewAnimator(
     override fun onDraw(
         canvas: Canvas
     ) = canvas.run {
+
         super.onDraw(this)
 
         var tickX = 0f
@@ -214,14 +265,14 @@ class VEViewAnimator(
             mScrollerVertical.apply {
                 options?.forEach {
                     val y = it.y + scrollValue
-                    if (event.x < it.width
-                        && (event.y + scrollValue).isInRange(
+                    if (y > 0
+                        && event.x < it.width
+                        && event.y.isInRange(
                             y,
                             y+it.height
                     )) {
-                        val fa = (abs(
-                            mScrollerHorizontal
-                                .scrollValue
+                        val fa = (abs(mScrollerHorizontal
+                            .scrollValue
                         ) + mTicker.tickPosition) / durationPx
 
                         it.tickTimer.tick(
@@ -236,11 +287,5 @@ class VEViewAnimator(
         }
 
         return true
-    }
-
-    override fun onScrollVertical(
-        v: Float
-    ) {
-
     }
 }

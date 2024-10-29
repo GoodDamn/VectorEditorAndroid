@@ -74,7 +74,7 @@ VEIDrawable {
             0f,
             mTickPositionX,
             canvas.height.toFloat(),
-            mPaintg
+            mPaint
         )
     }
 
@@ -87,11 +87,11 @@ VEIDrawable {
         }
 
         if (event.x > mTriggerRect.left) {
-            tickPosition = event.x - mTriggerRect.right
+            tickPosition = event.x - mTriggerRect.left
             tickPositionFactor = tickPosition / width
             mTickPositionX = event.x
         } else {
-            mTickPositionX = mTriggerRect.right
+            mTickPositionX = mTriggerRect.left
         }
 
         return true
