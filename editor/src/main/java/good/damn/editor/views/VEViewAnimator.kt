@@ -7,6 +7,8 @@ import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animator.scroller.VEScrollerHorizontal
+import good.damn.editor.animator.scroller.vertical.VEIListenerOnScrollVertical
+import good.damn.editor.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animator.ticker.VEAnimatorTicker
 import good.damn.sav.misc.extensions.primitives.isInRange
 import good.damn.sav.misc.interfaces.VEITouchable
@@ -15,10 +17,11 @@ import kotlin.math.abs
 class VEViewAnimator(
     context: Context,
     private val heightOptionFactor: Float,
-    private val widthOptionFactor: Float
+    private val widthOptionFactor: Float,
+    private val heightTickTriggerFactor: Float
 ): View(
     context
-) {
+), VEIListenerOnScrollVertical {
 
     companion object {
         private val TAG = VEViewAnimator::class.simpleName
@@ -30,6 +33,9 @@ class VEViewAnimator(
 
     private val mTicker = VEAnimatorTicker()
     private val mScrollerHorizontal = VEScrollerHorizontal()
+    private val mScrollerVertical = VEScrollerVertical().apply {
+        onScroll = this@VEViewAnimator
+    }
 
     private var mCurrentTouch: VEITouchable? = null
 
@@ -68,7 +74,7 @@ class VEViewAnimator(
             bottom
         )
 
-        val tickerHeight = height * 0.1f
+        val tickerHeight = height * heightTickTriggerFactor
         var y = tickerHeight
         val ww = width * widthOptionFactor
         val hh = height * heightOptionFactor
@@ -96,15 +102,20 @@ class VEViewAnimator(
         }
 
         mTicker.layout(
-            width = wTimer,
-            height = tickerHeight,
-            x = ww
+            0f,
+            tickerHeight,
+            ww,
+            width.toFloat()
         )
 
-        mScrollerHorizontal.triggerEndY = tickerHeight
-        mScrollerHorizontal.triggerEndX = ww
+        mScrollerHorizontal.apply {
+            triggerEndY = tickerHeight
+            triggerEndX = ww
+        }
 
-        mPaintText.textSize = height * 0.02f
+        mScrollerVertical.triggerEndX = ww * 0.5f
+
+        mPaintText.textSize = tickerHeight * 0.5f
 
         duration = 5000
     }
@@ -116,6 +127,14 @@ class VEViewAnimator(
 
         var tickX = 0f
         var tickY = 0f
+
+        save()
+
+        translate(
+            0f,
+            mScrollerVertical.scrollValue
+        )
+
         options?.forEach {
             it.draw(
                 canvas
@@ -143,9 +162,12 @@ class VEViewAnimator(
             mPaintText
         )
 
+        restore()
+
         mTicker.draw(
             this
         )
+
     }
 
     override fun onTouchEvent(
@@ -179,21 +201,34 @@ class VEViewAnimator(
             return true
         }
 
-        if (event.action == MotionEvent.ACTION_UP) {
-            options?.forEach {
-                if (event.x < it.width && event.y.isInRange(
-                   it.y,
-                   it.y+it.height
-                )) {
-                    val fa = (abs(
-                        mScrollerHorizontal
-                        .scrollValue
-                    ) + mTicker.tickPosition) / durationPx
 
-                    it.tickTimer.tick(
-                        duration,
-                        fa
-                    )
+        if (mScrollerVertical.onTouchEvent(
+            event
+        )) {
+            mCurrentTouch = mScrollerVertical
+            invalidate()
+            return true
+        }
+
+        if (event.action == MotionEvent.ACTION_UP) {
+            mScrollerVertical.apply {
+                options?.forEach {
+                    val y = it.y + scrollValue
+                    if (event.x < it.width
+                        && (event.y + scrollValue).isInRange(
+                            y,
+                            y+it.height
+                    )) {
+                        val fa = (abs(
+                            mScrollerHorizontal
+                                .scrollValue
+                        ) + mTicker.tickPosition) / durationPx
+
+                        it.tickTimer.tick(
+                            duration,
+                            fa
+                        )
+                    }
                 }
             }
 
@@ -203,5 +238,9 @@ class VEViewAnimator(
         return true
     }
 
+    override fun onScrollVertical(
+        v: Float
+    ) {
 
+    }
 }

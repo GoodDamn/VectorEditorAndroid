@@ -2,6 +2,7 @@ package good.damn.editor.animator.ticker
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.RectF
 import android.util.Log
 import android.view.MotionEvent
 import androidx.annotation.ColorInt
@@ -22,8 +23,8 @@ VEIDrawable {
     var tickPosition = 0f
         private set
 
-    var width = 0f
-        private set
+    val width: Float
+        get() = mTriggerRect.width()
 
     @setparam:ColorInt
     @get:ColorInt
@@ -39,30 +40,41 @@ VEIDrawable {
         style = Paint.Style.STROKE
     }
 
-    private var mEndY = 0f
-    private var mStartX = 0f
+    private val mTriggerRect = RectF()
     private var mTickPositionX = 0f
 
     fun layout(
-        width: Float,
-        height: Float,
-        x: Float
+        top2: Float,
+        bottom2: Float,
+        left2: Float,
+        right2: Float
     ) {
-        this.width = width
-        mStartX = x
-        mEndY = height
-        mTickPositionX = x
+        mTriggerRect.apply {
+            left = left2
+            right = right2
+            top = top2
+            bottom = bottom2
+        }
+
+        mTickPositionX = left2
     }
 
     override fun draw(
         canvas: Canvas
     ) {
+        mPaint.style = Paint.Style.FILL
+        canvas.drawRect(
+            mTriggerRect,
+            mPaint
+        )
+        mPaint.style = Paint.Style.STROKE
+
         canvas.drawLine(
             mTickPositionX,
             0f,
-            mTickPositionX + 15f,
+            mTickPositionX,
             canvas.height.toFloat(),
-            mPaint
+            mPaintg
         )
     }
 
@@ -70,16 +82,16 @@ VEIDrawable {
         event: MotionEvent
     ): Boolean {
 
-        if (event.y > mEndY) {
+        if (event.y > mTriggerRect.bottom) {
             return false
         }
 
-        if (event.x > mStartX) {
-            tickPosition = event.x - mStartX
+        if (event.x > mTriggerRect.left) {
+            tickPosition = event.x - mTriggerRect.right
             tickPositionFactor = tickPosition / width
             mTickPositionX = event.x
         } else {
-            mTickPositionX = mStartX
+            mTickPositionX = mTriggerRect.right
         }
 
         return true

@@ -14,7 +14,9 @@ open class VERectable: VEILayoutable {
     var y: Float
         get() = mRect.top
         set(v) {
+            val h = mRect.height()
             mRect.top = v
+            mRect.bottom = v + h
         }
 
     var width: Float

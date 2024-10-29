@@ -34,7 +34,7 @@ class VEOptionAnimatorColor
             0f,
             intArrayOf(
                 0xffffff00.toInt(),
-                0xff0000ff.toInt()
+                0xffff00ff.toInt()
             ),
             floatArrayOf(
                 0.0f,
