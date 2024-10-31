@@ -7,7 +7,7 @@ import good.damn.editor.interfaces.VEITickable
 import good.damn.editor.animator.options.tickTimer.data.base.VETickData
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEILayoutable
-import good.damn.sav.misc.structures.BinaryTree
+import good.damn.sav.misc.structures.tree.BinaryTree
 
 abstract class VETickTimerAnimatorBase
 : VEITickable,

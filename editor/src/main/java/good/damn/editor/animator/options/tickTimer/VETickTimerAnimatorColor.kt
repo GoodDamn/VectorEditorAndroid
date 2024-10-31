@@ -3,7 +3,6 @@ package good.damn.editor.animator.options.tickTimer
 import androidx.annotation.ColorInt
 import good.damn.editor.animator.options.tickTimer.base.VETickTimerAnimatorBase
 import good.damn.editor.animator.options.tickTimer.data.VETickDataColor
-import good.damn.sav.misc.structures.BinaryTree
 
 class VETickTimerAnimatorColor
 : VETickTimerAnimatorBase() {

@@ -1,4 +1,7 @@
-package good.damn.sav.misc.structures
+package good.damn.sav.misc.structures.tree
+
+import java.util.Stack
+import java.util.function.Consumer
 
 class BinaryTree<T>(
     val equality: ((T,T) -> Boolean),
@@ -44,7 +47,6 @@ class BinaryTree<T>(
             action
         )
     }
-
 }
 
 private fun <T> BinaryTree<T>.searchAdd(

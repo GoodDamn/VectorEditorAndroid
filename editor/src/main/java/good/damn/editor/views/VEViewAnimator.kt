@@ -41,8 +41,8 @@ class VEViewAnimator(
             field = v
 
             durationPx = (
-                    v / 1000f * (width - mScrollerHorizontal.triggerEndX)
-                    ).toInt()
+                v / 1000f * (width - mScrollerHorizontal.triggerEndX)
+            ).toInt()
 
             options?.forEach {
                 it.tickTimer.durationPx = durationPx
@@ -96,6 +96,12 @@ class VEViewAnimator(
 
                 mScrollerHorizontal.scrollValue = currentMs
                     .toFloat() / duration * -durationPx
+
+
+
+                options?.forEach {
+                    it.tickTimer.tickList
+                }
 
                 currentMs += dt
                 mScope.remember()
@@ -174,10 +180,17 @@ class VEViewAnimator(
         canvas: Canvas
     ) = canvas.run {
 
-        super.onDraw(this)
+        super.onDraw(
+            canvas
+        )
 
         var tickX = 0f
-        var tickY = 0f
+        var tickY = mPaintText.textSize
+
+        options?.firstOrNull()?.apply {
+            tickX = tickTimer.x
+            tickY += tickTimer.y
+        }
 
         save()
 
@@ -194,8 +207,6 @@ class VEViewAnimator(
             it.tickTimer.apply {
                 scrollTimer = mScrollerHorizontal.scrollValue
                 draw(canvas)
-                tickX = this@apply.x
-                tickY = this@apply.y
             }
         }
 
@@ -209,6 +220,13 @@ class VEViewAnimator(
         drawText(
             ii.toString(),
             tickX + pos + mScrollerHorizontal.scrollValue,
+            tickY,
+            mPaintText
+        )
+
+        drawText(
+            (ii - 1000).toString(),
+            tickX,
             tickY,
             mPaintText
         )
