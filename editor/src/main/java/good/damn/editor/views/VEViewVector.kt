@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
 

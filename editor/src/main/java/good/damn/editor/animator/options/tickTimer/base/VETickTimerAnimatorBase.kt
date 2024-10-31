@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import good.damn.editor.interfaces.VEITickable
 import good.damn.editor.animator.options.tickTimer.data.base.VETickData
+import good.damn.editor.interfaces.VEIInterpolatable
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEILayoutable
 import good.damn.sav.misc.structures.tree.BinaryTree
@@ -12,7 +13,8 @@ import good.damn.sav.misc.structures.tree.BinaryTree
 abstract class VETickTimerAnimatorBase
 : VEITickable,
 VEIDrawable,
-VEILayoutable {
+VEILayoutable,
+VEIInterpolatable {
 
     companion object {
         private val TAG = VETickTimerAnimatorBase::class.simpleName
@@ -119,4 +121,7 @@ VEILayoutable {
         restore()
     }
 
+
+
+    abstract fun beginTickData(): VETickData
 }

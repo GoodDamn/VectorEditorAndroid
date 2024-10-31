@@ -1,5 +1,6 @@
 package good.damn.sav.misc.structures.tree
 
+import java.util.LinkedList
 import java.util.Stack
 import java.util.function.Consumer
 
@@ -47,6 +48,11 @@ class BinaryTree<T>(
             action
         )
     }
+}
+
+fun <T> BinaryTree<T>.toList()
+: List<T> = LinkedList<T>().apply {
+    this@toList.forEach { add(it) }
 }
 
 private fun <T> BinaryTree<T>.searchAdd(

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import good.damn.editor.views.VEViewAnimator
+import good.damn.editor.views.VEViewAnimatorEditor
 import good.damn.editor.animator.options.VEOptionAnimatorColor
 import good.damn.editor.animator.options.VEOptionAnimatorPosition
 
@@ -26,7 +26,7 @@ class VEActivityAnimation
             )
         }
 
-        val editorAnimator = VEViewAnimator(
+        val editorAnimator = VEViewAnimatorEditor(
             context,
             0.35f,
             0.2f,

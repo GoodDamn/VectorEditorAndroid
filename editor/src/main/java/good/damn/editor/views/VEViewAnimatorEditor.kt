@@ -7,19 +7,18 @@ import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animator.scroller.VEScrollerHorizontal
-import good.damn.editor.animator.scroller.vertical.VEIListenerOnScrollVertical
 import good.damn.editor.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animator.ticker.VEAnimatorTicker
+import good.damn.editor.animators.VEAnimatorVector
 import good.damn.sav.misc.extensions.primitives.isInRange
 import good.damn.sav.misc.interfaces.VEITouchable
 import good.damn.sav.misc.scopes.TimeScope
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
-class VEViewAnimator(
+class VEViewAnimatorEditor(
     context: Context,
     private val heightOptionFactor: Float,
     private val widthOptionFactor: Float,
@@ -29,7 +28,9 @@ class VEViewAnimator(
 ) {
 
     companion object {
-        private val TAG = VEViewAnimator::class.simpleName
+        private val TAG = VEViewAnimatorEditor::class.simpleName
+        var subInterpolation: Float = 0f
+        var interpolation: Float = 0f
     }
 
     var options: Array<
@@ -61,8 +62,13 @@ class VEViewAnimator(
 
     private var mCurrentTouch: VEITouchable? = null
 
-    private var mPaintText = Paint().apply {
+    private val mPaintText = Paint().apply {
         color = mTicker.color
+    }
+
+    private val mPaintDebugText = Paint().apply {
+        color = 0xffffff00.toInt()
+        textSize = 25f
     }
 
     private val mScope = TimeScope(
@@ -91,17 +97,24 @@ class VEViewAnimator(
             var dt: Long
             mScope.remember()
 
+            val options = options
+                ?: return@launch
+
+            val animator = VEAnimatorVector(
+                options
+            )
+
+            val fDuration = duration.toFloat()
+
             while (currentMs < duration && isPlaying) {
-                dt = mScope.deltaTime
+                dt = (mScope.deltaTime * 0.8f).toLong()
 
-                mScrollerHorizontal.scrollValue = currentMs
-                    .toFloat() / duration * -durationPx
+                animator.tick(
+                    dt / fDuration
+                )
 
-
-
-                options?.forEach {
-                    it.tickTimer.tickList
-                }
+                mScrollerHorizontal.scrollValue =
+                    currentMs / fDuration * -durationPx
 
                 currentMs += dt
                 mScope.remember()
@@ -235,6 +248,20 @@ class VEViewAnimator(
 
         mTicker.draw(
             this
+        )
+
+        drawText(
+            "interpolation: $interpolation",
+            0f,
+            height - mPaintDebugText.textSize,
+            mPaintDebugText
+        )
+
+        drawText(
+            "subInterpolation: $subInterpolation",
+            0f,
+            height - mPaintDebugText.textSize*2,
+            mPaintDebugText
         )
 
     }
