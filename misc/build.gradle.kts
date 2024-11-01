@@ -8,10 +8,15 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 19
+        minSdk = 21
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        externalNativeBuild {
+            cmake {
+                cppFlags += ""
+            }
+        }
     }
 
     buildTypes {
@@ -29,6 +34,13 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
     }
 }
 

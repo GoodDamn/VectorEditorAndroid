@@ -55,10 +55,6 @@ class VETickTimerAnimatorColor
         onTickColor?.onTickColor(
             mInterpolatedColor.toInt32()
         )
-
-        Log.d(TAG, "interpolate: $t ${
-            mInterpolatedColor.contentToString()
-        }")
     }
     
     override fun beginTickData() = VETickDataColor(
