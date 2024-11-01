@@ -8,6 +8,7 @@ import good.damn.editor.animator.options.tickTimer.data.base.VETickData
 import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickColor
 import good.damn.sav.misc.extensions.interpolate
 import good.damn.sav.misc.extensions.primitives.toByteArray
+import good.damn.sav.misc.extensions.toInt32
 import java.io.ByteArrayInputStream
 
 class VETickTimerAnimatorColor
@@ -52,7 +53,7 @@ class VETickTimerAnimatorColor
         )
 
         onTickColor?.onTickColor(
-            mInterpolatedColor.
+            mInterpolatedColor.toInt32()
         )
 
         Log.d(TAG, "interpolate: $t ${

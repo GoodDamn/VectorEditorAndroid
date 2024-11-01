@@ -8,7 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import good.damn.editor.views.VEViewAnimatorEditor
 import good.damn.editor.animator.options.VEOptionAnimatorColor
 import good.damn.editor.animator.options.VEOptionAnimatorPosition
+import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickColor
 import good.damn.gradient_color_picker.GradientColorPicker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class VEActivityAnimation
 : AppCompatActivity() {
@@ -27,6 +31,28 @@ class VEActivityAnimation
                 .VERTICAL
             setBackgroundColor(
                 0xff000315.toInt()
+            )
+        }
+
+        View(
+            context
+        ).apply {
+            optionColor.tickTimer.onTickColor = object: VEListenerOnTickColor {
+                override fun onTickColor(
+                    color: Int
+                ) {
+                    CoroutineScope(
+                        Dispatchers.Main
+                    ).launch {
+                        setBackgroundColor(color)
+                    }
+                }
+
+            }
+            layout.addView(
+                this,
+                100,
+                100
             )
         }
 
@@ -90,16 +116,6 @@ class VEActivityAnimation
                 this,
                 -1,
                 -2
-            )
-        }
-
-        val colorView = View(
-            context
-        ).apply {
-            layout.addView(
-                this,
-                100,
-                100
             )
         }
 
