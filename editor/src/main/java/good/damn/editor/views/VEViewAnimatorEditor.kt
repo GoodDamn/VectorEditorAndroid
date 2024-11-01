@@ -107,7 +107,7 @@ class VEViewAnimatorEditor(
             val fDuration = duration.toFloat()
 
             while (currentMs < duration && isPlaying) {
-                dt = (mScope.deltaTime * 0.8f).toLong()
+                dt = mScope.deltaTime
 
                 animator.tick(
                     dt / fDuration

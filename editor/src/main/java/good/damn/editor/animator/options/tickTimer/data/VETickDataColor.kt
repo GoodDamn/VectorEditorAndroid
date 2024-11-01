@@ -7,5 +7,5 @@ import good.damn.sav.misc.interfaces.VEIComparable
 
 data class VETickDataColor(
     override val tickFactor: Float,
-    @ColorInt val color: Int
+    val argb: ByteArray
 ): VETickDataBase()

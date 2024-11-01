@@ -1,12 +1,14 @@
 package good.damn.editor.vector
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import good.damn.editor.views.VEViewAnimatorEditor
 import good.damn.editor.animator.options.VEOptionAnimatorColor
 import good.damn.editor.animator.options.VEOptionAnimatorPosition
+import good.damn.gradient_color_picker.GradientColorPicker
 
 class VEActivityAnimation
 : AppCompatActivity() {
@@ -15,6 +17,8 @@ class VEActivityAnimation
         super.onCreate(savedInstanceState)
 
         val context = this
+
+        val optionColor = VEOptionAnimatorColor()
 
         val layout = LinearLayout(
             context
@@ -35,7 +39,7 @@ class VEActivityAnimation
             setBackgroundColor(0)
 
             options = arrayOf(
-                VEOptionAnimatorColor(),
+                optionColor,
                 VEOptionAnimatorPosition()
             )
 
@@ -89,7 +93,30 @@ class VEActivityAnimation
             )
         }
 
+        val colorView = View(
+            context
+        ).apply {
+            layout.addView(
+                this,
+                100,
+                100
+            )
+        }
 
+        GradientColorPicker(
+            context
+        ).apply {
+
+            setOnPickColorListener {
+                optionColor.tickTimer.color = it
+            }
+
+            layout.addView(
+                this,
+                -1,
+                (VEApp.height * 0.2f).toInt()
+            )
+        }
 
         setContentView(
             layout

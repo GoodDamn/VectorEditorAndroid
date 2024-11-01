@@ -121,7 +121,5 @@ VEIInterpolatable {
         restore()
     }
 
-
-
     abstract fun beginTickData(): VETickData
 }

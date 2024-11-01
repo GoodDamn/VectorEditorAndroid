@@ -5,6 +5,10 @@ import androidx.annotation.ColorInt
 import good.damn.editor.animator.options.tickTimer.base.VETickTimerAnimatorBase
 import good.damn.editor.animator.options.tickTimer.data.VETickDataColor
 import good.damn.editor.animator.options.tickTimer.data.base.VETickData
+import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickColor
+import good.damn.sav.misc.extensions.interpolate
+import good.damn.sav.misc.extensions.primitives.toByteArray
+import java.io.ByteArrayInputStream
 
 class VETickTimerAnimatorColor
 : VETickTimerAnimatorBase() {
@@ -17,6 +21,10 @@ class VETickTimerAnimatorColor
     @get:ColorInt
     var color: Int = 0
 
+    var onTickColor: VEListenerOnTickColor? = null
+
+    private val mInterpolatedColor = ByteArray(4)
+
     override fun tick(
         tickTimeMs: Int,
         tickTimeFactor: Float
@@ -24,7 +32,7 @@ class VETickTimerAnimatorColor
         tickList.add(
             VETickDataColor(
                 tickTimeFactor,
-                color
+                color.toByteArray()
             )
         )
     }
@@ -37,12 +45,24 @@ class VETickTimerAnimatorColor
         from as VETickDataColor
         to as VETickDataColor
 
-        Log.d(TAG, "interpolate: $t")
+        mInterpolatedColor.interpolate(
+            from.argb,
+            to.argb,
+            t
+        )
+
+        onTickColor?.onTickColor(
+            mInterpolatedColor.
+        )
+
+        Log.d(TAG, "interpolate: $t ${
+            mInterpolatedColor.contentToString()
+        }")
     }
     
     override fun beginTickData() = VETickDataColor(
         0.0f,
-        0
+        byteArrayOf(0, 0, 0, 0)
     )
 
 }

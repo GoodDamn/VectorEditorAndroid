@@ -10,7 +10,9 @@ class VEAnimatorVector(
     private val mOptions: Array<VEOptionAnimatorBase>
 ) {
 
-    private val mOptionsPrepared: Array<Tick?> = Array(mOptions.size) {
+    private val mOptionsPrepared: Array<Tick?> = Array(
+        mOptions.size
+    ) {
         val tickTimer = mOptions[it]
             .tickTimer
 
@@ -38,6 +40,9 @@ class VEAnimatorVector(
             interpolationPath += dt
             if (interpolationPath > to.tickFactor) {
                 from = to
+                if (!ticks.hasNext()) {
+                    return@forEach
+                }
                 to = ticks.next()
                 dtPath = to.tickFactor - from.tickFactor
                 return@forEach
