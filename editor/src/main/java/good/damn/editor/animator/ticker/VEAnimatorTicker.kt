@@ -87,7 +87,7 @@ VEIDrawable {
         }
 
         if (event.x > mTriggerRect.left) {
-            tickPosition = event.x - mTriggerRect.left
+            tickPosition = event.x - mTriggerRect.left + mPaint.strokeWidth * 0.5f
             tickPositionFactor = tickPosition / width
             mTickPositionX = event.x
         } else {

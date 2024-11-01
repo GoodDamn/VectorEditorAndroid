@@ -16,6 +16,7 @@ import good.damn.sav.misc.scopes.TimeScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.LinkedList
 import kotlin.math.abs
 
 class VEViewAnimatorEditor(
@@ -41,12 +42,24 @@ class VEViewAnimatorEditor(
         set(v) {
             field = v
 
+            mTimeDividers.clear()
+
             durationPx = (
                 v / 1000f * (width - mScrollerHorizontal.triggerEndX)
             ).toInt()
 
             options?.forEach {
                 it.tickTimer.durationPx = durationPx
+            }
+
+            val fDuration = duration.toFloat()
+            for (i in 0..duration step 1000) {
+                mTimeDividers.add(
+                    TimeDivider(
+                        i / fDuration * durationPx,
+                        i.toString()
+                    )
+                )
             }
         }
 
@@ -59,6 +72,7 @@ class VEViewAnimatorEditor(
     private val mTicker = VEAnimatorTicker()
     private val mScrollerHorizontal = VEScrollerHorizontal()
     private val mScrollerVertical = VEScrollerVertical()
+    private val mTimeDividers = LinkedList<TimeDivider>()
 
     private var mCurrentTouch: VEITouchable? = null
 
@@ -184,7 +198,7 @@ class VEViewAnimatorEditor(
 
         mScrollerVertical.triggerEndX = ww * 0.5f
 
-        mPaintText.textSize = tickerHeight * 0.5f
+        mPaintText.textSize = tickerHeight * 0.18f
 
         duration = 5000
     }
@@ -223,24 +237,23 @@ class VEViewAnimatorEditor(
             }
         }
 
-        val scrollDuration = (abs(
+        for (it in mTimeDividers) {
+            drawText(
+                it.time,
+                tickX + it.scrollPosition + mScrollerHorizontal.scrollValue,
+                tickY,
+                mPaintText
+            )
+        }
+
+        val scrollDuration = ((abs(
             mScrollerHorizontal.scrollValue
-        ) / durationPx * duration).toInt()
-
-        val ii = (scrollDuration / 1000 + 1) * 1000
-        val pos = ii.toFloat() / duration * durationPx
+        ) + mTicker.tickPosition) / durationPx * duration).toInt()
 
         drawText(
-            ii.toString(),
-            tickX + pos + mScrollerHorizontal.scrollValue,
-            tickY,
-            mPaintText
-        )
-
-        drawText(
-            (ii - 1000).toString(),
-            tickX,
-            tickY,
+            scrollDuration.toString(),
+            tickX + mTicker.tickPosition,
+            height.toFloat(),
             mPaintText
         )
 
@@ -334,3 +347,8 @@ class VEViewAnimatorEditor(
         return true
     }
 }
+
+private data class TimeDivider(
+    val scrollPosition: Float,
+    val time: String
+)

@@ -9,6 +9,7 @@ import good.damn.editor.views.VEViewAnimatorEditor
 import good.damn.editor.animator.options.VEOptionAnimatorColor
 import good.damn.editor.animator.options.VEOptionAnimatorPosition
 import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickColor
+import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickPosition
 import good.damn.gradient_color_picker.GradientColorPicker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +24,7 @@ class VEActivityAnimation
         val context = this
 
         val optionColor = VEOptionAnimatorColor()
+        val optionPosition = VEOptionAnimatorPosition()
 
         val layout = LinearLayout(
             context
@@ -37,21 +39,25 @@ class VEActivityAnimation
         View(
             context
         ).apply {
+
+            val scope = CoroutineScope(
+                Dispatchers.Main
+            )
+
             optionColor.tickTimer.onTickColor = object: VEListenerOnTickColor {
                 override fun onTickColor(
                     color: Int
                 ) {
-                    CoroutineScope(
-                        Dispatchers.Main
-                    ).launch {
+                    scope.launch {
                         setBackgroundColor(color)
                     }
                 }
-
             }
+
+
             layout.addView(
                 this,
-                100,
+                -1,
                 100
             )
         }
@@ -66,7 +72,7 @@ class VEActivityAnimation
 
             options = arrayOf(
                 optionColor,
-                VEOptionAnimatorPosition()
+                optionPosition
             )
 
             layout.addView(
