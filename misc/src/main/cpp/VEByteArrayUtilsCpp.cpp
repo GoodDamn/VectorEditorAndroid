@@ -3,28 +3,28 @@
 
 extern "C"
 JNIEXPORT void JNICALL Java_good_damn_sav_misc_utils_VEUtilsByteArrayJava_interpolate(
-        JNIEnv* env,
-        jclass thiz,
-        jbyteArray v,
-        jbyteArray vv,
-        jfloat t,
-        jbyteArray to
+    JNIEnv* env,
+    jclass thiz,
+    jbyteArray v,
+    jbyteArray vv,
+    jfloat t,
+    jbyteArray to
 ) {
     jsize vSize = env->GetArrayLength(v);
 
     jbyte* vElements = env->GetByteArrayElements(
-            v,
-            nullptr
+        v,
+        nullptr
     );
 
     jbyte* vvElements = env->GetByteArrayElements(
-            vv,
-            nullptr
+        vv,
+        nullptr
     );
 
     jbyte* toElements = env->GetByteArrayElements(
-            to,
-            0
+        to,
+        0
     );
 
     float fromVal;
@@ -33,8 +33,14 @@ JNIEXPORT void JNICALL Java_good_damn_sav_misc_utils_VEUtilsByteArrayJava_interp
     for (int i = 0; i < vSize; i++) {
         fromVal = (unsigned char) vElements[i];
         toVal = (unsigned char) vvElements[i];
-        toElements[i] = (jbyte) (fromVal + (toVal - fromVal) * t);
+        toElements[i] = (jbyte) (
+            fromVal + (toVal - fromVal) * t
+        );
     }
 
-    env->ReleaseByteArrayElements(to, toElements, 0);
+    env->ReleaseByteArrayElements(
+        to,
+        toElements,
+        0
+    );
 }
