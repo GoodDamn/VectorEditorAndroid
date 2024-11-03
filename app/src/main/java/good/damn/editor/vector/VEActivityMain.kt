@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
+import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animation.animator.options.tickTimer.listeners.VEListenerOnTickColor
 import good.damn.editor.editmodes.VEEditModeAnimation
 import good.damn.editor.vector.browsers.VEBrowserContent
@@ -28,6 +29,7 @@ import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
 import good.damn.sav.core.shapes.VEShapeLine
 import good.damn.sav.misc.interfaces.VEIDrawable
+import java.util.LinkedList
 
 class VEActivityMain
 : AppCompatActivity(),
@@ -101,6 +103,7 @@ OnPickColorListener,
         modeShape.skeleton
     ).apply {
         onChangePoint = mFragmentVectorAnimation
+        onChangePointPosition = mFragmentVectorAnimation
     }
 
 
@@ -110,6 +113,20 @@ OnPickColorListener,
         super.onCreate(
             savedInstanceState
         )
+
+        mFragmentVectorAnimation.onPlayAnimation = {
+            val list = ArrayList<VEOptionAnimatorBase>(
+                modeAnimation.animatedPoints.size
+            )
+
+            for (pia in modeAnimation.animatedPoints.values) {
+                pia.options.forEach {
+                    list.add(it)
+                }
+            }
+
+            list.toTypedArray()
+        }
 
         mBrowserContent.register(
             this

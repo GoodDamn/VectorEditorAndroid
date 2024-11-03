@@ -35,30 +35,28 @@ class VEAnimatorVector(
 
     fun tick(
         dt: Float
-    ) {
-        mOptionsPrepared.forEach { it?.apply {
-            interpolationPath += dt
-            if (interpolationPath > to.tickFactor) {
-                from = to
-                if (!ticks.hasNext()) {
-                    return@forEach
-                }
-                to = ticks.next()
-                dtPath = to.tickFactor - from.tickFactor
+    ) = mOptionsPrepared.forEach { it?.apply {
+        interpolationPath += dt
+        if (interpolationPath > to.tickFactor) {
+            from = to
+            if (!ticks.hasNext()) {
                 return@forEach
             }
-
-            val i = (interpolationPath - from.tickFactor) / dtPath
-            VEViewAnimatorEditor.interpolation = interpolationPath
-            VEViewAnimatorEditor.subInterpolation = i
-
-            interpolation.interpolate(
-                from,
-                to,
-                i
-            )
-            }
+            to = ticks.next()
+            dtPath = to.tickFactor - from.tickFactor
+            return@forEach
         }
+
+        val i = (interpolationPath - from.tickFactor) / dtPath
+        VEViewAnimatorEditor.interpolation = interpolationPath
+        VEViewAnimatorEditor.subInterpolation = i
+
+        interpolation.interpolate(
+            from,
+            to,
+            i
+        )
+    }
     }
 
 

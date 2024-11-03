@@ -8,10 +8,12 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import good.damn.editor.animation.VEPointIndexedAnimation
+import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animation.animator.options.VEOptionAnimatorColor
 import good.damn.editor.animation.animator.options.VEOptionAnimatorPosition
 import good.damn.editor.animation.animator.options.tickTimer.listeners.VEListenerOnTickColor
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangePoint
+import good.damn.editor.editmodes.listeners.VEIListenerOnChangePointPosition
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.interfaces.VEIColorPickable
 import good.damn.editor.views.VEViewAnimatorEditor
@@ -21,9 +23,11 @@ import good.damn.sav.core.shapes.VEShapeBase
 class VEFragmentVectorAnimation
 : Fragment(),
 VEIColorPickable,
-VEIListenerOnChangePoint {
+VEIListenerOnChangePoint,
+VEIListenerOnChangePointPosition {
 
     var onClickBtnPrev: View.OnClickListener? = null
+    var onPlayAnimation: (() -> Array<VEOptionAnimatorBase>?)? = null
 
     private var mViewEditor: VEViewAnimatorEditor? = null
 
@@ -34,6 +38,18 @@ VEIListenerOnChangePoint {
             options = point.options
             layoutEditor()
             invalidate()
+        }
+    }
+
+    override fun onChangePointPosition(
+        x: Float,
+        y: Float
+    ) {
+        mViewEditor?.apply {
+            (options?.firstOrNull() as? VEOptionAnimatorPosition)?.apply {
+                tickTimer.tickX = x
+                tickTimer.tickY = y
+            }
         }
     }
 
@@ -98,7 +114,11 @@ VEIListenerOnChangePoint {
                 text = "Play"
 
                 setOnClickListener {
-                    mViewEditor?.play()
+                    mViewEditor?.apply {
+                        options = onPlayAnimation?.invoke()
+                        layoutEditor()
+                        play()
+                    }
                 }
 
                 addView(

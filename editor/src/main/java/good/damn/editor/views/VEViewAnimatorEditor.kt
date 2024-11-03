@@ -35,7 +35,7 @@ class VEViewAnimatorEditor(
     }
 
     var options: Array<
-            VEOptionAnimatorBase
+        VEOptionAnimatorBase
     >? = null
 
     var duration: Int = 1000 // ms
