@@ -5,11 +5,11 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
-import good.damn.editor.animator.options.VEOptionAnimatorBase
-import good.damn.editor.animator.scroller.VEScrollerHorizontal
-import good.damn.editor.animator.scroller.vertical.VEScrollerVertical
-import good.damn.editor.animator.ticker.VEAnimatorTicker
-import good.damn.editor.animators.VEAnimatorVector
+import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
+import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
+import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
+import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
+import good.damn.editor.animation.animators.VEAnimatorVector
 import good.damn.sav.misc.extensions.primitives.isInRange
 import good.damn.sav.misc.interfaces.VEITouchable
 import good.damn.sav.misc.scopes.TimeScope
@@ -35,7 +35,7 @@ class VEViewAnimatorEditor(
     }
 
     var options: Array<
-        VEOptionAnimatorBase
+            VEOptionAnimatorBase
     >? = null
 
     var duration: Int = 1000 // ms
@@ -142,21 +142,7 @@ class VEViewAnimatorEditor(
         }
     }
 
-    override fun onLayout(
-        changed: Boolean,
-        left: Int,
-        top: Int,
-        right: Int,
-        bottom: Int
-    ) {
-        super.onLayout(
-            changed,
-            left,
-            top,
-            right,
-            bottom
-        )
-
+    fun layoutEditor() {
         val tickerHeight = height * heightTickTriggerFactor
         var y = tickerHeight
         val ww = width * widthOptionFactor
@@ -201,6 +187,24 @@ class VEViewAnimatorEditor(
         mPaintText.textSize = tickerHeight * 0.18f
 
         duration = 5000
+    }
+
+    override fun onLayout(
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int
+    ) {
+        super.onLayout(
+            changed,
+            left,
+            top,
+            right,
+            bottom
+        )
+
+        layoutEditor()
     }
 
     override fun onDraw(

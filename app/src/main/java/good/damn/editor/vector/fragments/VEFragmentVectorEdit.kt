@@ -7,14 +7,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import good.damn.editor.vector.VEApp
-import good.damn.editor.vector.extensions.views.boundsFrame
-import good.damn.gradient_color_picker.GradientColorPicker
-import good.damn.gradient_color_picker.OnPickColorListener
+import good.damn.editor.vector.interfaces.VEIColorPickable
 
 class VEFragmentVectorEdit
 : Fragment(),
-VEColorPickable {
+    VEIColorPickable {
 
     var onClickDeleteAll: View.OnClickListener? = null
     var onClickUndoAction: View.OnClickListener? = null

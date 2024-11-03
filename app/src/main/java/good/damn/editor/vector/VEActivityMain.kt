@@ -3,28 +3,26 @@ package good.damn.editor.vector
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
-import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickColor
+import good.damn.editor.animation.animator.options.tickTimer.listeners.VEListenerOnTickColor
+import good.damn.editor.editmodes.VEEditModeAnimation
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.extensions.views.boundsFrame
-import good.damn.editor.options.VEOptionFreeMove
-import good.damn.editor.options.VEOptionShapeable
+import good.damn.editor.editmodes.VEEditModeFreeMove
+import good.damn.editor.editmodes.VEEditModeShape
 import good.damn.editor.vector.bottomsheets.VEBottomSheetColorPick
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
 import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
 import good.damn.editor.vector.fragments.VEFragmentVectorEdit
-import good.damn.editor.views.VEViewVector
-import good.damn.gradient_color_picker.GradientColorPicker
+import good.damn.editor.views.VEViewVectorEditor
 import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
@@ -38,13 +36,13 @@ VSIListenerSeekBarProgress,
 VEIDrawable,
 VEIListenerOnAnchorPoint,
 OnPickColorListener,
-VEListenerOnTickColor {
+    VEListenerOnTickColor {
 
     companion object {
         private val TAG = VEActivityMain::class.simpleName
     }
 
-    private var mViewVector: VEViewVector? = null
+    private var mViewVector: VEViewVectorEditor? = null
     private var mViewColor: View? = null
     private var mCurrentAnchor: VEIListenerOnAnchorPoint? = null
     private var mViewPager: ViewPager2? = null
@@ -58,17 +56,6 @@ VEListenerOnTickColor {
     ).apply {
         onAnchorPoint = this@VEActivityMain
     }
-
-    private val mOptionShape = VEOptionShapeable(
-        mAnchor,
-        VEApp.width.toFloat(),
-        VEApp.width.toFloat()
-    )
-
-    private val mOptionFreeMove = VEOptionFreeMove(
-        mAnchor,
-        mOptionShape.skeleton
-    )
 
     private val mFragmentVectorEdit = VEFragmentVectorEdit().apply {
         onClickDeleteAll = View.OnClickListener {
@@ -96,9 +83,26 @@ VEListenerOnTickColor {
         onClickBtnPrev = View.OnClickListener {
             onClickBtnPrev(it)
         }
-
-        onTickColorAnimation = this@VEActivityMain
     }
+
+    private val modeShape = VEEditModeShape(
+        mAnchor,
+        VEApp.width.toFloat(),
+        VEApp.width.toFloat()
+    )
+
+    private val modeFreeMove = VEEditModeFreeMove(
+        mAnchor,
+        modeShape.skeleton
+    )
+
+    private val modeAnimation = VEEditModeAnimation(
+        mAnchor,
+        modeShape.skeleton
+    ).apply {
+        onChangePoint = mFragmentVectorAnimation
+    }
+
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -120,11 +124,11 @@ VEListenerOnTickColor {
             )
         }
 
-        mCurrentAnchor = mOptionShape
+        mCurrentAnchor = modeShape
 
-        mViewVector = VEViewVector(
+        mViewVector = VEViewVectorEditor(
             context,
-            mOptionShape
+            modeShape
         ).apply {
 
             setBackgroundColor(
@@ -132,8 +136,8 @@ VEListenerOnTickColor {
             )
 
             boundsFrame(
-                width = mOptionShape.canvasWidth,
-                height = mOptionShape.canvasHeight
+                width = modeShape.canvasWidth,
+                height = modeShape.canvasHeight
             )
 
             canvasRenderer = this@VEActivityMain
@@ -152,8 +156,8 @@ VEListenerOnTickColor {
             val s = VEApp.width * 0.15f
 
             setOnClickListener {
-                mViewVector?.optionable = mOptionShape
-                mCurrentAnchor = mOptionShape
+                mViewVector?.mode = modeShape
+                mCurrentAnchor = modeShape
             }
 
             boundsFrame(
@@ -174,8 +178,8 @@ VEListenerOnTickColor {
             val s = VEApp.width * 0.15f
 
             setOnClickListener {
-                mViewVector?.optionable = mOptionFreeMove
-                mCurrentAnchor = mOptionFreeMove
+                mViewVector?.mode = modeFreeMove
+                mCurrentAnchor = modeFreeMove
             }
 
             boundsFrame(
@@ -201,7 +205,7 @@ VEListenerOnTickColor {
             )
 
             setOnClickListener {
-                mOptionShape.currentPrimitive = VEShapeLine(
+                modeShape.currentPrimitive = VEShapeLine(
                     0f, 0f
                 )
             }
@@ -224,7 +228,7 @@ VEListenerOnTickColor {
             )
 
             setOnClickListener {
-                mOptionShape.currentPrimitive = good.damn.sav.core.shapes.VEShapeBezierС(
+                modeShape.currentPrimitive = good.damn.sav.core.shapes.VEShapeBezierС(
                     0f, 0f
                 )
             }
@@ -277,12 +281,12 @@ VEListenerOnTickColor {
                 0xffffffff.toInt()
             )
 
-            val size = mOptionShape.canvasWidth * 0.1f
-            val margin = mOptionShape.canvasWidth * 0.01f
+            val size = modeShape.canvasWidth * 0.1f
+            val margin = modeShape.canvasWidth * 0.01f
 
             boundsFrame(
                 gravity = Gravity.END,
-                top = mOptionShape.canvasHeight - size - margin,
+                top = modeShape.canvasHeight - size - margin,
                 end = margin,
                 width = size,
                 height = size
@@ -309,7 +313,7 @@ VEListenerOnTickColor {
             )
 
             boundsFrame(
-                top = mOptionShape.canvasHeight,
+                top = modeShape.canvasHeight,
                 width = -1f,
                 height = -1f
             )
@@ -332,7 +336,7 @@ VEListenerOnTickColor {
     override fun onSeekProgress(
         progress: Float
     ) {
-        mOptionShape.apply {
+        modeShape.apply {
             currentPrimitive.strokeWidth =
                 progress * canvasWidth
         }
@@ -342,7 +346,7 @@ VEListenerOnTickColor {
 
     override fun draw(
         canvas: Canvas
-    ) = mOptionShape.run {
+    ) = modeShape.run {
         skeleton.draw(
             canvas
         )
@@ -353,7 +357,7 @@ VEListenerOnTickColor {
             )
         }
 
-        mOptionShape.draw(
+        modeShape.draw(
             canvas
         )
     }
@@ -383,14 +387,14 @@ VEListenerOnTickColor {
     private fun onClickDeleteAll(
         v: View
     ) {
-        mOptionShape.clearActions()
+        modeShape.clearActions()
         mViewVector?.invalidate()
     }
 
     private fun onClickUndoAction(
         v: View
     ) {
-        mOptionShape.undoAction()
+        modeShape.undoAction()
         mViewVector?.invalidate()
     }
 
@@ -398,18 +402,22 @@ VEListenerOnTickColor {
         v: View
     ) {
         mViewPager?.currentItem = 0
+        mViewVector?.mode = modeFreeMove
+        mCurrentAnchor = modeFreeMove
     }
 
     private fun onClickBtnNext(
         v: View
     ) {
         mViewPager?.currentItem = 1
+        mViewVector?.mode = modeAnimation
+        mCurrentAnchor = modeAnimation
     }
 
     override fun onPickColor(
         color: Int
     ) {
-        mOptionShape
+        modeShape
             .currentPrimitive
             .color = color
 
@@ -431,7 +439,7 @@ VEListenerOnTickColor {
     override fun onTickColor(
         color: Int
     ) {
-        mOptionShape.currentPrimitive.color = color
+        modeShape.currentPrimitive.color = color
         mViewVector?.invalidate()
     }
 }

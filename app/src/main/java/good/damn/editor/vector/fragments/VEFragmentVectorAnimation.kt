@@ -7,25 +7,35 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import good.damn.editor.animator.options.VEOptionAnimatorColor
-import good.damn.editor.animator.options.VEOptionAnimatorPosition
-import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickColor
+import good.damn.editor.animation.VEPointIndexedAnimation
+import good.damn.editor.animation.animator.options.VEOptionAnimatorColor
+import good.damn.editor.animation.animator.options.VEOptionAnimatorPosition
+import good.damn.editor.animation.animator.options.tickTimer.listeners.VEListenerOnTickColor
+import good.damn.editor.editmodes.listeners.VEIListenerOnChangePoint
 import good.damn.editor.vector.VEApp
+import good.damn.editor.vector.interfaces.VEIColorPickable
 import good.damn.editor.views.VEViewAnimatorEditor
+import good.damn.sav.core.points.VEPointIndexed
+import good.damn.sav.core.shapes.VEShapeBase
 
 class VEFragmentVectorAnimation
 : Fragment(),
-VEColorPickable {
-
-    var onTickColorAnimation: VEListenerOnTickColor? = null
-        set(v) {
-            field = v
-            mOptionColor.tickTimer.onTickColor = v
-        }
+VEIColorPickable,
+VEIListenerOnChangePoint {
 
     var onClickBtnPrev: View.OnClickListener? = null
 
-    private val mOptionColor = VEOptionAnimatorColor()
+    private var mViewEditor: VEViewAnimatorEditor? = null
+
+    override fun onChangePoint(
+        point: VEPointIndexedAnimation
+    ) {
+        mViewEditor?.apply {
+            options = point.options
+            layoutEditor()
+            invalidate()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,8 +45,6 @@ VEColorPickable {
         if (context == null) {
             return null
         }
-
-        val optionPosition = VEOptionAnimatorPosition()
 
         val layout = LinearLayout(
             context
@@ -48,18 +56,13 @@ VEColorPickable {
             )
         }
 
-        val editorAnimator = VEViewAnimatorEditor(
+        mViewEditor = VEViewAnimatorEditor(
             context,
             0.35f,
             0.2f,
             0.25f
         ).apply {
             setBackgroundColor(0)
-
-            options = arrayOf(
-                mOptionColor,
-                optionPosition
-            )
 
             layout.addView(
                 this,
@@ -95,7 +98,7 @@ VEColorPickable {
                 text = "Play"
 
                 setOnClickListener {
-                    editorAnimator.play()
+                    mViewEditor?.play()
                 }
 
                 addView(
@@ -112,7 +115,7 @@ VEColorPickable {
                 text = "Pause"
 
                 setOnClickListener {
-                    editorAnimator.pause()
+                    mViewEditor?.pause()
                 }
 
                 addView(
@@ -134,7 +137,7 @@ VEColorPickable {
     override fun pickColor(
         color: Int
     ) {
-        mOptionColor.tickTimer.color = color
+
     }
 
 }
