@@ -1,29 +1,34 @@
-package good.damn.editor.vector
+package good.damn.editor.vector.fragments
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatActivity
-import good.damn.editor.views.VEViewAnimatorEditor
+import androidx.fragment.app.Fragment
 import good.damn.editor.animator.options.VEOptionAnimatorColor
 import good.damn.editor.animator.options.VEOptionAnimatorPosition
-import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickColor
-import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickPosition
-import good.damn.gradient_color_picker.GradientColorPicker
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import good.damn.editor.vector.VEApp
+import good.damn.editor.views.VEViewAnimatorEditor
 
-class VEActivityAnimation
-: AppCompatActivity() {
+class VEFragmentVectorAnimation
+: Fragment(),
+VEColorPickable {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    var onClickBtnPrev: View.OnClickListener? = null
 
-        val context = this
+    private val mOptionColor = VEOptionAnimatorColor()
 
-        val optionColor = VEOptionAnimatorColor()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        if (context == null) {
+            return null
+        }
+
         val optionPosition = VEOptionAnimatorPosition()
 
         val layout = LinearLayout(
@@ -36,32 +41,6 @@ class VEActivityAnimation
             )
         }
 
-        View(
-            context
-        ).apply {
-
-            val scope = CoroutineScope(
-                Dispatchers.Main
-            )
-
-            optionColor.tickTimer.onTickColor = object: VEListenerOnTickColor {
-                override fun onTickColor(
-                    color: Int
-                ) {
-                    scope.launch {
-                        setBackgroundColor(color)
-                    }
-                }
-            }
-
-
-            layout.addView(
-                this,
-                -1,
-                100
-            )
-        }
-
         val editorAnimator = VEViewAnimatorEditor(
             context,
             0.35f,
@@ -71,7 +50,7 @@ class VEActivityAnimation
             setBackgroundColor(0)
 
             options = arrayOf(
-                optionColor,
+                mOptionColor,
                 optionPosition
             )
 
@@ -85,6 +64,23 @@ class VEActivityAnimation
         LinearLayout(
             context
         ).apply {
+
+            Button(
+                context
+            ).apply {
+                text = "<"
+
+                setOnClickListener(
+                    onClickBtnPrev
+                )
+
+                addView(
+                    this,
+                    -2,
+                    -2
+                )
+            }
+
             Button(
                 context
             ).apply {
@@ -125,24 +121,13 @@ class VEActivityAnimation
             )
         }
 
-        GradientColorPicker(
-            context
-        ).apply {
+        return layout
+    }
 
-            setOnPickColorListener {
-                optionColor.tickTimer.color = it
-            }
-
-            layout.addView(
-                this,
-                -1,
-                (VEApp.height * 0.2f).toInt()
-            )
-        }
-
-        setContentView(
-            layout
-        )
+    override fun pickColor(
+        color: Int
+    ) {
+        mOptionColor.tickTimer.color = color
     }
 
 }

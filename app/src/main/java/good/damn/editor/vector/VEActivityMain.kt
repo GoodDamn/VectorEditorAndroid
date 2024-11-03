@@ -5,10 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.vector.browsers.VEBrowserContent
@@ -16,8 +17,13 @@ import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.options.VEOptionFreeMove
 import good.damn.editor.options.VEOptionShapeable
+import good.damn.editor.vector.bottomsheets.VEBottomSheetColorPick
+import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
+import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
+import good.damn.editor.vector.fragments.VEFragmentVectorEdit
 import good.damn.editor.views.VEViewVector
 import good.damn.gradient_color_picker.GradientColorPicker
+import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
 import good.damn.sav.core.shapes.VEShapeLine
@@ -28,9 +34,17 @@ class VEActivityMain
 VEListenerOnGetBrowserContent,
 VSIListenerSeekBarProgress,
 VEIDrawable,
-VEIListenerOnAnchorPoint {
+VEIListenerOnAnchorPoint,
+OnPickColorListener {
+
+    companion object {
+        private val TAG = VEActivityMain::class.simpleName
+    }
 
     private var mViewVector: VEViewVector? = null
+    private var mViewColor: View? = null
+    private var mCurrentAnchor: VEIListenerOnAnchorPoint? = null
+    private var mViewPager: ViewPager2? = null
 
     private val mBrowserContent = VEBrowserContent().apply {
         onGetContent = this@VEActivityMain
@@ -53,7 +67,33 @@ VEIListenerOnAnchorPoint {
         mOptionShape.skeleton
     )
 
-    private var mCurrentAnchor: VEIListenerOnAnchorPoint? = null
+    private val mFragmentVectorEdit = VEFragmentVectorEdit().apply {
+        onClickDeleteAll = View.OnClickListener {
+            onClickDeleteAll(it)
+        }
+
+        onClickExport = View.OnClickListener {
+            onClickExportVector(it)
+        }
+
+        onClickImport = View.OnClickListener {
+            onClickImportVector(it)
+        }
+
+        onClickUndoAction = View.OnClickListener {
+            onClickUndoAction(it)
+        }
+
+        onClickBtnNext = View.OnClickListener {
+            onClickBtnNext(it)
+        }
+    }
+
+    private val mFragmentVectorAnimation = VEFragmentVectorAnimation().apply {
+        onClickBtnPrev = View.OnClickListener {
+            onClickBtnPrev(it)
+        }
+    }
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -189,6 +229,7 @@ VEIListenerOnAnchorPoint {
             )
         }
 
+
         VSViewSeekBarV(
             context
         ).apply {
@@ -215,110 +256,67 @@ VEIListenerOnAnchorPoint {
             )
         }
 
-        GradientColorPicker(
+        mViewColor = View(
             context
         ).apply {
-            boundsFrame(
-                top = VEApp.height * 0.5f,
-                width = VEApp.width.toFloat(),
-                height = VEApp.height * 0.2f
+            setOnClickListener {
+                VEBottomSheetColorPick(
+                    root
+                ).apply {
+                    onPickColor = this@VEActivityMain
+                    show()
+                }
+            }
+
+            setBackgroundColor(
+                0xffffffff.toInt()
             )
 
-            setOnPickColorListener {
-                mOptionShape
-                    .currentPrimitive
-                    .color = it
+            val size = mOptionShape.canvasWidth * 0.1f
+            val margin = mOptionShape.canvasWidth * 0.01f
 
-                mViewVector?.invalidate()
-            }
+            boundsFrame(
+                gravity = Gravity.END,
+                top = mOptionShape.canvasHeight - size - margin,
+                end = margin,
+                width = size,
+                height = size
+            )
 
             root.addView(
                 this
             )
         }
 
-        LinearLayout(
+        mViewPager = ViewPager2(
             context
         ).apply {
-            orientation = LinearLayout.HORIZONTAL
 
-            Button(
-                context
-            ).apply {
-                text = "Export"
-                setOnClickListener(
-                    this@VEActivityMain::onClickExportVector
-                )
-                addView(
-                    this
-                )
-            }
+            isUserInputEnabled = false
 
-            Button(
-                context
-            ).apply {
-                text = "Import"
-                setOnClickListener(
-                    this@VEActivityMain::onClickImportVector
-                )
-                addView(this)
-            }
-
-            Button(
-                context
-            ).apply {
-                text = "Delete all"
-                setOnClickListener(
-                    this@VEActivityMain::onClickDeleteAll
-                )
-                addView(this)
-            }
-
-            Button(
-                context
-            ).apply {
-                text = "Undo"
-                setOnClickListener(
-                    this@VEActivityMain::onClickUndoAction
-                )
-                addView(this)
-            }
-
-            boundsFrame(
-                top = VEApp.height * 0.7f
+            adapter = VEFragmentAdapter(
+                arrayOf(
+                    mFragmentVectorEdit,
+                    mFragmentVectorAnimation
+                ),
+                supportFragmentManager,
+                lifecycle
             )
 
-            root.addView(this)
+            boundsFrame(
+                top = mOptionShape.canvasHeight,
+                width = -1f,
+                height = -1f
+            )
+
+            root.addView(
+                this
+            )
         }
 
         setContentView(
             root
         )
-
-    }
-
-    private fun onClickExportVector(
-        v: View
-    ) = Unit
-
-    private fun onClickImportVector(
-        v: View
-    ) {
-        mBrowserContent.launch()
-    }
-
-    private fun onClickDeleteAll(
-        v: View
-    ) {
-        mOptionShape.clearActions()
-        mViewVector?.invalidate()
-    }
-
-    private fun onClickUndoAction(
-        v: View
-    ) {
-        mOptionShape.undoAction()
-        mViewVector?.invalidate()
     }
 
 
@@ -365,5 +363,63 @@ VEIListenerOnAnchorPoint {
         y: Float
     ) {
         mCurrentAnchor?.onAnchorY(y)
+    }
+
+    private fun onClickExportVector(
+        v: View
+    ) = Unit
+
+    private fun onClickImportVector(
+        v: View
+    ) {
+        mBrowserContent.launch()
+    }
+
+    private fun onClickDeleteAll(
+        v: View
+    ) {
+        mOptionShape.clearActions()
+        mViewVector?.invalidate()
+    }
+
+    private fun onClickUndoAction(
+        v: View
+    ) {
+        mOptionShape.undoAction()
+        mViewVector?.invalidate()
+    }
+
+    private fun onClickBtnPrev(
+        v: View
+    ) {
+        mViewPager?.currentItem = 0
+    }
+
+    private fun onClickBtnNext(
+        v: View
+    ) {
+        mViewPager?.currentItem = 1
+    }
+
+    override fun onPickColor(
+        color: Int
+    ) {
+        mOptionShape
+            .currentPrimitive
+            .color = color
+
+        mViewColor?.setBackgroundColor(
+            color
+        )
+
+        mViewVector?.invalidate()
+
+        mFragmentVectorEdit.pickColor(
+            color
+        )
+
+        mFragmentVectorAnimation.pickColor(
+            color
+        )
     }
 }

@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.gradientcolorpicker)
     implementation(project(":VerticalSeekBar"))
@@ -44,6 +45,8 @@ dependencies {
     implementation(project(":core"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.material)
 
 
     testImplementation(libs.junit)

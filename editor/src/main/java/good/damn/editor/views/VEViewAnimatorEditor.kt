@@ -20,7 +20,7 @@ import java.util.LinkedList
 import kotlin.math.abs
 
 class VEViewAnimatorEditor(
-    context: Context,
+    context: Context?,
     private val heightOptionFactor: Float,
     private val widthOptionFactor: Float,
     private val heightTickTriggerFactor: Float

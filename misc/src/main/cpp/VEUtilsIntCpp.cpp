@@ -32,8 +32,8 @@ Java_good_damn_sav_misc_utils_VEUtilsIntJava_int32__I(
     jint n
 ) {
     jbyteArray data = env->NewByteArray(4);
-    jbyte fill[4]{
-        static_cast<jbyte>(n >> 24 & 0xff),
+    jbyte fill[4] {
+        static_cast<jbyte>(n >> 24),
         static_cast<jbyte>(n >> 16 & 0xff),
         static_cast<jbyte>(n >> 8 & 0xff),
         static_cast<jbyte>(n & 0xff)
