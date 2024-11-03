@@ -9,12 +9,19 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import good.damn.editor.animator.options.VEOptionAnimatorColor
 import good.damn.editor.animator.options.VEOptionAnimatorPosition
+import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickColor
 import good.damn.editor.vector.VEApp
 import good.damn.editor.views.VEViewAnimatorEditor
 
 class VEFragmentVectorAnimation
 : Fragment(),
 VEColorPickable {
+
+    var onTickColorAnimation: VEListenerOnTickColor? = null
+        set(v) {
+            field = v
+            mOptionColor.tickTimer.onTickColor = v
+        }
 
     var onClickBtnPrev: View.OnClickListener? = null
 

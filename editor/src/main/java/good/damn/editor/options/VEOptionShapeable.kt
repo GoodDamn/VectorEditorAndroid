@@ -38,9 +38,9 @@ VEIDrawable,
     }
 
     var currentPrimitive: VEShapeBase = VEShapeLine(
-            canvasWidth,
-            canvasHeight
-        )
+        canvasWidth,
+        canvasHeight
+    )
 
     val shapes = VEListShapes().apply {
         onAddShape = this@VEOptionShapeable

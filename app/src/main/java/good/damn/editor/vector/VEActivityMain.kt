@@ -3,6 +3,7 @@ package good.damn.editor.vector
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
+import good.damn.editor.animator.options.tickTimer.listeners.VEListenerOnTickColor
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.extensions.views.boundsFrame
@@ -35,7 +37,8 @@ VEListenerOnGetBrowserContent,
 VSIListenerSeekBarProgress,
 VEIDrawable,
 VEIListenerOnAnchorPoint,
-OnPickColorListener {
+OnPickColorListener,
+VEListenerOnTickColor {
 
     companion object {
         private val TAG = VEActivityMain::class.simpleName
@@ -93,6 +96,8 @@ OnPickColorListener {
         onClickBtnPrev = View.OnClickListener {
             onClickBtnPrev(it)
         }
+
+        onTickColorAnimation = this@VEActivityMain
     }
 
     override fun onCreate(
@@ -421,5 +426,12 @@ OnPickColorListener {
         mFragmentVectorAnimation.pickColor(
             color
         )
+    }
+
+    override fun onTickColor(
+        color: Int
+    ) {
+        mOptionShape.currentPrimitive.color = color
+        mViewVector?.invalidate()
     }
 }
