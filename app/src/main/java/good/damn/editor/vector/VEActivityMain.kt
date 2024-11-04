@@ -85,6 +85,10 @@ OnPickColorListener,
         onClickBtnPrev = View.OnClickListener {
             onClickBtnPrev(it)
         }
+
+        onTickUpdateAnimation = {
+            mViewVector?.invalidate()
+        }
     }
 
     private val modeShape = VEEditModeShape(

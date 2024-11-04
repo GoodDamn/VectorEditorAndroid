@@ -5,6 +5,7 @@ import android.view.MotionEvent
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.animation.VEPointIndexedAnimation
 import good.damn.editor.animation.animator.options.VEOptionAnimatorPosition
+import good.damn.editor.animation.animator.options.tickTimer.listeners.VEListenerOnTickPosition
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangePoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangePointPosition
 import good.damn.sav.core.skeleton.VESkeleton2D
@@ -47,8 +48,6 @@ class VEEditModeAnimation(
                     ?: return true
 
                 val index = foundPoint.index
-
-                Log.d(TAG, "onTouchEvent: $index $mPrevPoint")
                 if (mPrevPoint == index) {
                     return true
                 }
@@ -56,10 +55,20 @@ class VEEditModeAnimation(
                 var saved = animatedPoints[index]
 
                 if (saved == null) {
+                    val pos = VEOptionAnimatorPosition()
+                    pos.tickTimer.onTickPosition = object: VEListenerOnTickPosition {
+                        override fun onTickPosition(
+                            x: Float,
+                            y: Float
+                        ) {
+                            foundPoint.set(x,y)
+                        }
+                    }
+
                     saved = VEPointIndexedAnimation(
                         foundPoint,
                         arrayOf(
-                            VEOptionAnimatorPosition()
+                            pos
                         )
                     )
 

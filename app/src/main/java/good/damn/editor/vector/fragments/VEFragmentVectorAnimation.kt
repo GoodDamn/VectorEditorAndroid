@@ -29,6 +29,8 @@ VEIListenerOnChangePointPosition {
     var onClickBtnPrev: View.OnClickListener? = null
     var onPlayAnimation: (() -> Array<VEOptionAnimatorBase>?)? = null
 
+    var onTickUpdateAnimation: (()->Unit)? = null
+
     private var mViewEditor: VEViewAnimatorEditor? = null
 
     override fun onChangePoint(
@@ -79,6 +81,7 @@ VEIListenerOnChangePointPosition {
             0.25f
         ).apply {
             setBackgroundColor(0)
+            tickUpdate = onTickUpdateAnimation
 
             layout.addView(
                 this,

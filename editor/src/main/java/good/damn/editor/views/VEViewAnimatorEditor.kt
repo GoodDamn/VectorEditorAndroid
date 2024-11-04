@@ -3,13 +3,17 @@ package good.damn.editor.views
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.os.Handler
+import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
 import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
-import good.damn.editor.animation.animators.VEAnimatorVector
+import good.damn.editor.animation.animators.VEAnimator
+import good.damn.editor.animation.animators.VEAnimatorTick
+import good.damn.editor.animation.animators.VEIListenerAnimation
 import good.damn.sav.misc.extensions.primitives.isInRange
 import good.damn.sav.misc.interfaces.VEITouchable
 import good.damn.sav.misc.scopes.TimeScope
@@ -26,13 +30,13 @@ class VEViewAnimatorEditor(
     private val heightTickTriggerFactor: Float
 ): View(
     context
-) {
+), VEIListenerAnimation {
 
     companion object {
         private val TAG = VEViewAnimatorEditor::class.simpleName
-        var subInterpolation: Float = 0f
-        var interpolation: Float = 0f
     }
+
+    var tickUpdate: (()-> Unit)? = null
 
     var options: Array<
         VEOptionAnimatorBase
@@ -61,14 +65,20 @@ class VEViewAnimatorEditor(
                     )
                 )
             }
+
+            mAnimator.duration = duration
         }
 
     var durationPx: Int = 0
         private set
 
-    var isPlaying: Boolean = false
-        private set
+    val isPlaying: Boolean
+        get() = mAnimator.isPlaying
 
+    private val mAnimator = VEAnimator().apply {
+        listener = this@VEViewAnimatorEditor
+    }
+    private val mAnimatorTick = VEAnimatorTick()
     private val mTicker = VEAnimatorTicker()
     private val mScrollerHorizontal = VEScrollerHorizontal()
     private val mScrollerVertical = VEScrollerVertical()
@@ -80,66 +90,20 @@ class VEViewAnimatorEditor(
         color = mTicker.color
     }
 
-    private val mPaintDebugText = Paint().apply {
-        color = 0xffffff00.toInt()
-        textSize = 25f
-    }
-
-    private val mScope = TimeScope(
-        Dispatchers.IO
+    private val mHandler = Handler(
+        Looper.getMainLooper()
     )
 
-    private var mJobPlay: Job? = null
-
     fun pause() {
-        isPlaying = false
-        mJobPlay?.cancel()
+        mAnimator.pause()
     }
 
     fun play(
         atTimeMs: Long = 0L
     ) {
-        if (isPlaying) {
-            pause()
-            return
-        }
-
-        isPlaying = true
-
-        mJobPlay = mScope.launch {
-            var currentMs = atTimeMs
-            var dt: Long
-            mScope.remember()
-
-            val options = options
-                ?: return@launch
-
-            val animator = VEAnimatorVector(
-                options
-            )
-
-            val fDuration = duration.toFloat()
-
-            while (currentMs < duration && isPlaying) {
-                dt = mScope.deltaTime
-
-                animator.tick(
-                    dt / fDuration
-                )
-
-                mScrollerHorizontal.scrollValue =
-                    currentMs / fDuration * -durationPx
-
-                currentMs += dt
-                mScope.remember()
-
-                launch(
-                    Dispatchers.Main
-                ) {
-                    invalidate()
-                }
-            }
-        }
+        mAnimator.play(
+            atTimeMs
+        )
     }
 
     fun layoutEditor() {
@@ -266,21 +230,6 @@ class VEViewAnimatorEditor(
         mTicker.draw(
             this
         )
-
-        drawText(
-            "interpolation: $interpolation",
-            0f,
-            height - mPaintDebugText.textSize,
-            mPaintDebugText
-        )
-
-        drawText(
-            "subInterpolation: $subInterpolation",
-            0f,
-            height - mPaintDebugText.textSize*2,
-            mPaintDebugText
-        )
-
     }
 
     override fun onTouchEvent(
@@ -350,6 +299,33 @@ class VEViewAnimatorEditor(
 
         return true
     }
+
+    override fun onAnimatorStart() {
+        options?.apply {
+            mAnimatorTick.prepare(
+                this
+            )
+        }
+    }
+    override fun onAnimatorTick(
+        currentTimeMs: Long,
+        dt: Long
+    ) {
+        val durf = duration.toFloat()
+        mAnimatorTick.tick(
+            dt / durf
+        )
+
+        mScrollerHorizontal.scrollValue =
+            currentTimeMs / durf * -durationPx
+
+        mHandler.post {
+            tickUpdate?.invoke()
+            invalidate()
+        }
+    }
+
+    override fun onAnimatorEnd() = Unit
 }
 
 private data class TimeDivider(
