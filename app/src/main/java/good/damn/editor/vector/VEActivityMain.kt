@@ -423,8 +423,8 @@ OnPickColorListener,
         v: View
     ) {
         mViewPager?.currentItem = 0
-        mViewVector?.mode = modeFreeMove
-        mCurrentAnchor = modeFreeMove
+        mViewVector?.mode = modeShape
+        mCurrentAnchor = modeShape
     }
 
     private fun onClickBtnNext(

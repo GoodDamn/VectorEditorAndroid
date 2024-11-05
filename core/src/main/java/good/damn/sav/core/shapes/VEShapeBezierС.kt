@@ -50,8 +50,6 @@ class VEShapeBezierС(
         val p2 = points[2]
             ?: return@run
 
-        Log.d(TAG, "onDraw: $p0 $p1 $p2")
-        
         moveTo(p0)
 
         cubicTo(
@@ -64,6 +62,13 @@ class VEShapeBezierС(
             this,
             mPaint
         )
+    }
+
+    override fun checkHit(
+        x: Float,
+        y: Float
+    ): Boolean {
+        return false
     }
 
     override fun newInstance(

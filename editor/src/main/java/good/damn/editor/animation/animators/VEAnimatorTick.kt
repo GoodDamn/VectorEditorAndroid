@@ -3,7 +3,6 @@ package good.damn.editor.animation.animators
 import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animation.animator.options.tickTimer.data.base.VETickData
 import good.damn.editor.interfaces.VEIInterpolatable
-import good.damn.editor.views.VEViewAnimatorEditor
 import good.damn.sav.misc.structures.tree.toList
 
 class VEAnimatorTick {
@@ -40,8 +39,8 @@ class VEAnimatorTick {
     fun tick(
         dt: Float
     ) = mOptionsPrepared.forEach { it?.apply {
-        interpolationPath += dt
-        if (interpolationPath > to.tickFactor) {
+        currentPathTime += dt
+        if (currentPathTime > to.tickFactor) {
             from = to
             if (!ticks.hasNext()) {
                 return@forEach
@@ -51,7 +50,7 @@ class VEAnimatorTick {
             return@forEach
         }
 
-        val i = (interpolationPath - from.tickFactor) / dtPath
+        val i = (currentPathTime - from.tickFactor) / dtPath
 
         interpolation.interpolate(
             from,
@@ -67,7 +66,7 @@ class VEAnimatorTick {
         val interpolation: VEIInterpolatable,
         var from: VETickData,
         var to: VETickData,
-        var interpolationPath: Float = 0f,
+        var currentPathTime: Float = 0f,
         var dtPath: Float = to.tickFactor - from.tickFactor
     )
 }

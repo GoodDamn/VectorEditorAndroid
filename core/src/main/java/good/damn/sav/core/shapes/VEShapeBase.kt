@@ -2,6 +2,7 @@ package good.damn.sav.core.shapes
 
 import android.graphics.Paint
 import androidx.annotation.ColorInt
+import good.damn.sav.core.listeners.VEIHittable
 import good.damn.sav.core.listeners.VEIPointIndexable
 import good.damn.sav.misc.interfaces.VEIDrawable
 
@@ -9,7 +10,8 @@ abstract class VEShapeBase(
     protected val mCanvasWidth: Float,
     protected val mCanvasHeight: Float
 ): VEIDrawable,
-    VEIPointIndexable {
+VEIPointIndexable,
+VEIHittable {
 
     @get:ColorInt
     @setparam:ColorInt
@@ -30,7 +32,6 @@ abstract class VEShapeBase(
         set(v) {
             mPaint.style = v
         }
-
 
     protected val mPaint = Paint()
 
