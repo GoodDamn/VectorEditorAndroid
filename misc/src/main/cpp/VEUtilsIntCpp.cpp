@@ -11,7 +11,7 @@ Java_good_damn_sav_misc_utils_VEUtilsIntJava_int32___3BI(
     jbyteArray n,
     jint offset
 ) {
-    unsigned char* nElements = reinterpret_cast<
+    auto* nElements = reinterpret_cast<
         unsigned char*
     >(env->GetByteArrayElements(
         n,

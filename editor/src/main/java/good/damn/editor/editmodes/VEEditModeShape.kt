@@ -12,6 +12,7 @@ import good.damn.sav.core.listeners.VEICallbackOnAddShape
 import good.damn.sav.core.listeners.VEICallbackOnAddSkeletonPoint
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
+import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
@@ -36,6 +37,8 @@ VEIListenerOnAnchorPoint {
     companion object {
         private val TAG = VEEditModeShape::class.simpleName
     }
+
+    var onSelectShape: VEIListenerOnSelectShape? = null
 
     var currentPrimitive: VEShapeBase = VEShapeLine(
         canvasWidth,
@@ -75,6 +78,18 @@ VEIListenerOnAnchorPoint {
             event.action
         ) {
             MotionEvent.ACTION_DOWN -> {
+                shapes.forEach {
+                    if (it.checkHit(
+                        mTouchX,
+                        mTouchY
+                    )) {
+                        onSelectShape?.onSelectShape(
+                            it
+                        )
+                        return true
+                    }
+                }
+
                 val tempX = mTouchX
                 val tempY = mTouchY
 
@@ -232,7 +247,6 @@ VEIListenerOnAnchorPoint {
     ) {
         mPointTo?.y = y
     }
-
 
     fun undoAction() {
         mActions

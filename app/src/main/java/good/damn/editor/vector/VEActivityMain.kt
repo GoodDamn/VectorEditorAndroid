@@ -5,9 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
@@ -19,6 +21,7 @@ import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.editmodes.VEEditModeFreeMove
 import good.damn.editor.editmodes.VEEditModeShape
+import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.vector.bottomsheets.VEBottomSheetColorPick
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
 import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
@@ -27,8 +30,12 @@ import good.damn.editor.views.VEViewVectorEditor
 import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
+import good.damn.sav.core.shapes.VEShapeBase
+import good.damn.sav.core.shapes.VEShapeBezierС
 import good.damn.sav.core.shapes.VEShapeLine
 import good.damn.sav.misc.interfaces.VEIDrawable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.LinkedList
 
 class VEActivityMain
@@ -38,7 +45,8 @@ VSIListenerSeekBarProgress,
 VEIDrawable,
 VEIListenerOnAnchorPoint,
 OnPickColorListener,
-    VEListenerOnTickColor {
+VEListenerOnTickColor,
+VEIListenerOnSelectShape {
 
     companion object {
         private val TAG = VEActivityMain::class.simpleName
@@ -95,7 +103,9 @@ OnPickColorListener,
         mAnchor,
         VEApp.width.toFloat(),
         VEApp.width.toFloat()
-    )
+    ).apply {
+        onSelectShape = this@VEActivityMain
+    }
 
     private val modeFreeMove = VEEditModeFreeMove(
         mAnchor,
@@ -249,7 +259,7 @@ OnPickColorListener,
             )
 
             setOnClickListener {
-                modeShape.currentPrimitive = good.damn.sav.core.shapes.VEShapeBezierС(
+                modeShape.currentPrimitive = VEShapeBezierС(
                     0f, 0f
                 )
             }
@@ -462,5 +472,22 @@ OnPickColorListener,
     ) {
         modeShape.currentPrimitive.color = color
         mViewVector?.invalidate()
+    }
+
+    override fun onSelectShape(
+        shape: VEShapeBase
+    ) {
+        val view = window.decorView
+            as? ViewGroup ?: return
+
+        VEBottomSheetColorPick(
+            view
+        ).apply {
+            onPickColor = OnPickColorListener {
+                shape.color = it
+                mViewVector?.invalidate()
+            }
+            show()
+        }
     }
 }

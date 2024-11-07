@@ -1,5 +1,7 @@
 package good.damn.editor.animation.animators
 
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
 import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animation.animator.options.tickTimer.data.base.VETickData
 import good.damn.editor.interfaces.VEIInterpolatable
@@ -8,6 +10,8 @@ import good.damn.sav.misc.structures.tree.toList
 class VEAnimatorTick {
 
     private lateinit var mOptionsPrepared: Array<Tick?>
+
+    private val mInterpolator = AccelerateDecelerateInterpolator()
 
     fun prepare(
         options: Array<VEOptionAnimatorBase>
@@ -55,7 +59,7 @@ class VEAnimatorTick {
         interpolation.interpolate(
             from,
             to,
-            i
+            mInterpolator.getInterpolation(i)
         )
     }
     }
