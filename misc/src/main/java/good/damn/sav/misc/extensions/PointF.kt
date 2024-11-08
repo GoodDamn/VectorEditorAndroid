@@ -4,6 +4,22 @@ import android.graphics.PointF
 import good.damn.sav.misc.extensions.io.write
 import good.damn.sav.misc.extensions.primitives.toDigitalFraction
 import java.io.OutputStream
+import kotlin.math.atan2
+import kotlin.math.hypot
+
+inline fun PointF.length(
+    with: PointF
+) = hypot(
+    with.x - x,
+    with.y - y
+)
+
+inline fun PointF.angle(
+    with: PointF
+) = atan2(
+    with.x - x,
+    with.y - y
+)
 
 inline fun PointF.writeToStream(
     out: OutputStream,

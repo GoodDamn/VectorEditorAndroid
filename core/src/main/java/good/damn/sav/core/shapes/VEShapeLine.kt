@@ -5,11 +5,16 @@ import android.graphics.Paint
 import android.graphics.PointF
 import android.util.Log
 import good.damn.sav.core.points.VEPointIndexed
+import good.damn.sav.misc.extensions.angle
 import good.damn.sav.misc.extensions.drawLine
+import good.damn.sav.misc.extensions.length
 import java.io.InputStream
 import java.io.OutputStream
+import kotlin.math.cos
+import kotlin.math.log
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sin
 
 class VEShapeLine(
     canvasWidth: Float,
@@ -55,56 +60,45 @@ class VEShapeLine(
         val pp = points[1]
             ?: return false
 
-        mPointLeftTop.set(
-            p.x - mPaint.strokeWidth,
-            p.y
-        )
+        val angle = p.angle(pp)
+        val m = mPaint.strokeWidth
+        val sin = m * sin(angle)
+        val cos = m * -cos(angle)
 
-        mPointRightTop.set(
-            p.x + mPaint.strokeWidth,
-            p.y
+        mPointLeftTop.set(
+            p.x + cos,
+            p.y + sin
         )
 
         mPointLeftBottom.set(
-            pp.x - mPaint.strokeWidth,
-            pp.y
+            pp.x + cos,
+            pp.y + sin
+        )
+
+        mPointRightTop.set(
+            p.x + -cos,
+            p.y + -sin
         )
 
         mPointRightBottom.set(
-            pp.x + mPaint.strokeWidth,
-            pp.y
+            pp.x + -cos,
+            pp.y + -sin
         )
 
-        mPaintDebug.strokeWidth.let {
-            val x1 = mPointLeftTop.x
-            val x6 = mPointRightBottom.x
+        Log.d(TAG, "checkHit: COS: $cos;;;; SIN: $sin")
+        Log.d(TAG, "checkHit: $angle $mPointLeftTop $mPointLeftBottom")
 
-            if (x < x1 || x > x6 || y < p.y || y > pp.y) {
-                return false
-            }
-
-            Log.d(TAG, "checkHit: $x1 < $x < ${mPointLeftTop.y};")
-
-            if (x1 < x && x < mPointLeftTop.y) {
-                return false
-            }
-
-            Log.d(TAG, "checkHit2: ${mPointRightTop.y} < $x < $x6")
-
-            return !(mPointRightTop.y < x && x < x6)
-        }
+        return false
     }
 
     override fun draw(
         canvas: Canvas
     ) = canvas.run {
-        points[0]?.let { p1 ->
-            points[1]?.let { p2 ->
+        points[0]?.let { p ->
+            points[1]?.let { pp ->
                 drawLine(
-                    p1.x,
-                    p1.y,
-                    p2.x,
-                    p2.y,
+                    p,
+                    pp,
                     mPaint
                 )
 
