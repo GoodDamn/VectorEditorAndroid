@@ -8,9 +8,7 @@ inline fun minMax(
     v.forEach {
         if (min > it) {
             min = it
-        }
-
-        if (it > max) {
+        } else if (it > max) {
             max = it
         }
     }

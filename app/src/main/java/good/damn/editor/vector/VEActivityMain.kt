@@ -22,7 +22,7 @@ import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.editmodes.VEEditModeFreeMove
 import good.damn.editor.editmodes.VEEditModeShape
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
-import good.damn.editor.vector.bottomsheets.VEBottomSheetColorPick
+import good.damn.editor.vector.bottomsheets.VEBottomSheetSetupShape
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
 import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
 import good.damn.editor.vector.fragments.VEFragmentVectorEdit
@@ -41,10 +41,8 @@ import java.util.LinkedList
 class VEActivityMain
 : AppCompatActivity(),
 VEListenerOnGetBrowserContent,
-VSIListenerSeekBarProgress,
 VEIDrawable,
 VEIListenerOnAnchorPoint,
-OnPickColorListener,
 VEListenerOnTickColor,
 VEIListenerOnSelectShape {
 
@@ -53,7 +51,6 @@ VEIListenerOnSelectShape {
     }
 
     private var mViewVector: VEViewVectorEditor? = null
-    private var mViewColor: View? = null
     private var mCurrentAnchor: VEIListenerOnAnchorPoint? = null
     private var mViewPager: ViewPager2? = null
 
@@ -270,64 +267,6 @@ VEIListenerOnSelectShape {
         }
 
 
-        VSViewSeekBarV(
-            context
-        ).apply {
-
-            boundsFrame(
-                gravity = Gravity.END,
-                height = VEApp.height * 0.2f,
-                top = VEApp.width * 0.42f,
-                width = VEApp.width * 0.1f
-            )
-
-            onSeekProgress = this@VEActivityMain
-
-            strokeWidth = layoutParams.width * 0.25f
-            setBackgroundColor(
-                0xffff0000.toInt()
-            )
-            progressColor = 0xffffff00.toInt()
-
-            progress = 0.65f
-
-            root.addView(
-                this
-            )
-        }
-
-        mViewColor = View(
-            context
-        ).apply {
-            setOnClickListener {
-                VEBottomSheetColorPick(
-                    root
-                ).apply {
-                    onPickColor = this@VEActivityMain
-                    show()
-                }
-            }
-
-            setBackgroundColor(
-                0xffffffff.toInt()
-            )
-
-            val size = modeShape.canvasWidth * 0.1f
-            val margin = modeShape.canvasWidth * 0.01f
-
-            boundsFrame(
-                gravity = Gravity.END,
-                top = modeShape.canvasHeight - size - margin,
-                end = margin,
-                width = size,
-                height = size
-            )
-
-            root.addView(
-                this
-            )
-        }
-
         mViewPager = ViewPager2(
             context
         ).apply {
@@ -364,16 +303,6 @@ VEIListenerOnSelectShape {
         uri: Uri?
     ) = Unit
 
-    override fun onSeekProgress(
-        progress: Float
-    ) {
-        modeShape.apply {
-            currentPrimitive.strokeWidth =
-                progress * canvasWidth
-        }
-
-        mViewVector?.invalidate()
-    }
 
     override fun draw(
         canvas: Canvas
@@ -446,27 +375,6 @@ VEIListenerOnSelectShape {
         mCurrentAnchor = modeAnimation
     }
 
-    override fun onPickColor(
-        color: Int
-    ) {
-        modeShape
-            .currentPrimitive
-            .color = color
-
-        mViewColor?.setBackgroundColor(
-            color
-        )
-
-        mViewVector?.invalidate()
-
-        mFragmentVectorEdit.pickColor(
-            color
-        )
-
-        mFragmentVectorAnimation.pickColor(
-            color
-        )
-    }
 
     override fun onTickColor(
         color: Int
@@ -481,9 +389,17 @@ VEIListenerOnSelectShape {
         val view = window.decorView
             as? ViewGroup ?: return
 
-        VEBottomSheetColorPick(
+        VEBottomSheetSetupShape(
             view
         ).apply {
+            onSeekProgressWidth = object: VSIListenerSeekBarProgress {
+                override fun onSeekProgress(
+                    progress: Float
+                ) {
+                    shape.strokeWidth = progress * modeShape.canvasWidth
+                    mViewVector?.invalidate()
+                }
+            }
             onPickColor = OnPickColorListener {
                 shape.color = it
                 mViewVector?.invalidate()

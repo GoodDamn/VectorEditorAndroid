@@ -1,5 +1,6 @@
 package good.damn.sav.misc.structures.tree
 
+/*
 open class LinkedList2<T> {
 
     private var mFirst: Node<T>? = null
@@ -67,4 +68,4 @@ open class LinkedList2<T> {
         var previous: Node<T>? = null,
         var next: Node<T>? = null
     )
-}
+}*/

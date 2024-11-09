@@ -78,8 +78,7 @@ VEIListenerOnAnchorPoint {
             event.action
         ) {
             MotionEvent.ACTION_DOWN -> {
-                var isSelectedShape = false
-                shapes.forEachReversed {
+                shapes.forEach {
                     if (it.checkHit(
                         mTouchX,
                         mTouchY
@@ -87,17 +86,10 @@ VEIListenerOnAnchorPoint {
                         onSelectShape?.onSelectShape(
                             it
                         )
-                        isSelectedShape = true
-                        return@forEachReversed false
+                        return true
                     }
 
-                    return@forEachReversed true
                 }
-
-                if (isSelectedShape) {
-                    return true
-                }
-
                 val tempX = mTouchX
                 val tempY = mTouchY
 
