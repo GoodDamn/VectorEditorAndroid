@@ -8,12 +8,11 @@ import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.misc.extensions.angle
 import good.damn.sav.misc.extensions.drawLine
 import good.damn.sav.misc.extensions.length
+import good.damn.sav.misc.extensions.minMax
 import java.io.InputStream
 import java.io.OutputStream
 import kotlin.math.cos
 import kotlin.math.log
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sin
 
 class VEShapeLine(
@@ -61,7 +60,10 @@ class VEShapeLine(
             ?: return false
 
         val angle = p.angle(pp)
-        val m = mPaint.strokeWidth
+        val m = if (
+            mPaint.strokeWidth > 25f
+        ) mPaint.strokeWidth else 25f
+
         val sin = m * sin(angle)
         val cos = m * -cos(angle)
 
@@ -85,10 +87,43 @@ class VEShapeLine(
             pp.y + -sin
         )
 
-        Log.d(TAG, "checkHit: COS: $cos;;;; SIN: $sin")
-        Log.d(TAG, "checkHit: $angle $mPointLeftTop $mPointLeftBottom")
+        val minMaxX = minMax(
+            mPointLeftTop.x,
+            mPointLeftBottom.x,
+            mPointRightTop.x,
+            mPointRightBottom.x
+        )
 
-        return false
+        val minMaxY = minMax(
+            mPointLeftTop.y,
+            mPointLeftBottom.y,
+            mPointRightTop.y,
+            mPointRightBottom.y
+        )
+
+        if (
+            x < minMaxX.first ||
+            x > minMaxX.second ||
+            y < minMaxY.first ||
+            y > minMaxY.second
+        ) {
+            return false
+        }
+
+
+        var dpp = pp.x - p.x
+        if (dpp == 0.0f) {
+            dpp = 0.01f
+        }
+        val k = (pp.y - p.y) / dpp
+
+
+        val y1 = k * (x - mPointLeftTop.x) + mPointLeftTop.y
+        val y2 = k * (x - mPointRightTop.x) + mPointRightTop.y
+
+        Log.d(TAG, "checkHit: $y1 < $y < $y2")
+
+        return (y1 > y && y > y2) || (y1 < y && y < y2)
     }
 
     override fun draw(
