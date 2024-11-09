@@ -121,8 +121,6 @@ class VEShapeLine(
         val y1 = k * (x - mPointLeftTop.x) + mPointLeftTop.y
         val y2 = k * (x - mPointRightTop.x) + mPointRightTop.y
 
-        Log.d(TAG, "checkHit: $y1 < $y < $y2")
-
         return (y1 > y && y > y2) || (y1 < y && y < y2)
     }
 

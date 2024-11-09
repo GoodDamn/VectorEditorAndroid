@@ -386,6 +386,7 @@ VEIListenerOnSelectShape {
             it.draw(
                 canvas
             )
+            true
         }
 
         modeShape.draw(

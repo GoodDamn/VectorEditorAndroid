@@ -6,6 +6,6 @@ class VEDataActionShape(
     private val mShapes: VEListShapes
 ): VEIActionable {
     override fun removeAction() {
-        mShapes.removeLastOrNull()
+        mShapes.removeLast()
     }
 }

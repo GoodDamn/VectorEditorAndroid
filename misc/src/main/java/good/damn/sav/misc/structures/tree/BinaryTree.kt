@@ -48,6 +48,12 @@ class BinaryTree<T>(
             action
         )
     }
+
+    inner class Node<T>(
+        var data: T,
+        var leftNode: Node<T>? = null,
+        var rightNode: Node<T>? = null
+    )
 }
 
 fun <T> BinaryTree<T>.toList()
@@ -56,7 +62,7 @@ fun <T> BinaryTree<T>.toList()
 }
 
 private fun <T> BinaryTree<T>.searchAdd(
-    node: Node<T>? = null,
+    node: BinaryTree<T>.Node<T>? = null,
     data: T
 ) {
     if (node == null) {
@@ -90,9 +96,3 @@ private fun <T> BinaryTree<T>.searchAdd(
         data
     )
 }
-
-data class Node<T>(
-    var data: T,
-    var leftNode: Node<T>? = null,
-    var rightNode: Node<T>? = null
-)
