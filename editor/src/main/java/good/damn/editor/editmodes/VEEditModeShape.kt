@@ -78,18 +78,6 @@ VEIListenerOnAnchorPoint {
             event.action
         ) {
             MotionEvent.ACTION_DOWN -> {
-                shapes.forEach {
-                    if (it.checkHit(
-                        mTouchX,
-                        mTouchY
-                    )) {
-                        onSelectShape?.onSelectShape(
-                            it
-                        )
-                        return true
-                    }
-
-                }
                 val tempX = mTouchX
                 val tempY = mTouchY
 
@@ -97,6 +85,18 @@ VEIListenerOnAnchorPoint {
                     tempX,
                     tempY
                 )
+
+                if (mPointFrom == null) {
+                    shapes.find(
+                        mTouchX,
+                        mTouchY
+                    )?.apply {
+                        onSelectShape?.onSelectShape(
+                            this
+                        )
+                        return false
+                    }
+                }
 
                 if (mPointFrom != null) {
                     mActions.add(
@@ -194,14 +194,11 @@ VEIListenerOnAnchorPoint {
                 }
             }
 
-            MotionEvent.ACTION_UP -> {
-                mPointFrom = null
+            MotionEvent.ACTION_UP,
+            MotionEvent.ACTION_CANCEL -> {
                 mPointTo = null
                 mPointMiddle = null
-            }
-
-            else -> {
-
+                mPointFrom = null
             }
         }
 

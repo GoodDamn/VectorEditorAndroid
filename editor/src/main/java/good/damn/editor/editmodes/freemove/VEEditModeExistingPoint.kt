@@ -1,36 +1,35 @@
-package good.damn.editor.editmodes
+package good.damn.editor.editmodes.freemove
 
 import android.view.MotionEvent
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
-import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.core.points.VEPointIndexed
+import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.interfaces.VEITouchable
 
-open class VEEditModeFreeMove(
-    private val mAnchor: VEAnchor,
-    private val mSkeleton: VESkeleton2D
-): VEITouchable,
-VEIListenerOnAnchorPoint {
+class VEEditModeExistingPoint(
+    private val mSkeleton: VESkeleton2D,
+    private val mAnchor: VEAnchor
+): VEIListenerOnAnchorPoint,
+VEITouchable {
 
-    protected var mFoundPoint: VEPointIndexed? = null
+    var foundPoint: VEPointIndexed? = null
 
     override fun onTouchEvent(
         event: MotionEvent
     ): Boolean {
-
-        when (
-            event.action
-        ) {
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                mFoundPoint = mSkeleton.find(
+                foundPoint = mSkeleton.find(
                     event.x,
                     event.y
-                )
+                ) ?: return false
+
+                return true
             }
 
             MotionEvent.ACTION_MOVE -> {
-                mFoundPoint?.apply {
+                foundPoint?.apply {
                     mAnchor.checkAnchors(
                         mSkeleton,
                         event.x,
@@ -38,22 +37,23 @@ VEIListenerOnAnchorPoint {
                         index
                     )
                 }
+
+                return true
             }
-            else ->  {}
         }
 
-        return true
+        return false
     }
 
     override fun onAnchorX(
         x: Float
     ) {
-        mFoundPoint?.x = x
+        foundPoint?.x = x
     }
 
     override fun onAnchorY(
         y: Float
     ) {
-        mFoundPoint?.y = y
+        foundPoint?.y = y
     }
 }

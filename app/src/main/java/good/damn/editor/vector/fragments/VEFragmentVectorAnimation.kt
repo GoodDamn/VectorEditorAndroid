@@ -7,24 +7,20 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import good.damn.editor.animation.VEPointIndexedAnimation
+import good.damn.editor.animation.VEAnimationEntity
 import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
-import good.damn.editor.animation.animator.options.VEOptionAnimatorColor
 import good.damn.editor.animation.animator.options.VEOptionAnimatorPosition
-import good.damn.editor.animation.animator.options.tickTimer.listeners.VEListenerOnTickColor
-import good.damn.editor.editmodes.listeners.VEIListenerOnChangePoint
-import good.damn.editor.editmodes.listeners.VEIListenerOnChangePointPosition
+import good.damn.editor.editmodes.listeners.VEIListenerOnChangeEntityAnimation
+import good.damn.editor.editmodes.listeners.VEIListenerOnChangeValueAnimation
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.interfaces.VEIColorPickable
 import good.damn.editor.views.VEViewAnimatorEditor
-import good.damn.sav.core.points.VEPointIndexed
-import good.damn.sav.core.shapes.VEShapeBase
 
 class VEFragmentVectorAnimation
 : Fragment(),
 VEIColorPickable,
-VEIListenerOnChangePoint,
-VEIListenerOnChangePointPosition {
+VEIListenerOnChangeEntityAnimation,
+VEIListenerOnChangeValueAnimation {
 
     var onClickBtnPrev: View.OnClickListener? = null
     var onPlayAnimation: (() -> Array<VEOptionAnimatorBase>?)? = null
@@ -33,8 +29,8 @@ VEIListenerOnChangePointPosition {
 
     private var mViewEditor: VEViewAnimatorEditor? = null
 
-    override fun onChangePoint(
-        point: VEPointIndexedAnimation
+    override fun onChangeEntityAnimation(
+        point: VEAnimationEntity
     ) {
         mViewEditor?.apply {
             options = point.options
@@ -43,16 +39,16 @@ VEIListenerOnChangePointPosition {
         }
     }
 
-    override fun onChangePointPosition(
-        x: Float,
-        y: Float
+    override fun onChangeValueAnimation(
+        entity: VEAnimationEntity,
+        value: Any
     ) {
-        mViewEditor?.apply {
+        /*mViewEditor?.apply {
             (options?.firstOrNull() as? VEOptionAnimatorPosition)?.apply {
                 tickTimer.tickX = x
                 tickTimer.tickY = y
             }
-        }
+        }*/
     }
 
     override fun onCreateView(

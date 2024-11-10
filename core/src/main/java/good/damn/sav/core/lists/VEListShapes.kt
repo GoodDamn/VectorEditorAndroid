@@ -7,7 +7,23 @@ import java.util.LinkedList
 class VEListShapes: LinkedList<VEShapeBase>() {
 
     var onAddShape: VEICallbackOnAddShape? = null
-    
+
+    fun find(
+        touchX: Float,
+        touchY: Float
+    ): VEShapeBase? {
+        forEach {
+            if (it.checkHit(
+                    touchX,
+                    touchY
+                )) {
+                return it
+            }
+        }
+
+        return null
+    }
+
     override fun add(
         e: VEShapeBase
     ): Boolean {

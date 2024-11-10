@@ -1,36 +1,36 @@
 package good.damn.editor.editmodes
 
-import android.util.Log
 import android.view.MotionEvent
 import good.damn.editor.anchors.VEAnchor
-import good.damn.editor.animation.VEPointIndexedAnimation
+import good.damn.editor.animation.VEAnimationEntity
+import good.damn.editor.animation.VETickerPosition
 import good.damn.editor.animation.animator.options.VEOptionAnimatorPosition
-import good.damn.editor.animation.animator.options.tickTimer.listeners.VEListenerOnTickPosition
-import good.damn.editor.editmodes.listeners.VEIListenerOnChangePoint
-import good.damn.editor.editmodes.listeners.VEIListenerOnChangePointPosition
+import good.damn.editor.editmodes.freemove.VEEditModeExistingEntity
+import good.damn.editor.editmodes.listeners.VEIListenerOnChangeEntityAnimation
+import good.damn.editor.editmodes.listeners.VEIListenerOnChangeValueAnimation
+import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.skeleton.VESkeleton2D
-import good.damn.sav.core.points.VEPointIndexed
 
 class VEEditModeAnimation(
     anchor: VEAnchor,
-    skeleton: VESkeleton2D
-): VEEditModeFreeMove(
+    skeleton: VESkeleton2D,
+    shapes: VEListShapes
+): VEEditModeExistingEntity(
     anchor,
-    skeleton
+    skeleton,
+    shapes
 ) {
 
     companion object {
         private val TAG = VEEditModeAnimation::class.simpleName
     }
 
-    var onChangePoint: VEIListenerOnChangePoint? = null
-    var onChangePointPosition: VEIListenerOnChangePointPosition? = null
+    var onChangeEntityAnimation: VEIListenerOnChangeEntityAnimation? = null
+    var onChangeValueAnimation: VEIListenerOnChangeValueAnimation? = null
 
-    private var mPrevPoint: Int = 0
-
-    val animatedPoints = HashMap<
-        Int,
-        VEPointIndexedAnimation
+    val animatedEntities = HashMap<
+        Long,
+        VEAnimationEntity
     >()
 
     override fun onTouchEvent(
@@ -39,64 +39,6 @@ class VEEditModeAnimation(
         super.onTouchEvent(
             event
         )
-
-        when(
-            event.action
-        ) {
-            MotionEvent.ACTION_DOWN -> {
-                val foundPoint = mFoundPoint
-                    ?: return true
-
-                val index = foundPoint.index
-                if (mPrevPoint == index) {
-                    return true
-                }
-
-                var saved = animatedPoints[index]
-
-                if (saved == null) {
-                    val pos = VEOptionAnimatorPosition()
-                    pos.tickTimer.onTickPosition = object: VEListenerOnTickPosition {
-                        override fun onTickPosition(
-                            x: Float,
-                            y: Float
-                        ) {
-                            foundPoint.set(x,y)
-                        }
-                    }
-
-                    saved = VEPointIndexedAnimation(
-                        foundPoint,
-                        arrayOf(
-                            pos
-                        )
-                    )
-
-                    animatedPoints[
-                        index
-                    ] = saved
-                }
-
-                onChangePoint?.onChangePoint(
-                    saved
-                )
-
-                mPrevPoint = index
-                return true
-            }
-
-
-            MotionEvent.ACTION_UP,
-            MotionEvent.ACTION_CANCEL -> {
-                mFoundPoint?.let {
-                    onChangePointPosition?.onChangePointPosition(
-                        it.x,
-                        it.y
-                    )
-                }
-            }
-
-        }
 
         return true
     }

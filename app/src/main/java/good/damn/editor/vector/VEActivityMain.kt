@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
@@ -19,7 +18,7 @@ import good.damn.editor.editmodes.VEEditModeAnimation
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.extensions.views.boundsFrame
-import good.damn.editor.editmodes.VEEditModeFreeMove
+import good.damn.editor.editmodes.freemove.VEEditModeExistingEntity
 import good.damn.editor.editmodes.VEEditModeShape
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.vector.bottomsheets.VEBottomSheetSetupShape
@@ -28,15 +27,11 @@ import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
 import good.damn.editor.vector.fragments.VEFragmentVectorEdit
 import good.damn.editor.views.VEViewVectorEditor
 import good.damn.gradient_color_picker.OnPickColorListener
-import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.VEShapeBezierС
 import good.damn.sav.core.shapes.VEShapeLine
 import good.damn.sav.misc.interfaces.VEIDrawable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.LinkedList
 
 class VEActivityMain
 : AppCompatActivity(),
@@ -104,17 +99,21 @@ VEIListenerOnSelectShape {
         onSelectShape = this@VEActivityMain
     }
 
-    private val modeFreeMove = VEEditModeFreeMove(
+    private val modeFreeMove = VEEditModeExistingEntity(
         mAnchor,
-        modeShape.skeleton
-    )
+        modeShape.skeleton,
+        modeShape.shapes
+    ).apply {
+        editModeShape.onSelectShape = this@VEActivityMain
+    }
 
     private val modeAnimation = VEEditModeAnimation(
         mAnchor,
-        modeShape.skeleton
+        modeShape.skeleton,
+        modeShape.shapes
     ).apply {
-        onChangePoint = mFragmentVectorAnimation
-        onChangePointPosition = mFragmentVectorAnimation
+        onChangeEntityAnimation = mFragmentVectorAnimation
+        onChangeValueAnimation = mFragmentVectorAnimation
     }
 
 
@@ -126,17 +125,16 @@ VEIListenerOnSelectShape {
         )
 
         mFragmentVectorAnimation.onPlayAnimation = {
-            val list = ArrayList<VEOptionAnimatorBase>(
-                modeAnimation.animatedPoints.size
-            )
-
-            for (pia in modeAnimation.animatedPoints.values) {
-                pia.options.forEach {
-                    list.add(it)
+            modeAnimation.animatedEntities.run {
+                val list = ArrayList<VEOptionAnimatorBase>(size)
+                for (pia in values) {
+                    pia.options.forEach {
+                        list.add(it)
+                    }
                 }
-            }
 
-            list.toTypedArray()
+                list.toTypedArray()
+            }
         }
 
         mBrowserContent.register(
@@ -207,7 +205,7 @@ VEIListenerOnSelectShape {
 
             setOnClickListener {
                 mViewVector?.mode = modeFreeMove
-                mCurrentAnchor = modeFreeMove
+                mCurrentAnchor = modeFreeMove.editModePoint
             }
 
             boundsFrame(
@@ -315,7 +313,6 @@ VEIListenerOnSelectShape {
             it.draw(
                 canvas
             )
-            true
         }
 
         modeShape.draw(
@@ -372,9 +369,8 @@ VEIListenerOnSelectShape {
     ) {
         mViewPager?.currentItem = 1
         mViewVector?.mode = modeAnimation
-        mCurrentAnchor = modeAnimation
+        mCurrentAnchor = modeAnimation.editModePoint
     }
-
 
     override fun onTickColor(
         color: Int

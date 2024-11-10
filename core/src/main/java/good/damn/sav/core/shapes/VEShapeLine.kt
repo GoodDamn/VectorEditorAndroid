@@ -78,30 +78,24 @@ class VEShapeLine(
         }
         val k = (pp.y - p.y) / dpp
 
-        val xx = p.x + 50f * sina
-        val yy = k * (xx - p.x) + p.y
-
-        val xxx = pp.x - 50f * sina
-        val yyy = k * (xxx - pp.x) + pp.y
-
         mPointLeftTop.set(
-            xx + cos,
-            yy + sin
+            p.x + cos,
+            p.y + sin
         )
 
         mPointLeftBottom.set(
-            xxx + cos,
-            yyy + sin
+            pp.x + cos,
+            pp.y + sin
         )
 
         mPointRightTop.set(
-            xx + -cos,
-            yy + -sin
+            p.x + -cos,
+            p.y + -sin
         )
 
         mPointRightBottom.set(
-            xxx + -cos,
-            yyy + -sin
+            pp.x + -cos,
+            pp.y + -sin
         )
 
         val minMaxX = minMax(
@@ -144,7 +138,7 @@ class VEShapeLine(
                     mPaint
                 )
 
-                drawLine(
+                /*drawLine(
                     mPointLeftTop,
                     mPointLeftBottom,
                     mPaintDebug
@@ -154,7 +148,7 @@ class VEShapeLine(
                     mPointRightTop,
                     mPointRightBottom,
                     mPaintDebug
-                )
+                )*/
             }
         }
 
