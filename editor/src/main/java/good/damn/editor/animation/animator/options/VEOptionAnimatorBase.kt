@@ -10,4 +10,7 @@ abstract class VEOptionAnimatorBase
 : VERectable(),
 VEIDrawable {
     abstract val tickTimer: VETickTimerAnimatorBase
+    abstract fun changeValueAnimation(
+        value: Any
+    )
 }

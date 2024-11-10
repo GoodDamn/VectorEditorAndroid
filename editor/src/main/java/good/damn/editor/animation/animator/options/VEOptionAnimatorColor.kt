@@ -18,6 +18,15 @@ class VEOptionAnimatorColor
 
     override val tickTimer = VETickTimerAnimatorColor()
 
+    override fun changeValueAnimation(
+        value: Any
+    ) {
+        if (value !is Int)
+            return
+
+        tickTimer.color = value
+    }
+
     override fun layout(
         width: Float,
         height: Float

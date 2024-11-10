@@ -42,27 +42,9 @@ VEIListenerOnChangeValueAnimation {
     }
 
     override fun onChangeValueAnimation(
-        entity: VEEditAnimationEntity,
         value: Any
-    ) = mViewEditor?.run {
-        options?.forEach {
-            (it as? VEOptionAnimatorPosition)?.apply {
-                if (value !is VEEditAnimationDataPosition)
-                    return@forEach
-                tickTimer.tickX = value.x
-                tickTimer.tickY = value.y
-                return@forEach
-            }
-
-            (it as? VEOptionAnimatorColor)?.apply {
-                if (value !is Int)
-                    return@forEach
-
-                tickTimer.color = value
-                return@forEach
-            }
-        }
-
+    ) = mViewEditor?.options?.forEach {
+        it.changeValueAnimation(value)
     } ?: Unit
 
     override fun onCreateView(

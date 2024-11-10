@@ -1,6 +1,6 @@
 package good.damn.editor.editmodes.animation.data
 
 data class VEEditAnimationDataPosition(
-    val x: Float,
-    val y: Float
+    var x: Float = 0.0f,
+    var y: Float = 0.0f
 )

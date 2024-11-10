@@ -379,7 +379,7 @@ VEIListenerOnSelectShape {
     ) {
         mViewPager?.currentItem = 1
         mViewVector?.mode = modeAnimation
-        mCurrentAnchor = modeExistingPoint
+        mCurrentAnchor = modeAnimation.anchor
     }
 
     override fun onTickColor(

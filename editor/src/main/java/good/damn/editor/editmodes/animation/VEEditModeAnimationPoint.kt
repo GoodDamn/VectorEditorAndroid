@@ -5,6 +5,7 @@ import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.animation.tickers.VETickerPosition
 import good.damn.editor.animation.animator.options.VEOptionAnimatorPosition
+import good.damn.editor.editmodes.animation.data.VEEditAnimationDataPosition
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangeValueAnimation
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.skeleton.VESkeleton2D
@@ -35,6 +36,8 @@ VEIListenerOnAnchorPoint {
         )
     }
 
+    private var mDataPosition: VEEditAnimationDataPosition? = null
+
     override fun onTouchEvent(
         event: MotionEvent
     ): Boolean {
@@ -45,6 +48,7 @@ VEIListenerOnAnchorPoint {
                     event.y
                 ) ?: return false
 
+                mDataPosition = VEEditAnimationDataPosition()
                 return true
             }
 
@@ -58,12 +62,20 @@ VEIListenerOnAnchorPoint {
                     )
                 }
 
+                mDataPosition?.let {
+                    it.x = event.x
+                    it.y = event.y
+                    onChangeValueAnimation?.onChangeValueAnimation(
+                        it
+                    )
+                }
+
                 return true
             }
 
 
             MotionEvent.ACTION_UP -> {
-
+                mDataPosition = null
                 return true
             }
         }

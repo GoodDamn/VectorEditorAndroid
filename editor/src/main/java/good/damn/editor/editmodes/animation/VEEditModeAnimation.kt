@@ -2,6 +2,7 @@ package good.damn.editor.editmodes.animation
 
 import android.view.MotionEvent
 import good.damn.editor.anchors.VEAnchor
+import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.editmodes.VEEditModeSwap
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangeEntityAnimation
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangeValueAnimation
@@ -26,6 +27,8 @@ class VEEditModeAnimation(
     companion object {
         private val TAG = VEEditModeAnimation::class.simpleName
     }
+
+    val anchor = editModes[0] as? VEIListenerOnAnchorPoint
 
     var onChangeEntityAnimation: VEIListenerOnChangeEntityAnimation? = null
     var onChangeValueAnimation: VEIListenerOnChangeValueAnimation? = null
