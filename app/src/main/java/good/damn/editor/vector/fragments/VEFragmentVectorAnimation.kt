@@ -11,7 +11,7 @@ import good.damn.editor.editmodes.animation.VEEditAnimationEntity
 import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animation.animator.options.VEOptionAnimatorColor
 import good.damn.editor.animation.animator.options.VEOptionAnimatorPosition
-import good.damn.editor.editmodes.animation.VEEditAnimationDataPosition
+import good.damn.editor.editmodes.animation.data.VEEditAnimationDataPosition
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangeEntityAnimation
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangeValueAnimation
 import good.damn.editor.vector.VEApp
@@ -32,10 +32,10 @@ VEIListenerOnChangeValueAnimation {
     private var mViewEditor: VEViewAnimatorEditor? = null
 
     override fun onChangeEntityAnimation(
-        point: VEEditAnimationEntity
+        entity: VEEditAnimationEntity
     ) {
         mViewEditor?.apply {
-            options = point.options
+            options = entity.options
             layoutEditor()
             invalidate()
         }
