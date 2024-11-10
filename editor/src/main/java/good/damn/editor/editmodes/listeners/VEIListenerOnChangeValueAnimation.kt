@@ -1,10 +1,10 @@
 package good.damn.editor.editmodes.listeners
 
-import good.damn.editor.animation.VEAnimationEntity
+import good.damn.editor.editmodes.animation.VEEditAnimationEntity
 
 interface VEIListenerOnChangeValueAnimation {
     fun onChangeValueAnimation(
-        entity: VEAnimationEntity,
+        entity: VEEditAnimationEntity,
         value: Any
     )
 }

@@ -1,9 +1,8 @@
-package good.damn.editor.animation
+package good.damn.editor.editmodes.animation
 
 import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
-import good.damn.sav.core.shapes.VEShapeBase
 
-data class VEAnimationEntity(
+data class VEEditAnimationEntity(
     val options: Array<VEOptionAnimatorBase>,
     val index: Long = System.currentTimeMillis()
 )

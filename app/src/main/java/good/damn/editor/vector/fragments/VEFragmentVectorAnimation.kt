@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import good.damn.editor.animation.VEAnimationEntity
+import good.damn.editor.editmodes.animation.VEEditAnimationEntity
 import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
+import good.damn.editor.animation.animator.options.VEOptionAnimatorColor
 import good.damn.editor.animation.animator.options.VEOptionAnimatorPosition
+import good.damn.editor.editmodes.animation.VEEditAnimationDataPosition
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangeEntityAnimation
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangeValueAnimation
 import good.damn.editor.vector.VEApp
@@ -30,7 +32,7 @@ VEIListenerOnChangeValueAnimation {
     private var mViewEditor: VEViewAnimatorEditor? = null
 
     override fun onChangeEntityAnimation(
-        point: VEAnimationEntity
+        point: VEEditAnimationEntity
     ) {
         mViewEditor?.apply {
             options = point.options
@@ -40,16 +42,28 @@ VEIListenerOnChangeValueAnimation {
     }
 
     override fun onChangeValueAnimation(
-        entity: VEAnimationEntity,
+        entity: VEEditAnimationEntity,
         value: Any
-    ) {
-        /*mViewEditor?.apply {
-            (options?.firstOrNull() as? VEOptionAnimatorPosition)?.apply {
-                tickTimer.tickX = x
-                tickTimer.tickY = y
+    ) = mViewEditor?.run {
+        options?.forEach {
+            (it as? VEOptionAnimatorPosition)?.apply {
+                if (value !is VEEditAnimationDataPosition)
+                    return@forEach
+                tickTimer.tickX = value.x
+                tickTimer.tickY = value.y
+                return@forEach
             }
-        }*/
-    }
+
+            (it as? VEOptionAnimatorColor)?.apply {
+                if (value !is Int)
+                    return@forEach
+
+                tickTimer.color = value
+                return@forEach
+            }
+        }
+
+    } ?: Unit
 
     override fun onCreateView(
         inflater: LayoutInflater,

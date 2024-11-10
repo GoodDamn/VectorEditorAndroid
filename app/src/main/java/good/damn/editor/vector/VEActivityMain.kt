@@ -14,12 +14,14 @@ import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animation.animator.options.tickTimer.listeners.VEListenerOnTickColor
-import good.damn.editor.editmodes.VEEditModeAnimation
+import good.damn.editor.editmodes.animation.VEEditModeAnimation
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.extensions.views.boundsFrame
-import good.damn.editor.editmodes.freemove.VEEditModeExistingEntity
 import good.damn.editor.editmodes.VEEditModeShape
+import good.damn.editor.editmodes.VEEditModeSwap
+import good.damn.editor.editmodes.freemove.VEEditModeExistingPoint
+import good.damn.editor.editmodes.freemove.VEEditModeExistingShape
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.vector.bottomsheets.VEBottomSheetSetupShape
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
@@ -99,13 +101,21 @@ VEIListenerOnSelectShape {
         onSelectShape = this@VEActivityMain
     }
 
-    private val modeFreeMove = VEEditModeExistingEntity(
-        mAnchor,
+    private val modeExistingPoint = VEEditModeExistingPoint(
         modeShape.skeleton,
-        modeShape.shapes
-    ).apply {
-        editModeShape.onSelectShape = this@VEActivityMain
-    }
+        mAnchor
+    )
+
+    private val modeFreeMove = VEEditModeSwap(
+        arrayOf(
+            modeExistingPoint,
+            VEEditModeExistingShape(
+                modeShape.shapes
+            ).apply {
+                onSelectShape = this@VEActivityMain
+            }
+        )
+    )
 
     private val modeAnimation = VEEditModeAnimation(
         mAnchor,
@@ -205,7 +215,7 @@ VEIListenerOnSelectShape {
 
             setOnClickListener {
                 mViewVector?.mode = modeFreeMove
-                mCurrentAnchor = modeFreeMove.editModePoint
+                mCurrentAnchor = modeExistingPoint
             }
 
             boundsFrame(
@@ -369,7 +379,7 @@ VEIListenerOnSelectShape {
     ) {
         mViewPager?.currentItem = 1
         mViewVector?.mode = modeAnimation
-        mCurrentAnchor = modeAnimation.editModePoint
+        mCurrentAnchor = modeExistingPoint
     }
 
     override fun onTickColor(
