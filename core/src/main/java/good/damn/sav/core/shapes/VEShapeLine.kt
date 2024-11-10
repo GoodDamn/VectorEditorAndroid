@@ -53,7 +53,6 @@ class VEShapeLine(
         x: Float,
         y: Float
     ): Boolean {
-        Log.d(TAG, "checkHit: $this")
         val p = points[0]
             ?: return false
 
@@ -61,32 +60,48 @@ class VEShapeLine(
             ?: return false
 
         val angle = p.angle(pp)
+
         val stroke = mPaint.strokeWidth * 0.5f
         val m = if (
-            stroke > 25f
-        ) stroke else 25f
+            stroke > 50f
+        ) stroke else 50f
 
-        val sin = m * sin(angle)
-        val cos = m * -cos(angle)
+        val sina = sin(angle)
+        val cosa = -cos(angle)
+
+        val sin = m * sina
+        val cos = m * cosa
+
+        var dpp = pp.x - p.x
+        if (dpp == 0.0f) {
+            dpp = 0.001f
+        }
+        val k = (pp.y - p.y) / dpp
+
+        val xx = p.x + 50f * sina
+        val yy = k * (xx - p.x) + p.y
+
+        val xxx = pp.x - 50f * sina
+        val yyy = k * (xxx - pp.x) + pp.y
 
         mPointLeftTop.set(
-            p.x + cos,
-            p.y + sin
+            xx + cos,
+            yy + sin
         )
 
         mPointLeftBottom.set(
-            pp.x + cos,
-            pp.y + sin
+            xxx + cos,
+            yyy + sin
         )
 
         mPointRightTop.set(
-            p.x + -cos,
-            p.y + -sin
+            xx + -cos,
+            yy + -sin
         )
 
         mPointRightBottom.set(
-            pp.x + -cos,
-            pp.y + -sin
+            xxx + -cos,
+            yyy + -sin
         )
 
         val minMaxX = minMax(
@@ -112,14 +127,6 @@ class VEShapeLine(
             return false
         }
 
-
-        var dpp = pp.x - p.x
-        if (dpp == 0.0f) {
-            dpp = 0.01f
-        }
-        val k = (pp.y - p.y) / dpp
-
-
         val y1 = k * (x - mPointLeftTop.x) + mPointLeftTop.y
         val y2 = k * (x - mPointRightTop.x) + mPointRightTop.y
         
@@ -135,6 +142,18 @@ class VEShapeLine(
                     p,
                     pp,
                     mPaint
+                )
+
+                drawLine(
+                    mPointLeftTop,
+                    mPointLeftBottom,
+                    mPaintDebug
+                )
+
+                drawLine(
+                    mPointRightTop,
+                    mPointRightBottom,
+                    mPaintDebug
                 )
             }
         }
