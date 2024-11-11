@@ -124,6 +124,7 @@ VEIListenerOnSelectShape {
     ).apply {
         onChangeEntityAnimation = mFragmentVectorAnimation
         onChangeValueAnimation = mFragmentVectorAnimation
+        editModeAnimShape.onSelectShape = this@VEActivityMain
     }
 
 
@@ -408,6 +409,9 @@ VEIListenerOnSelectShape {
             }
             onPickColor = OnPickColorListener {
                 shape.color = it
+                modeAnimation.editModeAnimShape.changeShapeColor(
+                    it
+                )
                 mViewVector?.invalidate()
             }
             show()

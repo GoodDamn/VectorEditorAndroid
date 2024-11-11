@@ -12,16 +12,17 @@ import good.damn.sav.core.skeleton.VESkeleton2D
 class VEEditModeAnimation(
     anchor: VEAnchor,
     skeleton: VESkeleton2D,
-    shapes: VEListShapes
+    shapes: VEListShapes,
+    val editModeAnimShape: VEEditModeAnimationShape = VEEditModeAnimationShape(
+        shapes
+    )
 ): VEEditModeSwap<VEIAnimatableEntity>(
     arrayOf(
         VEEditModeAnimationPoint(
             skeleton,
             anchor
         ),
-        VEEditModeAnimationShape(
-            shapes
-        )
+        editModeAnimShape
 )) {
 
     companion object {

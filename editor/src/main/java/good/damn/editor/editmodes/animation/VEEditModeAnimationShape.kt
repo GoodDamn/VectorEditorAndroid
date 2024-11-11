@@ -11,7 +11,8 @@ import good.damn.sav.misc.interfaces.VEITouchable
 
 class VEEditModeAnimationShape(
     private val mShapes: VEListShapes
-): VEIAnimatableEntity {
+): VEIAnimatableEntity,
+VEIListenerOnChangeShape {
 
     var onSelectShape: VEIListenerOnSelectShape? = null
 
@@ -51,7 +52,22 @@ class VEEditModeAnimationShape(
             return true
         }
 
+        mSelectedShape = null
         return false
+    }
+
+    override fun changeShapeColor(
+        color: Int
+    ) {
+        onChangeValueAnimation?.onChangeValueAnimation(
+            color
+        )
+    }
+
+    override fun changeShapeWidth(
+        v: Float
+    ) {
+
     }
 
 }
