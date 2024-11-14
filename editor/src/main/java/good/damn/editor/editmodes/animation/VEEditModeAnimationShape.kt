@@ -2,7 +2,9 @@ package good.damn.editor.editmodes.animation
 
 import android.view.MotionEvent
 import good.damn.editor.animation.animator.options.VEOptionAnimatorColor
+import good.damn.editor.animation.animator.options.VEOptionAnimatorStrokeWidth
 import good.damn.editor.animation.tickers.VETickerColor
+import good.damn.editor.animation.tickers.VETickerStrokeWidth
 import good.damn.editor.editmodes.listeners.VEIListenerOnChangeValueAnimation
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.sav.core.lists.VEListShapes
@@ -29,6 +31,11 @@ VEIListenerOnChangeShape {
             arrayOf(
                 VEOptionAnimatorColor().apply {
                     tickTimer.onTickColor = VETickerColor(
+                        this@run
+                    )
+                },
+                VEOptionAnimatorStrokeWidth().apply {
+                    tickTimer.onTickStrokeWidth = VETickerStrokeWidth(
                         this@run
                     )
                 }
@@ -67,7 +74,9 @@ VEIListenerOnChangeShape {
     override fun changeShapeWidth(
         v: Float
     ) {
-
+        onChangeValueAnimation?.onChangeValueAnimation(
+            v
+        )
     }
 
 }

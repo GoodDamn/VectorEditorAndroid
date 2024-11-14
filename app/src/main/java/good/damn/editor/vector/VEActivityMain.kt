@@ -404,6 +404,9 @@ VEIListenerOnSelectShape {
                     progress: Float
                 ) {
                     shape.strokeWidth = progress * modeShape.canvasWidth
+                    modeAnimation.editModeAnimShape.changeShapeWidth(
+                        shape.strokeWidth
+                    )
                     mViewVector?.invalidate()
                 }
             }
