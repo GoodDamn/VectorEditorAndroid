@@ -48,7 +48,10 @@ VEIListenerOnAnchorPoint {
                     event.y
                 ) ?: return false
 
-                mDataPosition = VEEditAnimationDataPosition()
+                mDataPosition = VEEditAnimationDataPosition().apply {
+                    x = event.x
+                    y = event.y
+                }
                 return true
             }
 
@@ -67,6 +70,15 @@ VEIListenerOnAnchorPoint {
 
 
             MotionEvent.ACTION_UP -> {
+                mFoundPoint?.let {
+                    mDataPosition?.apply {
+                        x = it.x
+                        y = it.y
+                        onChangeValueAnimation?.onChangeValueAnimation(
+                            this
+                        )
+                    }
+                }
                 mDataPosition = null
                 return true
             }
@@ -79,26 +91,12 @@ VEIListenerOnAnchorPoint {
         x: Float
     ) {
         mFoundPoint?.x = x
-
-        mDataPosition?.let {
-            it.x = x
-            onChangeValueAnimation?.onChangeValueAnimation(
-                it
-            )
-        }
-
     }
 
     override fun onAnchorY(
         y: Float
     ) {
         mFoundPoint?.y = y
-        mDataPosition?.let {
-            it.y = y
-            onChangeValueAnimation?.onChangeValueAnimation(
-                it
-            )
-        }
     }
 
 }
