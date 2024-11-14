@@ -16,6 +16,12 @@ VEITouchable {
     override var mAnchorValue = 0f
     override var mScrollValue = 0f
 
+    override fun reset() {
+        mAnchorValue = 0f
+        mScrollValue = 0f
+        scrollValue = 0f
+    }
+
     override fun onTouchEvent(
         event: MotionEvent
     ): Boolean {

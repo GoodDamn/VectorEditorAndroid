@@ -18,6 +18,12 @@ class VEScrollerHorizontal
     override var mAnchorValue = 0f
     override var mScrollValue = 0f
 
+    override fun reset() {
+        scrollValue = 0f
+        mAnchorValue = 0f
+        mScrollValue = 0f
+    }
+
     override fun onTouchEvent(
         event: MotionEvent
     ): Boolean {

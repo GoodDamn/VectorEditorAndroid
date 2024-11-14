@@ -142,11 +142,15 @@ class VEViewAnimatorEditor(
         )
 
         mScrollerHorizontal.apply {
+            reset()
             triggerEndY = tickerHeight
             triggerEndX = ww
         }
 
-        mScrollerVertical.triggerEndX = ww * 0.5f
+        mScrollerVertical.apply {
+            reset()
+            triggerEndX = ww * 0.5f
+        }
 
         mPaintText.textSize = tickerHeight * 0.18f
 

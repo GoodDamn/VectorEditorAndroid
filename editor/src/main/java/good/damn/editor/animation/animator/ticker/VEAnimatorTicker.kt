@@ -49,6 +49,8 @@ VEIDrawable {
         left2: Float,
         right2: Float
     ) {
+        tickPosition = 0f
+        tickPositionFactor = 0f
         mTriggerRect.apply {
             left = left2
             right = right2
@@ -82,8 +84,19 @@ VEIDrawable {
         event: MotionEvent
     ): Boolean {
 
-        if (event.y > mTriggerRect.bottom) {
-            return false
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            if (event.y > mTriggerRect.bottom || event.x < mTriggerRect.left) {
+                return false
+            }
+        }
+
+        when (
+            event.action
+        ) {
+            MotionEvent.ACTION_UP,
+            MotionEvent.ACTION_CANCEL -> {
+                return false
+            }
         }
 
         if (event.x > mTriggerRect.left) {
