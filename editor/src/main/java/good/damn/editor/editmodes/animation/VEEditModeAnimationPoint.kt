@@ -62,14 +62,6 @@ VEIListenerOnAnchorPoint {
                     )
                 }
 
-                mDataPosition?.let {
-                    it.x = event.x
-                    it.y = event.y
-                    onChangeValueAnimation?.onChangeValueAnimation(
-                        it
-                    )
-                }
-
                 return true
             }
 
@@ -87,12 +79,26 @@ VEIListenerOnAnchorPoint {
         x: Float
     ) {
         mFoundPoint?.x = x
+
+        mDataPosition?.let {
+            it.x = x
+            onChangeValueAnimation?.onChangeValueAnimation(
+                it
+            )
+        }
+
     }
 
     override fun onAnchorY(
         y: Float
     ) {
         mFoundPoint?.y = y
+        mDataPosition?.let {
+            it.y = y
+            onChangeValueAnimation?.onChangeValueAnimation(
+                it
+            )
+        }
     }
 
 }
