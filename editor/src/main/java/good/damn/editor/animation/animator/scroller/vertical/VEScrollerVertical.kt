@@ -25,16 +25,17 @@ VEITouchable {
     override fun onTouchEvent(
         event: MotionEvent
     ): Boolean {
-        if (event.x > triggerEndX) {
-            return false
-        }
-
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                if (event.x > triggerEndX) {
+                    return false
+                }
+
                 mAnchorValue = event.y
             }
 
             MotionEvent.ACTION_MOVE -> {
+
                 scrollValue = mScrollValue + (event.y - mAnchorValue)
                 if (scrollValue > 0.0f) {
                     scrollValue = 0.0f
@@ -45,8 +46,10 @@ VEITouchable {
                 )
             }
 
+            MotionEvent.ACTION_CANCEL,
             MotionEvent.ACTION_UP -> {
                 mScrollValue = scrollValue
+                return false
             }
         }
 

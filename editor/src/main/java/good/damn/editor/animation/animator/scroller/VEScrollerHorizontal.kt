@@ -27,12 +27,12 @@ class VEScrollerHorizontal
     override fun onTouchEvent(
         event: MotionEvent
     ): Boolean {
-        if (event.x < triggerEndX || event.y < triggerEndY) {
-            return false
-        }
-
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                if (event.x < triggerEndX || event.y < triggerEndY) {
+                    return false
+                }
+
                 mAnchorValue = event.x
             }
 
@@ -45,6 +45,7 @@ class VEScrollerHorizontal
 
             MotionEvent.ACTION_UP -> {
                 mScrollValue = scrollValue
+                return false
             }
         }
 
