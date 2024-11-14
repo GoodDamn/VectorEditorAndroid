@@ -45,6 +45,8 @@ class VEEditModeAnimation(
         VEEditAnimationEntity
     >()
 
+    private var mPrevIdEntity = Long.MIN_VALUE
+
     override fun onTouchEvent(
         event: MotionEvent
     ): Boolean {
@@ -73,10 +75,15 @@ class VEEditModeAnimation(
                     ] = entity
                 }
 
+                if (mPrevIdEntity == entityId) {
+                    return true
+                }
+
                 onChangeEntityAnimation?.onChangeEntityAnimation(
                     entity
                 )
 
+                mPrevIdEntity = entityId
             }
 
         }
