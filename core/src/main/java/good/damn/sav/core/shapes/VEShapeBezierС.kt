@@ -9,6 +9,7 @@ import good.damn.sav.misc.extensions.cubicTo
 import good.damn.sav.misc.extensions.moveTo
 import java.io.InputStream
 import java.io.OutputStream
+import java.sql.Array
 
 class VEShapeBezierС(
     canvasWidth: Float,
@@ -20,14 +21,17 @@ class VEShapeBezierС(
 
     companion object {
         private val TAG = VEShapeBezierС::class.simpleName
-        const val ENCODE_TYPE = 1
     }
 
     private val mPath = Path()
 
-    override val points = Array<
-       VEPointIndexed?
-    >(3) {null}
+    override val points = ArrayList<
+        VEPointIndexed?
+    >(3).apply {
+        add(null)
+        add(null)
+        add(null)
+    }
 
     init {
         mPaint.apply {

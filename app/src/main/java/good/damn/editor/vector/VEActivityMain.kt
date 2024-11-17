@@ -8,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animation.animator.options.tickTimer.listeners.VEListenerOnTickColor
+import good.damn.editor.editmodes.VEEditModeFillPoints
 import good.damn.editor.editmodes.animation.VEEditModeAnimation
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
@@ -22,14 +24,17 @@ import good.damn.editor.editmodes.VEEditModeShape
 import good.damn.editor.editmodes.VEEditModeSwap
 import good.damn.editor.editmodes.freemove.VEEditModeExistingPoint
 import good.damn.editor.editmodes.freemove.VEEditModeExistingShape
+import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.vector.bottomsheets.VEBottomSheetSetupShape
+import good.damn.editor.vector.extensions.views.boundsLinear
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
 import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
 import good.damn.editor.vector.fragments.VEFragmentVectorEdit
 import good.damn.editor.views.VEViewVectorEditor
 import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
+import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.VEShapeBezierС
 import good.damn.sav.core.shapes.VEShapeLine
@@ -41,7 +46,7 @@ VEListenerOnGetBrowserContent,
 VEIDrawable,
 VEIListenerOnAnchorPoint,
 VEListenerOnTickColor,
-VEIListenerOnSelectShape {
+VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
 
     companion object {
         private val TAG = VEActivityMain::class.simpleName
@@ -117,6 +122,12 @@ VEIListenerOnSelectShape {
         )
     )
 
+    private val modeFillPoints = VEEditModeFillPoints(
+        modeShape.skeleton
+    ).apply {
+        onSelectPoint = this@VEActivityMain
+    }
+
     private val modeAnimation = VEEditModeAnimation(
         mAnchor,
         modeShape.skeleton,
@@ -184,45 +195,79 @@ VEIListenerOnSelectShape {
             )
         }
 
-
-        Button(
+        LinearLayout(
             context
         ).apply {
-            text = "SHP"
+            orientation = LinearLayout
+                .VERTICAL
 
-            val s = VEApp.width * 0.15f
+            background = null
 
-            setOnClickListener {
-                mViewVector?.mode = modeShape
-                mCurrentAnchor = modeShape
+            Button(
+                context
+            ).apply {
+                text = "SHP"
+
+                setOnClickListener {
+                    mViewVector?.mode = modeShape
+                    mCurrentAnchor = modeShape
+                }
+
+                addView(
+                    this,
+                    -2,
+                    -2
+                )
             }
+
+            Button(
+                context
+            ).apply {
+                text = "MOV"
+
+                setOnClickListener {
+                    mViewVector?.mode = modeFreeMove
+                    mCurrentAnchor = modeExistingPoint
+                }
+
+                addView(
+                    this,
+                    -2,
+                    -2
+                )
+            }
+
+            Button(
+                context
+            ).apply {
+
+                text = "FIL"
+
+                setOnClickListener {
+                    modeShape.apply {
+                        shapes.add(
+                            modeFillPoints.createShape(
+                                canvasWidth,
+                                canvasHeight
+                            )
+                        )
+                    }
+                    mViewVector?.mode = modeFillPoints
+                    mCurrentAnchor = null
+                }
+
+                addView(
+                    this,
+                    -2,
+                    -2
+                )
+            }
+
 
             boundsFrame(
                 gravity = Gravity.END,
-                width = s,
-            )
-
-            root.addView(
-                this
-            )
-        }
-
-        Button(
-            context
-        ).apply {
-            text = "MOV"
-
-            val s = VEApp.width * 0.15f
-
-            setOnClickListener {
-                mViewVector?.mode = modeFreeMove
-                mCurrentAnchor = modeExistingPoint
-            }
-
-            boundsFrame(
-                gravity = Gravity.END,
-                width = s,
-                top = s
+                width = -2f,
+                height = -2f
             )
 
             root.addView(
@@ -419,5 +464,11 @@ VEIListenerOnSelectShape {
             }
             show()
         }
+    }
+
+    override fun onSelectPoint(
+        point: VEPointIndexed
+    ) {
+        mViewVector?.invalidate()
     }
 }

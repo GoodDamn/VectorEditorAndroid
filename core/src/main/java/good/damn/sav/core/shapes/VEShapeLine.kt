@@ -27,9 +27,12 @@ class VEShapeLine(
         private val TAG = VEShapeLine::class.simpleName
     }
 
-    override val points = Array<
+    override val points = ArrayList<
         VEPointIndexed?
-    >(2) { null }
+    >(2).apply {
+        add(null)
+        add(null)
+    }
 
     private val mPointLeftTop = PointF()
     private val mPointLeftBottom = PointF()

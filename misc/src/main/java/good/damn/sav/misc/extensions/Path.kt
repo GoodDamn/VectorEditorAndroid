@@ -3,6 +3,15 @@ package good.damn.sav.misc.extensions
 import android.graphics.Path
 import android.graphics.PointF
 
+inline fun Path.lineTo(
+    point: PointF
+) {
+    lineTo(
+        point.x,
+        point.y
+    )
+}
+
 inline fun Path.moveTo(
     point: PointF
 ) {
