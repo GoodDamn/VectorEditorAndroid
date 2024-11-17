@@ -245,7 +245,7 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
 
                 setOnClickListener {
                     modeShape.apply {
-                        shapes.add(
+                        shapes.addFirst(
                             modeFillPoints.createShape(
                                 canvasWidth,
                                 canvasHeight

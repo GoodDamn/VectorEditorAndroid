@@ -16,7 +16,7 @@ class VEShapeFill(
     canvasHeight
 ) {
 
-    override val points = LinkedList<
+    override val points = ArrayList<
         VEPointIndexed?
     >()
 
@@ -32,7 +32,9 @@ class VEShapeFill(
     ) = VEShapeFill(
         width,
         height
-    )
+    ).apply {
+        color = this@VEShapeFill.color
+    }
 
     override fun draw(
         canvas: Canvas
@@ -69,7 +71,35 @@ class VEShapeFill(
         x: Float,
         y: Float
     ): Boolean {
-        return false
+        if (points.size < 3) {
+            return false
+        }
+
+        var i = 0
+        var j = points.size-1
+        var isInside = false
+
+        var pi: VEPointIndexed
+        var pj: VEPointIndexed
+
+        while (i < points.size) {
+            pi = points[i]
+                ?: continue
+
+            pj = points[j]
+                ?: continue
+
+            if (
+                ((pi.y > y) != (pj.y > y)) &&
+                (x < (pj.x - pi.x) * (y - pi.y) / (pj.y - pi.y) + pi.x)
+            ) {
+                isInside = !isInside
+            }
+
+            j = i++
+        }
+
+        return isInside
     }
 
 }
