@@ -23,6 +23,8 @@ import good.damn.sav.core.extensions.interpolateWith
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
 import java.util.LinkedList
+import kotlin.math.abs
+import kotlin.math.hypot
 
 class VEEditModeShape(
     private val mAnchor: VEAnchor,
@@ -196,6 +198,19 @@ VEIListenerOnAnchorPoint {
 
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL -> {
+                mPointTo?.let { to ->
+                    skeleton.find(
+                        event.x,
+                        event.y
+                    )?.apply {
+                        if (index == to.index) {
+                            return@let
+                        }
+                        currentPrimitive.points[1] = this
+                        skeleton.removeLast()
+                    }
+                }
+
                 mPointTo = null
                 mPointMiddle = null
                 mPointFrom = null

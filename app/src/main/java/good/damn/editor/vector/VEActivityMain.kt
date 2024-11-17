@@ -203,9 +203,14 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
 
             background = null
 
+            val s = (
+                VEApp.width * 0.1f
+            ).toInt()
+
             Button(
                 context
             ).apply {
+
                 text = "SHP"
 
                 setOnClickListener {
@@ -215,8 +220,7 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
 
                 addView(
                     this,
-                    -2,
-                    -2
+                    s, s
                 )
             }
 
@@ -232,8 +236,7 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
 
                 addView(
                     this,
-                    -2,
-                    -2
+                    s, s
                 )
             }
 
@@ -258,8 +261,7 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
 
                 addView(
                     this,
-                    -2,
-                    -2
+                    s, s
                 )
             }
 
