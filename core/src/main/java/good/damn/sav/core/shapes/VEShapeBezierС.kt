@@ -21,6 +21,7 @@ class VEShapeBezierС(
 
     companion object {
         private val TAG = VEShapeBezierС::class.simpleName
+        const val shapeType = 2
     }
 
     private val mPath = Path()
@@ -41,7 +42,7 @@ class VEShapeBezierС(
     }
 
 
-    override fun shapeType() = 2
+    override fun shapeType() = shapeType
 
     override fun draw(
         canvas: Canvas

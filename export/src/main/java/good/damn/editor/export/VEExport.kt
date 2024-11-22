@@ -2,6 +2,7 @@ package good.damn.editor.export
 
 import good.damn.sav.misc.Size
 import good.damn.sav.core.shapes.VEShapeBase
+import good.damn.sav.core.shapes.VEShapeFill
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.io.write
 import good.damn.sav.misc.extensions.primitives.toByteArray
@@ -38,10 +39,22 @@ class VEExport {
                 )
             }
 
+            write(
+                shapes.size
+            )
+
             shapes.forEach {
-                write(
-                    it.shapeType()
-                )
+                it.shapeType().apply {
+                    write(
+                        this
+                    )
+
+                    if (this == VEShapeFill.shapeType) {
+                        write(
+                            it.points.size
+                        )
+                    }
+                }
 
                 it.points.forEach {
                     it?.index?.apply {

@@ -28,6 +28,7 @@ import good.damn.editor.editmodes.freemove.VEEditModeExistingShape
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.export.VEExport
+import good.damn.editor.importer.VEImport
 import good.damn.editor.vector.bottomsheets.VEBottomSheetSetupShape
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
 import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
@@ -364,7 +365,35 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
 
     override fun onGetBrowserContent(
         uri: Uri?
-    ) = Unit
+    ) {
+        uri ?: return
+        contentResolver.openInputStream(
+            uri
+        )?.apply {
+            val model = VEImport.import(
+                Size(
+                    modeShape.canvasWidth,
+                    modeShape.canvasHeight
+                ),
+                this
+            )
+            close()
+
+            modeShape.apply {
+                skeleton.resetSkeleton(
+                    model.skeleton.points
+                )
+
+                shapes.clear()
+                shapes.addAll(
+                    model.shapes
+                )
+
+                mViewVector?.invalidate()
+            }
+
+        }
+    }
 
 
     override fun draw(
@@ -411,9 +440,7 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
 
     private fun onClickImportVector(
         v: View
-    ) {
-        mBrowserContent.launch()
-    }
+    ) = mBrowserContent.launch()
 
     private fun onClickDeleteAll(
         v: View

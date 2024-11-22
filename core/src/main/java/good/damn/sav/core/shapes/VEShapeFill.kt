@@ -16,6 +16,10 @@ class VEShapeFill(
     canvasHeight
 ) {
 
+    companion object {
+        const val shapeType = 1
+    }
+
     override val points = ArrayList<
         VEPointIndexed?
     >()
@@ -27,7 +31,7 @@ class VEShapeFill(
     }
 
 
-    override fun shapeType() = 1
+    override fun shapeType() = shapeType
 
     override fun newInstance(
         width: Float,
