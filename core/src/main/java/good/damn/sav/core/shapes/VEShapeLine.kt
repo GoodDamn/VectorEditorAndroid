@@ -23,7 +23,6 @@ class VEShapeLine(
     canvasHeight
 ) {
     companion object {
-        const val ENCODE_TYPE = 0
         private val TAG = VEShapeLine::class.simpleName
     }
 
@@ -51,6 +50,8 @@ class VEShapeLine(
             strokeJoin = Paint.Join.ROUND
         }
     }
+
+    override fun shapeType() = 0
 
     override fun checkHit(
         x: Float,

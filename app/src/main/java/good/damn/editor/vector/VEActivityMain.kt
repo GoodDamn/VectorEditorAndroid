@@ -3,6 +3,7 @@ package good.damn.editor.vector
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -26,11 +27,11 @@ import good.damn.editor.editmodes.freemove.VEEditModeExistingPoint
 import good.damn.editor.editmodes.freemove.VEEditModeExistingShape
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
+import good.damn.editor.export.VEExport
 import good.damn.editor.vector.bottomsheets.VEBottomSheetSetupShape
-import good.damn.editor.vector.extensions.views.boundsLinear
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
 import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
-import good.damn.editor.vector.fragments.VEFragmentVectorEdit
+import good.damn.editor.vector.fragments.VEFragmentVectorOptions
 import good.damn.editor.views.VEViewVectorEditor
 import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
@@ -38,6 +39,8 @@ import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.VEShapeBezierС
 import good.damn.sav.core.shapes.VEShapeLine
+import good.damn.sav.misc.Size
+import good.damn.sav.misc.VEFile
 import good.damn.sav.misc.interfaces.VEIDrawable
 
 class VEActivityMain
@@ -66,7 +69,7 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
         onAnchorPoint = this@VEActivityMain
     }
 
-    private val mFragmentVectorEdit = VEFragmentVectorEdit().apply {
+    private val mFragmentVectorEdit = VEFragmentVectorOptions().apply {
         onClickDeleteAll = View.OnClickListener {
             onClickDeleteAll(it)
         }
@@ -138,6 +141,9 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
         editModeAnimShape.onSelectShape = this@VEActivityMain
     }
 
+    private val mFileExport = VEFile(
+        "export.avs"
+    )
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -162,6 +168,7 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
         mBrowserContent.register(
             this
         )
+
         val context = this
 
         val root = FrameLayout(
@@ -392,7 +399,15 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
 
     private fun onClickExportVector(
         v: View
-    ) = Unit
+    ) = VEExport.export(
+        modeShape.skeleton,
+        modeShape.shapes,
+        Size(
+            modeShape.canvasWidth,
+            modeShape.canvasHeight
+        ),
+        mFileExport
+    )
 
     private fun onClickImportVector(
         v: View

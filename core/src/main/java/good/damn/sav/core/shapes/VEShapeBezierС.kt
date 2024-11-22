@@ -40,6 +40,9 @@ class VEShapeBezierС(
         }
     }
 
+
+    override fun shapeType() = 2
+
     override fun draw(
         canvas: Canvas
     ) = mPath.run {

@@ -9,9 +9,9 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import good.damn.editor.vector.interfaces.VEIColorPickable
 
-class VEFragmentVectorEdit
+class VEFragmentVectorOptions
 : Fragment(),
-    VEIColorPickable {
+VEIColorPickable {
 
     var onClickDeleteAll: View.OnClickListener? = null
     var onClickUndoAction: View.OnClickListener? = null

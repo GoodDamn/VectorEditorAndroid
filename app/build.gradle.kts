@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.viewpager2)
     implementation(libs.material)
+    implementation(project(":export"))
 
 
     testImplementation(libs.junit)

@@ -33,13 +33,11 @@ VEIIndexable {
             mPaint.strokeWidth = v
         }
 
-    var style: Paint.Style
-        get() = mPaint.style
-        set(v) {
-            mPaint.style = v
-        }
+    protected val mPaint = Paint().apply {
+        style = Paint.Style.STROKE
+    }
 
-    protected val mPaint = Paint()
+    abstract fun shapeType(): Int
 
     abstract fun newInstance(
         width: Float,

@@ -23,8 +23,11 @@ class VEShapeFill(
     private val mPath = Path()
 
     init {
-        style = Paint.Style.FILL
+        mPaint.style = Paint.Style.FILL
     }
+
+
+    override fun shapeType() = 1
 
     override fun newInstance(
         width: Float,
