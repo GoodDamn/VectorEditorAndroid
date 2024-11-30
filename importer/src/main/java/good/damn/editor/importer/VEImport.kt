@@ -18,10 +18,20 @@ import java.util.LinkedList
 
 class VEImport {
     companion object {
+        const val VERSION = 1
         fun import(
             canvasSize: Size,
             stream: InputStream
         ) = stream.run {
+
+            val version = readU()
+            if (version != VERSION) {
+                throw VEExceptionDifferentVersion(
+                    version,
+                    VERSION
+                )
+            }
+
             val pointsSize = readU()
             val skeleton = VESkeleton2D(
                 ArrayList(pointsSize)

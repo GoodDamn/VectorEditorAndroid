@@ -11,8 +11,9 @@ import java.io.File
 import java.io.FileOutputStream
 
 class VEExport {
-
     companion object {
+        const val VERSION = 1
+
         fun export(
             skeleton: VESkeleton2D,
             shapes: List<VEShapeBase>,
@@ -21,6 +22,9 @@ class VEExport {
         ) = FileOutputStream(
             file
         ).run {
+            write(
+                VERSION
+            )
             write(
                 skeleton.size
             )
