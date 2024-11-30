@@ -3,7 +3,6 @@ package good.damn.editor.vector
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +40,6 @@ import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.VEShapeBezierС
 import good.damn.sav.core.shapes.VEShapeLine
 import good.damn.sav.misc.Size
-import good.damn.sav.misc.VEFile
 import good.damn.sav.misc.interfaces.VEIDrawable
 
 class VEActivityMain
