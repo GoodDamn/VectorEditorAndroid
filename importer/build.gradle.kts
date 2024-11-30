@@ -1,6 +1,9 @@
+import io.netty.util.ReferenceCountUtil.release
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("maven-publish")
 }
 
 android {
@@ -41,4 +44,18 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = "com.github.GoodDamn.avs"
+            artifactId = "import"
+            version = "1.0-alpha"
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
 }
