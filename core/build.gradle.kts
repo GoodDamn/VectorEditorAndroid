@@ -48,7 +48,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "com.github.GoodDamn"
             artifactId = "core"
-            version = "1.0-alpha"
+            version = "1.0"
 
             afterEvaluate {
                 from(components["release"])
