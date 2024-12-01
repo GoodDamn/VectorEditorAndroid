@@ -49,7 +49,7 @@ dependencies {
 publishing {
     publications {
         register<MavenPublication>("release") {
-            groupId = "com.github.GoodDamn.avs"
+            groupId = "com.github.GoodDamn"
             artifactId = "import"
             version = "1.0-alpha"
 
