@@ -1,7 +1,9 @@
 package good.damn.editor.vector
 
+import android.Manifest
 import android.graphics.Canvas
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -9,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
@@ -32,6 +35,8 @@ import good.damn.editor.vector.bottomsheets.VEBottomSheetSetupShape
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
 import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
 import good.damn.editor.vector.fragments.VEFragmentVectorOptions
+import good.damn.editor.vector.launchers.VELauncherPermission
+import good.damn.editor.vector.launchers.VEListenerOnResultPermission
 import good.damn.editor.views.VEViewVectorEditor
 import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
@@ -48,7 +53,8 @@ VEListenerOnGetBrowserContent,
 VEIDrawable,
 VEIListenerOnAnchorPoint,
 VEListenerOnTickColor,
-VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
+VEIListenerOnSelectShape,
+VEIListenerOnSelectPoint, VEListenerOnResultPermission {
 
     companion object {
         private val TAG = VEActivityMain::class.simpleName
@@ -140,9 +146,11 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
         editModeAnimShape.onSelectShape = this@VEActivityMain
     }
 
-    private val mFileExport = VEFile(
-        "export.avs"
+    private val mLauncherPermission = VELauncherPermission(
+        this
     )
+
+    private var mFileExport: VEFile? = null
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -150,6 +158,15 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
         super.onCreate(
             savedInstanceState
         )
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            mLauncherPermission.register(
+                this
+            )
+            mLauncherPermission.launch(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        }
 
         mFragmentVectorAnimation.onPlayAnimation = {
             modeAnimation.animatedEntities.run {
@@ -427,15 +444,24 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
 
     private fun onClickExportVector(
         v: View
-    ) = VEExport.export(
-        modeShape.skeleton,
-        modeShape.shapes,
-        Size(
-            modeShape.canvasWidth,
-            modeShape.canvasHeight
-        ),
-        mFileExport
-    )
+    ) {
+        if (mFileExport == null) {
+            mLauncherPermission.launch(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            return
+        }
+
+        VEExport.export(
+            modeShape.skeleton,
+            modeShape.shapes,
+            Size(
+                modeShape.canvasWidth,
+                modeShape.canvasHeight
+            ),
+            mFileExport!!
+        )
+    }
 
     private fun onClickImportVector(
         v: View
@@ -513,5 +539,22 @@ VEIListenerOnSelectShape, VEIListenerOnSelectPoint {
         point: VEPointIndexed
     ) {
         mViewVector?.invalidate()
+    }
+
+    override fun onResultPermission(
+        permission: String,
+        isGranted: Boolean
+    ) {
+        if (!isGranted) {
+            return
+        }
+
+        when (permission) {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
+                mFileExport = VEFile(
+                    "export.avs"
+                )
+            }
+        }
     }
 }

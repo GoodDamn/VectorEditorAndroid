@@ -18,6 +18,10 @@ class VEFile(
     }
 
     init {
+        if (parentFile?.exists() == false) {
+            parentFile?.mkdirs()
+        }
+
         if (!exists() && createNewFile()) {
             Log.d(TAG, "init: $name is created")
         }
