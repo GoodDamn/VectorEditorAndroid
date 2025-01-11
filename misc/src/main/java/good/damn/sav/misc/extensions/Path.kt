@@ -1,6 +1,7 @@
 package good.damn.sav.misc.extensions
 
 import android.graphics.Path
+import android.graphics.Point
 import android.graphics.PointF
 
 inline fun Path.lineTo(
@@ -18,6 +19,18 @@ inline fun Path.moveTo(
     moveTo(
         point.x,
         point.y
+    )
+}
+
+inline fun Path.quadTo(
+    point1: PointF,
+    point2: PointF
+) {
+    quadTo(
+        point1.x,
+        point1.y,
+        point2.x,
+        point2.y
     )
 }
 

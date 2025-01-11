@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.PointF
 import android.util.Log
 import good.damn.sav.core.points.VEPointIndexed
+import good.damn.sav.core.utils.VEUtilsHit
 import good.damn.sav.misc.extensions.angle
 import good.damn.sav.misc.extensions.drawLine
 import good.damn.sav.misc.extensions.length
@@ -33,11 +34,6 @@ class VEShapeLine(
         add(null)
     }
 
-    private val mPointLeftTop = PointF()
-    private val mPointLeftBottom = PointF()
-    private val mPointRightTop = PointF()
-    private val mPointRightBottom = PointF()
-
     private val mPaintDebug = Paint().apply {
         color = 0xffffff00.toInt()
         style = Paint.Style.STROKE
@@ -63,72 +59,15 @@ class VEShapeLine(
         val pp = points[1]
             ?: return false
 
-        val angle = p.angle(pp)
-
         val stroke = mPaint.strokeWidth * 0.5f
-        val m = if (
-            stroke > 50f
-        ) stroke else 50f
 
-        val sina = sin(angle)
-        val cosa = -cos(angle)
-
-        val sin = m * sina
-        val cos = m * cosa
-
-        var dpp = pp.x - p.x
-        if (dpp == 0.0f) {
-            dpp = 0.001f
-        }
-        val k = (pp.y - p.y) / dpp
-
-        mPointLeftTop.set(
-            p.x + cos,
-            p.y + sin
+        return VEUtilsHit.checkLine(
+            x, y,
+            p, pp,
+            if (
+                stroke > 50f
+            ) stroke else 50f
         )
-
-        mPointLeftBottom.set(
-            pp.x + cos,
-            pp.y + sin
-        )
-
-        mPointRightTop.set(
-            p.x + -cos,
-            p.y + -sin
-        )
-
-        mPointRightBottom.set(
-            pp.x + -cos,
-            pp.y + -sin
-        )
-
-        val minMaxX = minMax(
-            mPointLeftTop.x,
-            mPointLeftBottom.x,
-            mPointRightTop.x,
-            mPointRightBottom.x
-        )
-
-        val minMaxY = minMax(
-            mPointLeftTop.y,
-            mPointLeftBottom.y,
-            mPointRightTop.y,
-            mPointRightBottom.y
-        )
-
-        if (
-            x < minMaxX.first ||
-            x > minMaxX.second ||
-            y < minMaxY.first ||
-            y > minMaxY.second
-        ) {
-            return false
-        }
-
-        val y1 = k * (x - mPointLeftTop.x) + mPointLeftTop.y
-        val y2 = k * (x - mPointRightTop.x) + mPointRightTop.y
-        
-        return (y1 > y && y > y2) || (y1 < y && y < y2)
     }
 
     override fun draw(

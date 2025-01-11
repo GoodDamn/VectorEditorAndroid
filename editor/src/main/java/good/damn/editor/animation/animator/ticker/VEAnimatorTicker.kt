@@ -84,15 +84,16 @@ VEIDrawable {
         event: MotionEvent
     ): Boolean {
 
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            if (event.y > mTriggerRect.bottom || event.x < mTriggerRect.left) {
-                return false
-            }
-        }
-
         when (
             event.action
         ) {
+            MotionEvent.ACTION_DOWN -> {
+                if (event.y > mTriggerRect.bottom ||
+                    event.x < mTriggerRect.left
+                ) {
+                    return false
+                }
+            }
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL -> {
                 return false
