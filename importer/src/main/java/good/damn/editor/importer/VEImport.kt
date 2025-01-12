@@ -2,8 +2,7 @@ package good.damn.editor.importer
 
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
-import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.core.shapes.VEShapeBezierС
+import good.damn.sav.core.shapes.VEShapeBezierQuad
 import good.damn.sav.core.shapes.VEShapeFill
 import good.damn.sav.core.shapes.VEShapeLine
 import good.damn.sav.core.skeleton.VESkeleton2D
@@ -11,10 +10,7 @@ import good.damn.sav.misc.Size
 import good.damn.sav.misc.extensions.io.readFraction
 import good.damn.sav.misc.extensions.io.readInt32
 import good.damn.sav.misc.extensions.io.readU
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
-import java.util.LinkedList
 
 class VEImport {
     companion object {
@@ -102,7 +98,7 @@ class VEImport {
                 canvasSize.height
             )
 
-            VEShapeBezierС.shapeType -> VEShapeBezierС(
+            VEShapeBezierQuad.shapeType -> VEShapeBezierQuad(
                 canvasSize.width,
                 canvasSize.height
             )

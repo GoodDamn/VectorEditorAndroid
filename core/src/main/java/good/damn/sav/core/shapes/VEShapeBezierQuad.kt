@@ -4,18 +4,12 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
-import android.util.Log
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.utils.VEUtilsHit
-import good.damn.sav.misc.extensions.cubicTo
-import good.damn.sav.misc.extensions.drawCircle
 import good.damn.sav.misc.extensions.moveTo
 import good.damn.sav.misc.extensions.quadTo
-import java.io.InputStream
-import java.io.OutputStream
-import java.sql.Array
 
-class VEShapeBezierС(
+class VEShapeBezierQuad(
     canvasWidth: Float,
     canvasHeight: Float
 ): VEShapeBase(
@@ -24,7 +18,7 @@ class VEShapeBezierС(
 ) {
 
     companion object {
-        private val TAG = VEShapeBezierС::class.simpleName
+        private val TAG = VEShapeBezierQuad::class.simpleName
         const val shapeType = 2
 
         private const val STEP_HIT = 1.0f / 8
@@ -147,7 +141,7 @@ class VEShapeBezierС(
     override fun newInstance(
         width: Float,
         height: Float
-    ) = VEShapeBezierС(
+    ) = VEShapeBezierQuad(
         width,
         height
     )

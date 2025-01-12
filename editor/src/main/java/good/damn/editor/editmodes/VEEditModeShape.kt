@@ -170,7 +170,7 @@ VEIListenerOnAnchorPoint {
                     }
 
                     if (mPointFrom != null) {
-                        shapes.add(
+                        shapes.addFirst(
                             this
                         )
                     }

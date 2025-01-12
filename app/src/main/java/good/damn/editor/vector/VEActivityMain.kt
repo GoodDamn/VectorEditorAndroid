@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
@@ -42,7 +41,7 @@ import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.core.shapes.VEShapeBezierС
+import good.damn.sav.core.shapes.VEShapeBezierQuad
 import good.damn.sav.core.shapes.VEShapeLine
 import good.damn.sav.misc.Size
 import good.damn.sav.misc.interfaces.VEIDrawable
@@ -58,6 +57,7 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
 
     companion object {
         private val TAG = VEActivityMain::class.simpleName
+        private const val FILE_NAME = "export.avs"
     }
 
     private var mViewVector: VEViewVectorEditor? = null
@@ -165,6 +165,10 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
             )
             mLauncherPermission.launch(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        } else {
+            mFileExport = VEFile(
+                FILE_NAME
             )
         }
 
@@ -335,7 +339,7 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
             )
 
             setOnClickListener {
-                modeShape.currentPrimitive = VEShapeBezierС(
+                modeShape.currentPrimitive = VEShapeBezierQuad(
                     0f, 0f
                 )
             }
@@ -552,7 +556,7 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
         when (permission) {
             Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
                 mFileExport = VEFile(
-                    "export.avs"
+                    FILE_NAME
                 )
             }
         }
