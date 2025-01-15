@@ -2,19 +2,9 @@ package good.damn.sav.core.shapes
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.PointF
-import android.util.Log
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.utils.VEUtilsHit
-import good.damn.sav.misc.extensions.angle
 import good.damn.sav.misc.extensions.drawLine
-import good.damn.sav.misc.extensions.length
-import good.damn.sav.misc.extensions.minMax
-import java.io.InputStream
-import java.io.OutputStream
-import kotlin.math.cos
-import kotlin.math.log
-import kotlin.math.sin
 
 class VEShapeLine(
     canvasWidth: Float,
@@ -61,7 +51,7 @@ class VEShapeLine(
 
         val stroke = mPaint.strokeWidth * 0.5f
 
-        return VEUtilsHit.checkLine(
+        return VEUtilsHit.line(
             x, y,
             p, pp,
             if (

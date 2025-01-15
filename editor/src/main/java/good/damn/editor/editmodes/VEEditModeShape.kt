@@ -35,7 +35,6 @@ VEIDrawable,
 VEICallbackOnAddSkeletonPoint,
 VEICallbackOnAddShape,
 VEIListenerOnAnchorPoint {
-
     companion object {
         private val TAG = VEEditModeShape::class.simpleName
     }
@@ -170,7 +169,7 @@ VEIListenerOnAnchorPoint {
                     }
 
                     if (mPointFrom != null) {
-                        shapes.addFirst(
+                        shapes.add(
                             this
                         )
                     }

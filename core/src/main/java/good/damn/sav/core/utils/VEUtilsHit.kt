@@ -1,7 +1,7 @@
 package good.damn.sav.core.utils
 
-import android.graphics.Point
 import android.graphics.PointF
+import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.misc.extensions.angle
 import good.damn.sav.misc.extensions.minMax
 import kotlin.math.cos
@@ -9,7 +9,44 @@ import kotlin.math.sin
 
 class VEUtilsHit {
     companion object {
-        inline fun checkLine(
+        inline fun poly(
+            x: Float,
+            y: Float,
+            points: List<VEPointIndexed?>
+        ): Boolean {
+
+            if (points.size < 3) {
+                return false
+            }
+
+            var i = 0
+            var j = points.size-1
+            var isInside = false
+
+            var pi: VEPointIndexed
+            var pj: VEPointIndexed
+
+            while (i < points.size) {
+                pi = points[i]
+                    ?: continue
+
+                pj = points[j]
+                    ?: continue
+
+                if (
+                    ((pi.y > y) != (pj.y > y)) &&
+                    (x < (pj.x - pi.x) * (y - pi.y) / (pj.y - pi.y) + pi.x)
+                ) {
+                    isInside = !isInside
+                }
+
+                j = i++
+            }
+
+            return isInside
+        }
+
+        inline fun line(
             x: Float,
             y: Float,
             p: PointF,

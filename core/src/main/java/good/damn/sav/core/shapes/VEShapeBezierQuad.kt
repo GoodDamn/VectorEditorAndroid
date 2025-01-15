@@ -102,7 +102,10 @@ class VEShapeBezierQuad(
             p0.y
         )
 
-        val stroke = mPaint.strokeWidth * 0.5f
+        var lineWidth = mPaint.strokeWidth * 0.5f
+        lineWidth = if (
+            lineWidth > 50f
+        ) lineWidth else 50f
 
         while (i < 1.01f) {
             val lp1x = p0.x + (p1.x - p0.x) * i
@@ -116,13 +119,11 @@ class VEShapeBezierQuad(
                 lp1y + (lp2y - lp1y) * i
             )
 
-            if (VEUtilsHit.checkLine(
+            if (VEUtilsHit.line(
                 x, y,
                 mTempPointHitFrom,
                 mTempPointHitTo,
-                if (
-                    stroke > 50f
-                ) stroke else 50f
+                lineWidth
             )) {
                 return true
             }

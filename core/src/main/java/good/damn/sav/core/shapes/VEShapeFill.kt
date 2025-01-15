@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import good.damn.sav.core.points.VEPointIndexed
+import good.damn.sav.core.utils.VEUtilsHit
 import good.damn.sav.misc.extensions.lineTo
 import good.damn.sav.misc.extensions.moveTo
 import java.util.LinkedList
@@ -29,7 +30,6 @@ class VEShapeFill(
     init {
         mPaint.style = Paint.Style.FILL
     }
-
 
     override fun shapeType() = shapeType
 
@@ -77,36 +77,10 @@ class VEShapeFill(
     override fun checkHit(
         x: Float,
         y: Float
-    ): Boolean {
-        if (points.size < 3) {
-            return false
-        }
-
-        var i = 0
-        var j = points.size-1
-        var isInside = false
-
-        var pi: VEPointIndexed
-        var pj: VEPointIndexed
-
-        while (i < points.size) {
-            pi = points[i]
-                ?: continue
-
-            pj = points[j]
-                ?: continue
-
-            if (
-                ((pi.y > y) != (pj.y > y)) &&
-                (x < (pj.x - pi.x) * (y - pi.y) / (pj.y - pi.y) + pi.x)
-            ) {
-                isInside = !isInside
-            }
-
-            j = i++
-        }
-
-        return isInside
-    }
+    ) = VEUtilsHit.poly(
+        x,
+        y,
+        points
+    )
 
 }
