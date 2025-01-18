@@ -12,9 +12,8 @@ class VEUtilsHit {
         inline fun poly(
             x: Float,
             y: Float,
-            points: List<VEPointIndexed?>
+            points: List<PointF?>
         ): Boolean {
-
             if (points.size < 3) {
                 return false
             }
@@ -23,8 +22,8 @@ class VEUtilsHit {
             var j = points.size-1
             var isInside = false
 
-            var pi: VEPointIndexed
-            var pj: VEPointIndexed
+            var pi: PointF
+            var pj: PointF
 
             while (i < points.size) {
                 pi = points[i]
@@ -61,12 +60,12 @@ class VEUtilsHit {
             val sin = lineWidth * sina
             val cos = lineWidth * cosa
 
-            var dpp = pp.x - p.x
+            /*var dpp = pp.x - p.x
             if (dpp == 0.0f) {
                 dpp = 0.001f
             }
             val k = (pp.y - p.y) / dpp
-
+*/
             val mPointLeftTop = PointF().apply {
                 set(
                     p.x + cos,
@@ -118,10 +117,21 @@ class VEUtilsHit {
                 return false
             }
 
-            val y1 = k * (x - mPointLeftTop.x) + mPointLeftTop.y
+            return poly(
+                x,
+                y,
+                arrayListOf(
+                    mPointLeftTop,
+                    mPointRightTop,
+                    mPointRightBottom,
+                    mPointLeftBottom
+                )
+            )
+
+            /*val y1 = k * (x - mPointLeftTop.x) + mPointLeftTop.y
             val y2 = k * (x - mPointRightTop.x) + mPointRightTop.y
 
-            return (y1 > y && y > y2) || (y1 < y && y < y2)
+            return (y1 > y && y > y2) || (y1 < y && y < y2)*/
         }
     }
 }

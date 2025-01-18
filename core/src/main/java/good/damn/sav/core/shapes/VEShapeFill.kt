@@ -78,8 +78,7 @@ class VEShapeFill(
         x: Float,
         y: Float
     ) = VEUtilsHit.poly(
-        x,
-        y,
+        x, y,
         points
     )
 
