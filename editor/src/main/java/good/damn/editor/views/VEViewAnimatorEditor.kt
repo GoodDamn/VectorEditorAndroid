@@ -5,8 +5,10 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import good.damn.editor.animation.animator.VEButtonTick
 import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
 import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
@@ -41,6 +43,10 @@ class VEViewAnimatorEditor(
     var options: Array<
         VEOptionAnimatorBase
     >? = null
+        set(v) {
+            field = v
+            mBtnTick.options = v
+        }
 
     var duration: Int = 1000 // ms
         set(v) {
@@ -67,10 +73,14 @@ class VEViewAnimatorEditor(
             }
 
             mAnimator.duration = duration
+            mBtnTick.duration = duration
         }
 
     var durationPx: Int = 0
-        private set
+        private set(v) {
+            field = v
+            mBtnTick.durationPx = v
+        }
 
     val isPlaying: Boolean
         get() = mAnimator.isPlaying
@@ -83,6 +93,12 @@ class VEViewAnimatorEditor(
     private val mScrollerHorizontal = VEScrollerHorizontal()
     private val mScrollerVertical = VEScrollerVertical()
     private val mTimeDividers = LinkedList<TimeDivider>()
+
+    private val mBtnTick = VEButtonTick(
+        mScrollerVertical,
+        mTicker,
+        mScrollerHorizontal
+    )
 
     private var mCurrentTouch: VEITouchable? = null
 
@@ -244,6 +260,7 @@ class VEViewAnimatorEditor(
         }
 
         mCurrentTouch?.let {
+            Log.d(TAG, "onTouchEvent: $mCurrentTouch")
             if (!it.onTouchEvent(event)) {
                 mCurrentTouch = null
             }
@@ -254,6 +271,7 @@ class VEViewAnimatorEditor(
         if (mTicker.onTouchEvent(
             event
         )) {
+            Log.d(TAG, "onTouchEvent: TICKER: ${event.action}")
             mCurrentTouch = mTicker
             invalidate()
             return true
@@ -267,7 +285,6 @@ class VEViewAnimatorEditor(
             return true
         }
 
-
         if (mScrollerVertical.onTouchEvent(
             event
         )) {
@@ -276,32 +293,15 @@ class VEViewAnimatorEditor(
             return true
         }
 
-        if (event.action == MotionEvent.ACTION_UP) {
-            mScrollerVertical.apply {
-                options?.forEach {
-                    val y = it.y + scrollValue
-                    if (y > 0
-                        && event.x < it.width
-                        && event.y.isInRange(
-                            y,
-                            y+it.height
-                    )) {
-                        val fa = (abs(mScrollerHorizontal
-                            .scrollValue
-                        ) + mTicker.tickPosition) / durationPx
-
-                        it.tickTimer.tick(
-                            duration,
-                            fa
-                        )
-                    }
-                }
-            }
-
+        if (mBtnTick.onTouchEvent(
+            event
+        )) {
+            mCurrentTouch = mBtnTick
             invalidate()
+            return true
         }
 
-        return true
+        return false
     }
 
     override fun onAnimatorStart() {

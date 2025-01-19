@@ -1,5 +1,6 @@
 package good.damn.editor.editmodes.animation
 
+import android.util.Log
 import android.view.MotionEvent
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
@@ -50,6 +51,7 @@ class VEEditModeAnimation(
     override fun onTouchEvent(
         event: MotionEvent
     ): Boolean {
+        
         if (!super.onTouchEvent(event)) {
             return false
         }
