@@ -2,6 +2,7 @@ package good.damn.editor.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import good.damn.sav.misc.interfaces.VEIDrawable
@@ -32,7 +33,6 @@ class VEViewVectorEditor(
             canvas
         )
     }
-
     override fun onTouchEvent(
         event: MotionEvent?
     ): Boolean {

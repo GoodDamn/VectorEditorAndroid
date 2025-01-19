@@ -23,11 +23,9 @@ import good.damn.sav.core.extensions.interpolateWith
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
 import java.util.LinkedList
-import kotlin.math.abs
-import kotlin.math.hypot
 
 class VEEditModeShape(
-    private val mAnchor: VEAnchor,
+    private val anchor: VEAnchor,
     val canvasWidth: Float,
     val canvasHeight: Float
 ): VEITouchable,
@@ -35,6 +33,7 @@ VEIDrawable,
 VEICallbackOnAddSkeletonPoint,
 VEICallbackOnAddShape,
 VEIListenerOnAnchorPoint {
+
     companion object {
         private val TAG = VEEditModeShape::class.simpleName
     }
@@ -81,6 +80,8 @@ VEIListenerOnAnchorPoint {
             MotionEvent.ACTION_DOWN -> {
                 val tempX = mTouchX
                 val tempY = mTouchY
+
+                anchor.isNoDrawAnchors = false
 
                 mPointFrom = skeleton.find(
                     tempX,
@@ -178,7 +179,7 @@ VEIListenerOnAnchorPoint {
 
             MotionEvent.ACTION_MOVE -> {
                 mPointTo?.let { to ->
-                    mAnchor.checkAnchors(
+                    anchor.checkAnchors(
                         skeleton,
                         mTouchX,
                         mTouchY,
@@ -197,6 +198,7 @@ VEIListenerOnAnchorPoint {
 
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL -> {
+                anchor.isNoDrawAnchors = true
                 mPointTo?.let { to ->
                     skeleton.find(
                         event.x,
@@ -222,7 +224,7 @@ VEIListenerOnAnchorPoint {
     override fun draw(
         canvas: Canvas
     ) {
-        mAnchor.draw(
+        anchor.draw(
             canvas
         )
     }

@@ -25,9 +25,15 @@ class VEAnchor(
         VEAnchorPoint(radiusPointer * 0.3f)
     )
 
+    var isNoDrawAnchors = false
+
     fun draw(
         canvas: Canvas
     ) {
+        if (isNoDrawAnchors) {
+            return
+        }
+
         mAnchors.forEach {
             if (it.isPreparedToDraw) {
                 it.onDraw(

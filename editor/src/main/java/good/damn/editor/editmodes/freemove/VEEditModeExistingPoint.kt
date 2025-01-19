@@ -20,6 +20,7 @@ VEITouchable {
     ): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                mAnchor.isNoDrawAnchors = false
                 foundPoint = mSkeleton.find(
                     event.x,
                     event.y
@@ -39,6 +40,11 @@ VEITouchable {
                 }
 
                 return true
+            }
+
+            MotionEvent.ACTION_UP,
+            MotionEvent.ACTION_CANCEL -> {
+                mAnchor.isNoDrawAnchors = true
             }
         }
 

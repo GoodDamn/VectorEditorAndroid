@@ -21,7 +21,7 @@ class VEShapeBezierQuad(
         private val TAG = VEShapeBezierQuad::class.simpleName
         const val shapeType = 2
 
-        private const val STEP_HIT = 1.0f / 8
+        private const val STEP_HIT = 1.0f / 15
     }
 
     private val mPath = Path()

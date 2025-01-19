@@ -43,6 +43,7 @@ VEIListenerOnAnchorPoint {
     ): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                mAnchor.isNoDrawAnchors = false
                 mFoundPoint = mSkeleton.find(
                     event.x,
                     event.y
@@ -70,6 +71,7 @@ VEIListenerOnAnchorPoint {
 
 
             MotionEvent.ACTION_UP -> {
+                mAnchor.isNoDrawAnchors = true
                 mFoundPoint?.let {
                     mDataPosition?.apply {
                         x = it.x
