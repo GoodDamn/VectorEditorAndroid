@@ -3,50 +3,39 @@ package good.damn.editor.views
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.animation.animator.VEButtonTick
-import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
+import good.damn.editor.animation.animator.options.canvas.VECanvasOption
+import good.damn.editor.animation.animator.options.canvas.keyframes.VECanvasOptionKeyFramePosition
+import good.damn.editor.animation.animator.options.canvas.previews.VECanvasOptionPreviewPosition
 import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
 import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
 import good.damn.editor.animation.animators.VEAnimator
 import good.damn.editor.animation.animators.VEAnimatorTick
-import good.damn.editor.animation.animators.VEIListenerAnimation
-import good.damn.sav.misc.extensions.primitives.isInRange
 import good.damn.sav.misc.interfaces.VEITouchable
-import good.damn.sav.misc.scopes.TimeScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import java.util.LinkedList
 import kotlin.math.abs
 
 class VEViewAnimatorEditor(
-    context: Context?,
-    private val heightOptionFactor: Float,
-    private val widthOptionFactor: Float,
-    private val heightTickTriggerFactor: Float
+    context: Context?
 ): View(
     context
-), VEIListenerAnimation {
+) {
 
     companion object {
         private val TAG = VEViewAnimatorEditor::class.simpleName
     }
 
-    var tickUpdate: (()-> Unit)? = null
-
-    var options: Array<
-        VEOptionAnimatorBase
-    >? = null
-        set(v) {
-            field = v
-            mBtnTick.options = v
-        }
+    private var mOptionsDraw: Array<
+        VECanvasOption
+    >? = Array(1) {
+        VECanvasOption(
+            VECanvasOptionPreviewPosition(),
+            VECanvasOptionKeyFramePosition()
+        )
+    }
 
     var duration: Int = 1000 // ms
         set(v) {
@@ -57,10 +46,6 @@ class VEViewAnimatorEditor(
             durationPx = (
                 v / 1000f * (width - mScrollerHorizontal.triggerEndX)
             ).toInt()
-
-            options?.forEach {
-                it.tickTimer.durationPx = durationPx
-            }
 
             val fDuration = duration.toFloat()
             for (i in 0..duration step 1000) {
@@ -86,9 +71,9 @@ class VEViewAnimatorEditor(
         get() = mAnimator.isPlaying
 
     private val mAnimator = VEAnimator().apply {
-        listener = this@VEViewAnimatorEditor
+        listener = VEAnimatorTick()
     }
-    private val mAnimatorTick = VEAnimatorTick()
+
     private val mTicker = VEAnimatorTicker()
     private val mScrollerHorizontal = VEScrollerHorizontal()
     private val mScrollerVertical = VEScrollerVertical()
@@ -106,12 +91,8 @@ class VEViewAnimatorEditor(
         color = mTicker.color
     }
 
-    private val mHandler = Handler(
-        Looper.getMainLooper()
-    )
-
     fun pause() {
-        mAnimator.pause()
+        mAnimator.stop()
     }
 
     fun play(
@@ -123,54 +104,43 @@ class VEViewAnimatorEditor(
     }
 
     fun layoutEditor() {
-        val tickerHeight = height * heightTickTriggerFactor
-        var y = tickerHeight
-        val ww = width * widthOptionFactor
-        val hh = height * heightOptionFactor
-        val wTimer = width - ww
+        val heightTicker = height * 0.16f
+        val widthPreview = width * 0.15f
+        val widthOption = width.toFloat()
 
-        options?.forEach {
-            it.let {
-                it.x = 0f
-                it.y = y
-                it.layout(
-                    ww, hh
-                )
-            }
+        var y = heightTicker
+        mOptionsDraw?.forEach {
+            it.layout(
+                0f,
+                y,
+                widthOption,
+                heightTicker
+            )
 
-            it.tickTimer.let {
-                it.x = ww
-                it.y = y
-                it.durationPx = width
-                it.layout(
-                    wTimer, hh
-                )
-            }
-
-            y += hh
+            y += heightTicker
         }
 
         mTicker.layout(
             0f,
-            tickerHeight,
-            ww,
-            width.toFloat()
+            heightTicker,
+            widthPreview,
+            widthOption
         )
 
         mScrollerHorizontal.apply {
             reset()
-            triggerEndY = tickerHeight
-            triggerEndX = ww
+            triggerEndY = heightTicker
+            triggerEndX = widthPreview
         }
 
         mScrollerVertical.apply {
             reset()
-            triggerEndX = ww * 0.5f
+            triggerEndX = widthPreview * 0.5f
         }
 
-        mPaintText.textSize = tickerHeight * 0.18f
+        mPaintText.textSize = heightTicker * 0.18f
 
-        duration = 5000
+        duration = 2000
     }
 
     override fun onLayout(
@@ -202,10 +172,10 @@ class VEViewAnimatorEditor(
         var tickX = 0f
         var tickY = mPaintText.textSize
 
-        options?.firstOrNull()?.apply {
+        /*options?.firstOrNull()?.apply {
             tickX = tickTimer.x
             tickY += tickTimer.y
-        }
+        }*/
 
         save()
 
@@ -214,15 +184,15 @@ class VEViewAnimatorEditor(
             mScrollerVertical.scrollValue
         )
 
-        options?.forEach {
+        mOptionsDraw?.forEach {
             it.draw(
                 canvas
             )
 
-            it.tickTimer.apply {
+            /*it.tickTimer.apply {
                 scrollTimer = mScrollerHorizontal.scrollValue
                 draw(canvas)
-            }
+            }*/
         }
 
         for (it in mTimeDividers) {
@@ -260,7 +230,6 @@ class VEViewAnimatorEditor(
         }
 
         mCurrentTouch?.let {
-            Log.d(TAG, "onTouchEvent: $mCurrentTouch")
             if (!it.onTouchEvent(event)) {
                 mCurrentTouch = null
             }
@@ -271,7 +240,6 @@ class VEViewAnimatorEditor(
         if (mTicker.onTouchEvent(
             event
         )) {
-            Log.d(TAG, "onTouchEvent: TICKER: ${event.action}")
             mCurrentTouch = mTicker
             invalidate()
             return true
@@ -303,33 +271,6 @@ class VEViewAnimatorEditor(
 
         return false
     }
-
-    override fun onAnimatorStart() {
-        options?.apply {
-            mAnimatorTick.prepare(
-                this
-            )
-        }
-    }
-    override fun onAnimatorTick(
-        currentTimeMs: Long,
-        dt: Long
-    ) {
-        val durf = duration.toFloat()
-        mAnimatorTick.tick(
-            dt / durf
-        )
-
-        mScrollerHorizontal.scrollValue =
-            currentTimeMs / durf * -durationPx
-
-        mHandler.post {
-            tickUpdate?.invoke()
-            invalidate()
-        }
-    }
-
-    override fun onAnimatorEnd() = Unit
 }
 
 private data class TimeDivider(

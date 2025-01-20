@@ -1,57 +1,58 @@
 package good.damn.editor.animation.animators
 
+import android.os.Handler
+import android.os.Looper
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
-import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
-import good.damn.editor.animation.animator.options.tickTimer.data.base.VETickData
-import good.damn.editor.interfaces.VEIInterpolatable
 import good.damn.sav.misc.structures.tree.toList
+import java.util.LinkedList
+import kotlin.time.Duration
 
-class VEAnimatorTick {
+class VEAnimatorTick: VEIListenerAnimation {
 
-    private lateinit var mOptionsPrepared: Array<Tick?>
+    private val mHandler = Handler(
+        Looper.getMainLooper()
+    )
 
-    private val mInterpolator = AccelerateDecelerateInterpolator()
 
-    fun prepare(
-        options: Array<VEOptionAnimatorBase>
-    ) {
-        mOptionsPrepared = Array(
-            options.size
-        ) {
-            val tickTimer = options[it]
-                .tickTimer
+    override fun onAnimatorStart() {
 
-            val iterator = tickTimer
-                .tickList
-                .toList()
-                .iterator()
-
-            if (!iterator.hasNext()) {
-                return@Array null
-            }
-
-            Tick(
-                iterator,
-                tickTimer,
-                tickTimer.beginTickData(),
-                iterator.next()
-            )
-        }
     }
 
-    fun tick(
+    override fun onAnimatorTick(
+        currentTimeMs: Long,
+        dt: Long,
+        duration: Int
+    ) {
+        val d = dt.toFloat() / duration
+
+        /*mScrollerHorizontal.scrollValue =
+            currentTimeMs / metadata.duration * -metadata.durationPx
+
+        options?.forEach {
+            tickOption(
+                it, d
+            )
+        }*/
+    }
+
+    override fun onAnimatorEnd() {
+
+    }
+
+    /*private inline fun tickOption(
+        it: VEModelOption,
         dt: Float
-    ) = mOptionsPrepared.forEach { it?.apply {
+    ) = it.run {
         currentPathTime += dt
         if (currentPathTime > to.tickFactor) {
             from = to
             if (!ticks.hasNext()) {
-                return@forEach
+                return@run
             }
             to = ticks.next()
             dtPath = to.tickFactor - from.tickFactor
-            return@forEach
+            return@run
         }
 
         val i = (currentPathTime - from.tickFactor) / dtPath
@@ -61,16 +62,5 @@ class VEAnimatorTick {
             to,
             mInterpolator.getInterpolation(i)
         )
-    }
-    }
-
-
-    private data class Tick(
-        val ticks: Iterator<VETickData>,
-        val interpolation: VEIInterpolatable,
-        var from: VETickData,
-        var to: VETickData,
-        var currentPathTime: Float = 0f,
-        var dtPath: Float = to.tickFactor - from.tickFactor
-    )
+    }*/
 }

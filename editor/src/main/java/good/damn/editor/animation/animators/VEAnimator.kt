@@ -1,10 +1,8 @@
 package good.damn.editor.animation.animators
 
-import android.util.Log
 import good.damn.sav.misc.scopes.TimeScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class VEAnimator {
@@ -26,7 +24,7 @@ class VEAnimator {
 
     private var mJobPlay: Job? = null
 
-    fun pause() {
+    fun stop() {
         isPlaying = false
         mJobPlay?.cancel()
     }
@@ -35,35 +33,42 @@ class VEAnimator {
         atTimeMs: Long
     ) {
         if (isPlaying) {
-            pause()
+            stop()
             return
         }
 
         isPlaying = true
 
         mJobPlay = mScope.launch {
-            var currentMs = atTimeMs
-            var dt: Long
-            mScope.remember()
-
-            listener?.onAnimatorStart()
-
-            while (currentMs < duration && isPlaying) {
-                dt = mScope.deltaTime
-                if (dt == 0L) {
-                    continue
-                }
-                listener?.onAnimatorTick(
-                    currentMs,
-                    dt
-                )
-
-                currentMs += dt
-                mScope.remember()
-            }
-
-            listener?.onAnimatorEnd()
+            playJob(atTimeMs)
         }
+    }
+
+    private inline fun playJob(
+        atTimeMs: Long
+    ) {
+        var currentMs = atTimeMs
+        var dt: Long
+        mScope.remember()
+
+        listener?.onAnimatorStart()
+
+        while (currentMs < duration && isPlaying) {
+            dt = mScope.deltaTime
+            if (dt == 0L) {
+                continue
+            }
+            listener?.onAnimatorTick(
+                currentMs,
+                dt,
+                duration
+            )
+
+            currentMs += dt
+            mScope.remember()
+        }
+
+        listener?.onAnimatorEnd()
     }
 
 }

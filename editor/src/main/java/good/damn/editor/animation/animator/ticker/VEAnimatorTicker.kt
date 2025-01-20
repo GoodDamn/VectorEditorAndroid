@@ -88,11 +88,9 @@ VEIDrawable {
             event.action
         ) {
             MotionEvent.ACTION_DOWN -> {
-                Log.d(TAG, "onTouchEvent: ${event.action} ACTION_DOWN: ${event.x} < ${mTriggerRect.left};; ${event.y} > ${mTriggerRect.bottom}")
                 if ((event.y > mTriggerRect.bottom) ||
                     (event.x < mTriggerRect.left)
                 ) {
-                    Log.d(TAG, "onTouchEvent: ACTION_DOWN: FALSE")
                     return false
                 }
             }
@@ -101,8 +99,6 @@ VEIDrawable {
                 return false
             }
         }
-
-        Log.d(TAG, "onTouchEvent: ${event.action} ACTION_MOVE:")
 
         if (event.x > mTriggerRect.left) {
             tickPosition = event.x - mTriggerRect.left + mPaint.strokeWidth * 0.5f

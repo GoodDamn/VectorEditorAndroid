@@ -17,10 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
-import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
-import good.damn.editor.animation.animator.options.tickTimer.listeners.VEListenerOnTickColor
 import good.damn.editor.editmodes.VEEditModeFillPoints
-import good.damn.editor.editmodes.animation.VEEditModeAnimation
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.extensions.views.boundsFrame
@@ -53,7 +50,6 @@ class VEActivityMain
 VEListenerOnGetBrowserContent,
 VEIDrawable,
 VEIListenerOnAnchorPoint,
-VEListenerOnTickColor,
 VEIListenerOnSelectShape,
 VEIListenerOnSelectPoint, VEListenerOnResultPermission {
 
@@ -102,10 +98,6 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
         onClickBtnPrev = View.OnClickListener {
             onClickBtnPrev(it)
         }
-
-        onTickUpdateAnimation = {
-            mViewVector?.invalidate()
-        }
     }
 
     private val modeShape = VEEditModeShape(
@@ -138,16 +130,6 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
         onSelectPoint = this@VEActivityMain
     }
 
-    private val modeAnimation = VEEditModeAnimation(
-        mAnchor,
-        modeShape.skeleton,
-        modeShape.shapes
-    ).apply {
-        onChangeEntityAnimation = mFragmentVectorAnimation
-        onChangeValueAnimation = mFragmentVectorAnimation
-        editModeAnimShape.onSelectShape = this@VEActivityMain
-    }
-
     private val mLauncherPermission = VELauncherPermission(
         this
     )
@@ -172,19 +154,6 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
             mFileExport = VEFile(
                 FILE_NAME
             )
-        }
-
-        mFragmentVectorAnimation.onPlayAnimation = {
-            modeAnimation.animatedEntities.run {
-                val list = ArrayList<VEOptionAnimatorBase>(size)
-                for (pia in values) {
-                    pia.options.forEach {
-                        list.add(it)
-                    }
-                }
-
-                list.toTypedArray()
-            }
         }
 
         mBrowserContent.register(
@@ -498,15 +467,6 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
         v: View
     ) {
         mViewPager?.currentItem = 1
-        mViewVector?.mode = modeAnimation
-        mCurrentAnchor = modeAnimation.anchor
-    }
-
-    override fun onTickColor(
-        color: Int
-    ) {
-        modeShape.currentPrimitive.color = color
-        mViewVector?.invalidate()
     }
 
     override fun onSelectShape(
@@ -523,17 +483,11 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
                     progress: Float
                 ) {
                     shape.strokeWidth = progress * modeShape.canvasWidth
-                    modeAnimation.editModeAnimShape.changeShapeWidth(
-                        shape.strokeWidth
-                    )
                     mViewVector?.invalidate()
                 }
             }
             onPickColor = OnPickColorListener {
                 shape.color = it
-                modeAnimation.editModeAnimShape.changeShapeColor(
-                    it
-                )
                 mViewVector?.invalidate()
             }
             show()

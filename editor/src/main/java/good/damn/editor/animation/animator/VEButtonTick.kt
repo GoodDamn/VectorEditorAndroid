@@ -3,7 +3,6 @@ package good.damn.editor.animation.animator
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.MotionEvent
-import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
 import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
 import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
@@ -26,14 +25,12 @@ class VEButtonTick(
     var durationPx = 0
     var duration = 0
 
-    var options: Array<VEOptionAnimatorBase>? = null
-
     override fun onTouchEvent(
         event: MotionEvent
     ) = when (event.action) {
         MotionEvent.ACTION_UP,
         MotionEvent.ACTION_CANCEL -> {
-            options?.forEach {
+            /*options?.forEach {
                 val y = it.y + mScrollerVertical.scrollValue
                 if (y > 0
                     && event.x < it.width
@@ -50,7 +47,7 @@ class VEButtonTick(
                         fa
                     )
                 }
-            }
+            }*/
             false
         }
         else -> true

@@ -5,7 +5,8 @@ interface VEIListenerAnimation {
 
     fun onAnimatorTick(
         currentTimeMs: Long,
-        dt: Long
+        dt: Long,
+        duration: Int
     )
 
     fun onAnimatorEnd()
