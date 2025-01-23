@@ -1,16 +1,21 @@
 package good.damn.editor.animation.animator.options.canvas
 
 import android.graphics.Canvas
+import android.view.MotionEvent
+import android.view.View
+import good.damn.editor.animation.animator.VEButtonKeyFrame
 import good.damn.editor.animation.animator.options.canvas.keyframes.VEICanvasOptionKeyFrame
 import good.damn.editor.animation.animator.options.canvas.previews.VEICanvasOptionPreview
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEILayoutable
+import good.damn.sav.misc.interfaces.VEITouchable
 
 class VECanvasOption(
     private val preview: VEICanvasOptionPreview,
     private val keyFrame: VEICanvasOptionKeyFrame
 ): VEILayoutable,
-VEIDrawable {
+VEIDrawable,
+VEITouchable {
 
     override fun draw(
         canvas: Canvas
@@ -40,4 +45,11 @@ VEIDrawable {
             height
         )
     }
+
+    override fun onTouchEvent(
+        event: MotionEvent
+    ) = preview.onTouchEvent(
+        event
+    )
+
 }

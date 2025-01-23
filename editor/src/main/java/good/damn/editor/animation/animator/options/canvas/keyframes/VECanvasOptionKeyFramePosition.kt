@@ -3,11 +3,15 @@ package good.damn.editor.animation.animator.options.canvas.keyframes
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import good.damn.sav.core.animation.VEMKeyFrame
-import good.damn.sav.misc.structures.tree.BinaryTree
+import good.damn.editor.animation.animator.options.canvas.VEITransactionReceiver
+import good.damn.sav.core.animation.keyframe.VEMAnimationOption
+import good.damn.sav.core.animation.keyframe.VEMKeyFrame
+import good.damn.sav.core.animation.keyframe.VEMKeyFrameDataPosition
 
-class VECanvasOptionKeyFramePosition
-: VEICanvasOptionKeyFrame {
+class VECanvasOptionKeyFramePosition(
+    private val option: VEMAnimationOption
+): VEICanvasOptionKeyFrame,
+VEITransactionReceiver {
 
     private val mRect = RectF()
 
@@ -15,21 +19,8 @@ class VECanvasOptionKeyFramePosition
         color = 0xffaaaaaa.toInt()
     }
 
-    private val keyFrames = BinaryTree<VEMKeyFrame>(
-        equality = { v, vv ->
-            v.factor == vv.factor
-        },
-        moreThan = { v, vv ->
-            v.factor > vv.factor
-        }
-    )
-
-    override fun addKeyFrame(
-        keyFrame: VEMKeyFrame
-    ) {
-        keyFrames.add(
-            keyFrame
-        )
+    private val mPaintKeyframe = Paint().apply {
+        color = 0xffffff00.toInt()
     }
 
     override fun layout(
@@ -43,6 +34,7 @@ class VECanvasOptionKeyFramePosition
             x+width,
             y + height
         )
+
     }
 
     override fun draw(
@@ -51,7 +43,30 @@ class VECanvasOptionKeyFramePosition
         save()
         clipRect(mRect)
         drawPaint(mPaintBack)
+        option.keyFrames.forEach {
+            drawCircle(
+                mRect.left + it.factor * mRect.width(),
+                mRect.bottom * 0.75f,
+                mRect.height() * 0.25f,
+                mPaintKeyframe
+            )
+        }
         restore()
+    }
+
+    override fun onReceiveTransaction() {
+
+        val keyFrame = VEMKeyFrame(
+            0.1f,
+            VEMKeyFrameDataPosition(
+                50f,
+                50f
+            )
+        )
+
+        option.keyFrames.add(
+            keyFrame
+        )
     }
 
 }

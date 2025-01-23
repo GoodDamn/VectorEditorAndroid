@@ -5,8 +5,9 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
-import good.damn.editor.animation.animator.VEButtonTick
+import good.damn.editor.animation.animator.VEButtonKeyFrame
 import good.damn.editor.animation.animator.options.canvas.VECanvasOption
+import good.damn.editor.animation.animator.options.canvas.VETransactionKeyFrame
 import good.damn.editor.animation.animator.options.canvas.keyframes.VECanvasOptionKeyFramePosition
 import good.damn.editor.animation.animator.options.canvas.previews.VECanvasOptionPreviewPosition
 import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
@@ -14,7 +15,9 @@ import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
 import good.damn.editor.animation.animators.VEAnimator
 import good.damn.editor.animation.animators.VEAnimatorTick
+import good.damn.sav.core.animation.keyframe.VEMAnimationOption
 import good.damn.sav.misc.interfaces.VEITouchable
+import good.damn.sav.misc.structures.tree.BinaryTree
 import java.util.LinkedList
 import kotlin.math.abs
 
@@ -28,12 +31,27 @@ class VEViewAnimatorEditor(
         private val TAG = VEViewAnimatorEditor::class.simpleName
     }
 
-    private var mOptionsDraw: Array<
-        VECanvasOption
-    >? = Array(1) {
+    private val mOptionPosition = VEMAnimationOption(
+        BinaryTree(
+            equality = {v, vv -> v.factor == vv.factor},
+            moreThan = {v, vv -> v.factor > vv.factor}
+        )
+    )
+
+    private val mCanvasKeyFramePosition = VECanvasOptionKeyFramePosition(
+        mOptionPosition
+    )
+
+    private val mTransactionKeyFrame = VETransactionKeyFrame(
+        mCanvasKeyFramePosition
+    )
+
+    private var mOptionsDraw = Array(1) {
         VECanvasOption(
-            VECanvasOptionPreviewPosition(),
-            VECanvasOptionKeyFramePosition()
+            VECanvasOptionPreviewPosition(
+                mTransactionKeyFrame
+            ),
+            mCanvasKeyFramePosition
         )
     }
 
@@ -58,13 +76,11 @@ class VEViewAnimatorEditor(
             }
 
             mAnimator.duration = duration
-            mBtnTick.duration = duration
         }
 
     var durationPx: Int = 0
         private set(v) {
             field = v
-            mBtnTick.durationPx = v
         }
 
     val isPlaying: Boolean
@@ -78,12 +94,6 @@ class VEViewAnimatorEditor(
     private val mScrollerHorizontal = VEScrollerHorizontal()
     private val mScrollerVertical = VEScrollerVertical()
     private val mTimeDividers = LinkedList<TimeDivider>()
-
-    private val mBtnTick = VEButtonTick(
-        mScrollerVertical,
-        mTicker,
-        mScrollerHorizontal
-    )
 
     private var mCurrentTouch: VEITouchable? = null
 
@@ -109,7 +119,7 @@ class VEViewAnimatorEditor(
         val widthOption = width.toFloat()
 
         var y = heightTicker
-        mOptionsDraw?.forEach {
+        mOptionsDraw.forEach {
             it.layout(
                 0f,
                 y,
@@ -261,12 +271,12 @@ class VEViewAnimatorEditor(
             return true
         }
 
-        if (mBtnTick.onTouchEvent(
-            event
-        )) {
-            mCurrentTouch = mBtnTick
-            invalidate()
-            return true
+        mOptionsDraw.forEach {
+            if (it.onTouchEvent(event)) {
+                mCurrentTouch = it
+                invalidate()
+                return true
+            }
         }
 
         return false
