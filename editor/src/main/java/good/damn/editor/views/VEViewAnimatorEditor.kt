@@ -83,9 +83,6 @@ class VEViewAnimatorEditor(
             field = v
         }
 
-    val isPlaying: Boolean
-        get() = mAnimator.isPlaying
-
     private val mAnimator = VEAnimator().apply {
         listener = VEAnimatorTick()
     }
@@ -182,11 +179,6 @@ class VEViewAnimatorEditor(
         var tickX = 0f
         var tickY = mPaintText.textSize
 
-        /*options?.firstOrNull()?.apply {
-            tickX = tickTimer.x
-            tickY += tickTimer.y
-        }*/
-
         save()
 
         translate(
@@ -194,15 +186,11 @@ class VEViewAnimatorEditor(
             mScrollerVertical.scrollValue
         )
 
-        mOptionsDraw?.forEach {
+        mOptionsDraw.forEach {
             it.draw(
                 canvas
             )
-
-            /*it.tickTimer.apply {
-                scrollTimer = mScrollerHorizontal.scrollValue
-                draw(canvas)
-            }*/
+            it.scrollX = mScrollerHorizontal.scrollValue
         }
 
         for (it in mTimeDividers) {

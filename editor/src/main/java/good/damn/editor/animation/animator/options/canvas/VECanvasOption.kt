@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.animation.animator.VEButtonKeyFrame
+import good.damn.editor.animation.animator.VEIScrollable
 import good.damn.editor.animation.animator.options.canvas.keyframes.VEICanvasOptionKeyFrame
 import good.damn.editor.animation.animator.options.canvas.previews.VEICanvasOptionPreview
 import good.damn.sav.misc.interfaces.VEIDrawable
@@ -15,13 +16,26 @@ class VECanvasOption(
     private val keyFrame: VEICanvasOptionKeyFrame
 ): VEILayoutable,
 VEIDrawable,
-VEITouchable {
+VEITouchable,
+VEIScrollable {
+
+    override var scrollX: Float
+        get() = keyFrame.scrollX
+        set(value) {
+            keyFrame.scrollX = value
+        }
+
+    override var scrollY: Float
+        get() = keyFrame.scrollY
+        set(value) {
+            keyFrame.scrollY = value
+        }
 
     override fun draw(
         canvas: Canvas
     ) {
-        preview.draw(canvas)
         keyFrame.draw(canvas)
+        preview.draw(canvas)
     }
 
     override fun layout(

@@ -13,6 +13,9 @@ class VECanvasOptionKeyFramePosition(
 ): VEICanvasOptionKeyFrame,
 VEITransactionReceiver {
 
+    override var scrollX = 0f
+    override var scrollY = 0f
+
     private val mRect = RectF()
 
     private val mPaintBack = Paint().apply {
@@ -45,7 +48,7 @@ VEITransactionReceiver {
         drawPaint(mPaintBack)
         option.keyFrames.forEach {
             drawCircle(
-                mRect.left + it.factor * mRect.width(),
+                scrollX + mRect.left + it.factor * mRect.width(),
                 mRect.bottom * 0.75f,
                 mRect.height() * 0.25f,
                 mPaintKeyframe
