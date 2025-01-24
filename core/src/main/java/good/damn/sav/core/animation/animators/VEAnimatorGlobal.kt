@@ -1,22 +1,20 @@
-package good.damn.editor.animation.animators
+package good.damn.sav.core.animation.animators
 
 import good.damn.sav.misc.scopes.TimeScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class VEAnimator {
+class VEAnimatorGlobal {
 
     companion object {
-        private val TAG = VEAnimator::class.simpleName
+        private val TAG = VEAnimatorGlobal::class.simpleName
     }
 
     var isPlaying: Boolean = false
         private set
 
-    var duration: Int = 1000
-
-    var listener: VEIListenerAnimation? = null
+    private var mAnimations: Array<VEIListenerTick>? = null
 
     private val mScope = TimeScope(
         Dispatchers.IO
@@ -51,24 +49,30 @@ class VEAnimator {
         var dt: Long
         mScope.remember()
 
-        listener?.onAnimatorStart()
+        val animsCount = mAnimations?.size ?: 0
+        var animsCompleted = 0
+        var state = VEEnumAnimationState.RUNNING
 
-        while (currentMs < duration && isPlaying) {
+        while (isPlaying) {
             dt = mScope.deltaTime
             if (dt == 0L) {
                 continue
             }
-            listener?.onAnimatorTick(
-                currentMs,
-                dt,
-                duration
-            )
+
+            mAnimations?.forEach {
+                state = it.animationTickContinuation(dt)
+                if (state == VEEnumAnimationState.HAS_END) {
+                    animsCompleted++
+                }
+            }
+
+            if (animsCount == animsCompleted) {
+                return
+            }
 
             currentMs += dt
             mScope.remember()
         }
-
-        listener?.onAnimatorEnd()
     }
 
 }

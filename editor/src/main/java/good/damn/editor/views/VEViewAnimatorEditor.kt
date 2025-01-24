@@ -7,17 +7,12 @@ import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.animation.animator.options.canvas.VECanvasOption
 import good.damn.editor.animation.animator.options.canvas.VEIAnimationCanvas
-import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
 import good.damn.editor.animation.animator.options.canvas.VEIRequesterFloat
-import good.damn.editor.animation.animator.options.canvas.VEITransactionReceiver
-import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
 import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
-import good.damn.editor.animation.animators.VEAnimator
+import good.damn.sav.core.animation.animators.VEAnimatorGlobal
 import good.damn.editor.animation.animators.VEAnimatorTick
-import good.damn.sav.core.animation.keyframe.VEIAnimation
 import good.damn.sav.misc.interfaces.VEITouchable
-import kotlin.math.abs
 
 class VEViewAnimatorEditor(
     context: Context?
@@ -50,7 +45,7 @@ class VEViewAnimatorEditor(
         }
 
 
-    private val mAnimator = VEAnimator().apply {
+    private val mAnimator = VEAnimatorGlobal().apply {
         listener = VEAnimatorTick()
     }
 
@@ -64,15 +59,15 @@ class VEViewAnimatorEditor(
     }
 
     fun pause() {
-        //mAnimator.stop()
+        mAnimator.stop()
     }
 
     fun play(
         atTimeMs: Long = 0L
     ) {
-        /*mAnimator.play(
+        mAnimator.play(
             atTimeMs
-        )*/
+        )
     }
 
     fun layoutEditor() {
@@ -131,7 +126,6 @@ class VEViewAnimatorEditor(
     override fun onDraw(
         canvas: Canvas
     ) = canvas.run {
-
         super.onDraw(
             canvas
         )
