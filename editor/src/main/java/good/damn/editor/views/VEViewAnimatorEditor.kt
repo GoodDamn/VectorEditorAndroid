@@ -50,17 +50,6 @@ class VEViewAnimatorEditor(
             }
         }
 
-    var duration: Int = 1000 // ms
-        set(v) {
-            field = v
-
-            /*durationPx = (
-                v / 1000f * (width - mScrollerHorizontal.triggerEndX)
-            ).toInt()*/
-
-            mAnimator.duration = duration
-        }
-
 
     private val mAnimator = VEAnimator().apply {
         listener = VEAnimatorTick()
@@ -76,15 +65,15 @@ class VEViewAnimatorEditor(
     }
 
     fun pause() {
-        mAnimator.stop()
+        //mAnimator.stop()
     }
 
     fun play(
         atTimeMs: Long = 0L
     ) {
-        mAnimator.play(
+        /*mAnimator.play(
             atTimeMs
-        )
+        )*/
     }
 
     fun layoutEditor() {
@@ -118,8 +107,6 @@ class VEViewAnimatorEditor(
         }
 
         mPaintText.textSize = heightTicker * 0.25f
-
-        duration = 2000
     }
 
     override fun requestDataFloat() = mTicker.tickPosition
