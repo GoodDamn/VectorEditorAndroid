@@ -3,17 +3,16 @@ package good.damn.editor.animation.animator.options.canvas.keyframes
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import good.damn.editor.animation.animator.options.canvas.VEITransactionReceiver
-import good.damn.sav.core.animation.keyframe.VEMAnimationOption
-import good.damn.sav.core.animation.keyframe.VEMKeyFrame
-import good.damn.sav.core.animation.keyframe.VEMKeyFrameDataPosition
+import android.view.MotionEvent
+import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
+import good.damn.sav.core.animation.keyframe.VEIAnimationOption
 
-class VECanvasOptionKeyFramePosition(
-    private val option: VEMAnimationOption
+class VECanvasOptionKeyframePosition(
+    private val option: VEIAnimationOption
 ): VEICanvasOptionKeyFrame {
 
-    override var scrollX = 0f
-    override var scrollY = 0f
+    val scrollX: Float
+        get() = mScrollerHorizontal.scrollValue
 
     private val mRect = RectF()
 
@@ -24,6 +23,8 @@ class VECanvasOptionKeyFramePosition(
     private val mPaintKeyframe = Paint().apply {
         color = 0xffffff00.toInt()
     }
+
+    private val mScrollerHorizontal = VEScrollerHorizontal()
 
     override fun layout(
         x: Float,
@@ -37,6 +38,9 @@ class VECanvasOptionKeyFramePosition(
             y + height
         )
 
+        mScrollerHorizontal.rect.set(
+            mRect
+        )
     }
 
     override fun draw(
@@ -45,9 +49,11 @@ class VECanvasOptionKeyFramePosition(
         save()
         clipRect(mRect)
         drawPaint(mPaintBack)
-        option.keyFrames.forEach {
+        option.keyframes.forEach {
             drawCircle(
-                mRect.left + scrollX + it.factor * option.duration,
+                mRect.left
+                        + mScrollerHorizontal.scrollValue
+                        + it.factor * option.duration,
                 mRect.bottom * 0.75f,
                 mRect.height() * 0.25f,
                 mPaintKeyframe
@@ -55,5 +61,11 @@ class VECanvasOptionKeyFramePosition(
         }
         restore()
     }
+
+    override fun onTouchEvent(
+        event: MotionEvent
+    ) = mScrollerHorizontal.onTouchEvent(
+        event
+    )
 
 }

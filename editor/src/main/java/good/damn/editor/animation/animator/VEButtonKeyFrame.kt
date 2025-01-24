@@ -2,10 +2,6 @@ package good.damn.editor.animation.animator
 
 import android.view.MotionEvent
 import android.view.View
-import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
-import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
-import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
-import good.damn.sav.core.animation.keyframe.VEMAnimationOption
 import good.damn.sav.misc.interfaces.VEILayoutable
 import good.damn.sav.misc.interfaces.VEITouchable
 
@@ -49,6 +45,14 @@ VEILayoutable {
     ): Boolean {
 
         when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                if (x > event.x || x + width < event.x ||
+                    y > event.y || y + height < event.y
+                ) {
+                    return false
+                }
+            }
+
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL -> {
                 if (x > event.x || x + width < event.x ||
@@ -58,6 +62,7 @@ VEILayoutable {
                 }
 
                 onClickListener?.onClick(null)
+                return false
             }
         }
 

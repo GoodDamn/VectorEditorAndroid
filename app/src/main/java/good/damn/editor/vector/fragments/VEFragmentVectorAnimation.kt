@@ -7,13 +7,20 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import good.damn.editor.animation.animator.options.canvas.VEMAnimationCanvas
+import good.damn.editor.animation.animator.options.canvas.VEMAnimationOptionCanvasPosition
+import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.interfaces.VEIColorPickable
 import good.damn.editor.views.VEViewAnimatorEditor
+import good.damn.sav.core.animation.keyframe.VEMAnimationOptionPosition
+import good.damn.sav.core.points.VEPointIndexed
+import good.damn.sav.misc.structures.tree.BinaryTree
 
 class VEFragmentVectorAnimation
 : Fragment(),
-VEIColorPickable {
+VEIColorPickable,
+VEIListenerOnSelectPoint {
 
     var onClickBtnPrev: View.OnClickListener? = null
 
@@ -119,6 +126,29 @@ VEIColorPickable {
         color: Int
     ) {
 
+    }
+
+    override fun onSelectPoint(
+        point: VEPointIndexed
+    ) {
+        mViewEditor?.apply {
+            animation = VEMAnimationCanvas(
+                arrayListOf(
+                    VEMAnimationOptionCanvasPosition(
+                        point,
+                        VEMAnimationOptionPosition(
+                            BinaryTree(
+                                equality = {v, vv -> v.factor == vv.factor},
+                                moreThan = {v, vv -> v.factor > vv.factor}
+                            ),
+                            duration = 2000
+                        ),
+                        this
+                    )
+                )
+            )
+            invalidate()
+        }
     }
 
 }

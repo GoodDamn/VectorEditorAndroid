@@ -1,20 +1,20 @@
 package good.damn.editor.animation.animator.options.canvas
 
-import good.damn.sav.core.animation.keyframe.VEMKeyFrame
+import good.damn.sav.core.animation.keyframe.VEMKeyframe
 
 class VETransactionKeyFrame(
     private val receiver: VEITransactionReceiver
 ): VEITransactionRequest,
-VEITransactionSender<VEMKeyFrame> {
+VEITransactionSender<VEMKeyframe> {
 
-    var receiverResult: VEITransactionResult<VEMKeyFrame>? = null
+    var receiverResult: VEITransactionResult<VEMKeyframe>? = null
 
     override fun requestTransaction() {
         receiver.onReceiveTransaction()
     }
 
     override fun sendTransactionResult(
-        result: VEMKeyFrame?
+        result: VEMKeyframe?
     ) {
         receiverResult?.onResultTransaction(
             result

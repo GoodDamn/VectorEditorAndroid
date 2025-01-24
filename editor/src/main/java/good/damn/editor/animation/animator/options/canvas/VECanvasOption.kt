@@ -2,38 +2,24 @@ package good.damn.editor.animation.animator.options.canvas
 
 import android.graphics.Canvas
 import android.view.MotionEvent
-import android.view.View
-import good.damn.editor.animation.animator.VEButtonKeyFrame
 import good.damn.editor.animation.animator.VEIScrollable
 import good.damn.editor.animation.animator.options.canvas.keyframes.VEICanvasOptionKeyFrame
 import good.damn.editor.animation.animator.options.canvas.previews.VEICanvasOptionPreview
 import good.damn.sav.misc.interfaces.VEIDrawable
-import good.damn.sav.misc.interfaces.VEILayoutable
 import good.damn.sav.misc.interfaces.VEITouchable
 
 class VECanvasOption(
     private val preview: VEICanvasOptionPreview,
-    private val keyFrame: VEICanvasOptionKeyFrame
+    private val keyframe: VEICanvasOptionKeyFrame
 ): VEIDrawable,
-VEITouchable,
-VEIScrollable {
+VEITouchable {
 
-    override var scrollX: Float
-        get() = keyFrame.scrollX
-        set(value) {
-            keyFrame.scrollX = value
-        }
-
-    override var scrollY: Float
-        get() = keyFrame.scrollY
-        set(value) {
-            keyFrame.scrollY = value
-        }
+    private var mCurrentTouch: VEITouchable? = null
 
     override fun draw(
         canvas: Canvas
     ) {
-        keyFrame.draw(canvas)
+        keyframe.draw(canvas)
         preview.draw(canvas)
     }
 
@@ -51,7 +37,7 @@ VEIScrollable {
             height
         )
 
-        keyFrame.layout(
+        keyframe.layout(
             widthPreview,
             y,
             width - widthPreview,
@@ -61,8 +47,31 @@ VEIScrollable {
 
     override fun onTouchEvent(
         event: MotionEvent
-    ) = preview.onTouchEvent(
-        event
-    )
+    ): Boolean {
+
+        mCurrentTouch?.apply {
+            if (!onTouchEvent(event)) {
+                mCurrentTouch = null
+                return false
+            }
+            return true
+        }
+
+        if (preview.onTouchEvent(
+            event
+        )) {
+            mCurrentTouch = preview
+            return true
+        }
+
+        if (keyframe.onTouchEvent(
+            event
+        )) {
+            mCurrentTouch = keyframe
+            return true
+        }
+
+        return false
+    }
 
 }

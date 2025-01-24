@@ -5,97 +5,69 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
-import good.damn.editor.animation.animator.VEButtonKeyFrame
 import good.damn.editor.animation.animator.options.canvas.VECanvasOption
+import good.damn.editor.animation.animator.options.canvas.VEIAnimationCanvas
+import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
+import good.damn.editor.animation.animator.options.canvas.VEIRequesterFloat
 import good.damn.editor.animation.animator.options.canvas.VEITransactionReceiver
-import good.damn.editor.animation.animator.options.canvas.VETransactionKeyFrame
-import good.damn.editor.animation.animator.options.canvas.keyframes.VECanvasOptionKeyFramePosition
-import good.damn.editor.animation.animator.options.canvas.previews.VECanvasOptionPreviewPosition
 import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
 import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
 import good.damn.editor.animation.animators.VEAnimator
 import good.damn.editor.animation.animators.VEAnimatorTick
-import good.damn.sav.core.animation.keyframe.VEMAnimationOption
-import good.damn.sav.core.animation.keyframe.VEMKeyFrame
-import good.damn.sav.core.animation.keyframe.VEMKeyFrameDataPosition
+import good.damn.sav.core.animation.keyframe.VEIAnimation
 import good.damn.sav.misc.interfaces.VEITouchable
-import good.damn.sav.misc.structures.tree.BinaryTree
-import java.util.LinkedList
 import kotlin.math.abs
 
 class VEViewAnimatorEditor(
     context: Context?
 ): View(
     context
-), VEITransactionReceiver {
+), VEIRequesterFloat {
 
     companion object {
         private val TAG = VEViewAnimatorEditor::class.simpleName
     }
 
-    private val mOptionPosition = VEMAnimationOption(
-        BinaryTree(
-            equality = {v, vv -> v.factor == vv.factor},
-            moreThan = {v, vv -> v.factor > vv.factor}
-        )
-    )
 
-    private val mCanvasKeyFramePosition = VECanvasOptionKeyFramePosition(
-        mOptionPosition
-    )
+    private var mOptionsDraw: Array<VECanvasOption>? = null
 
-    private val mTransactionKeyFrame = VETransactionKeyFrame(
-        this@VEViewAnimatorEditor
-    )
+    var animation: VEIAnimationCanvas? = null
+        set(v) {
+            field = v
+            v?.apply {
+                mOptionsDraw = Array(
+                    options.size
+                ) {
+                    val option = options[it]
+                    VECanvasOption(
+                        option.preview,
+                        option.keyframe
+                    )
+                }
 
-    private var mOptionsDraw = Array(1) {
-        VECanvasOption(
-            VECanvasOptionPreviewPosition(
-                mTransactionKeyFrame
-            ),
-            mCanvasKeyFramePosition
-        )
-    }
+                layoutEditor()
+            }
+        }
 
     var duration: Int = 1000 // ms
         set(v) {
             field = v
 
-            mTimeDividers.clear()
-
-            durationPx = (
+            /*durationPx = (
                 v / 1000f * (width - mScrollerHorizontal.triggerEndX)
-            ).toInt()
-
-            val fDuration = duration.toFloat()
-            for (i in 0..duration step 1000) {
-                mTimeDividers.add(
-                    TimeDivider(
-                        i / fDuration * durationPx,
-                        height.toFloat(),
-                        i.toString()
-                    )
-                )
-            }
+            ).toInt()*/
 
             mAnimator.duration = duration
         }
 
-    var durationPx: Int
-        get () = mOptionPosition.duration
-        private set(v) {
-            mOptionPosition.duration = v
-        }
 
     private val mAnimator = VEAnimator().apply {
         listener = VEAnimatorTick()
     }
 
     private val mTicker = VEAnimatorTicker()
-    private val mScrollerHorizontal = VEScrollerHorizontal()
     private val mScrollerVertical = VEScrollerVertical()
-    private val mTimeDividers = LinkedList<TimeDivider>()
 
     private var mCurrentTouch: VEITouchable? = null
 
@@ -121,7 +93,7 @@ class VEViewAnimatorEditor(
         val widthOption = width.toFloat()
 
         var y = heightTicker
-        mOptionsDraw.forEach {
+        mOptionsDraw?.forEach {
             it.layout(
                 0f,
                 y,
@@ -140,12 +112,6 @@ class VEViewAnimatorEditor(
             widthOption
         )
 
-        mScrollerHorizontal.apply {
-            reset()
-            triggerEndY = heightTicker
-            triggerEndX = widthPreview
-        }
-
         mScrollerVertical.apply {
             reset()
             triggerEndX = widthPreview * 0.5f
@@ -156,20 +122,7 @@ class VEViewAnimatorEditor(
         duration = 2000
     }
 
-    override fun onReceiveTransaction() {
-        val factor = (abs(mScrollerHorizontal.scrollValue)
-            + mTicker.tickPosition
-        ) / durationPx
-        mOptionPosition.keyFrames.add(
-            VEMKeyFrame(
-                factor,
-                VEMKeyFrameDataPosition(
-                    50f,
-                    50f,
-                )
-            )
-        )
-    }
+    override fun requestDataFloat() = mTicker.tickPosition
 
     override fun onLayout(
         changed: Boolean,
@@ -204,34 +157,11 @@ class VEViewAnimatorEditor(
             mScrollerVertical.scrollValue
         )
 
-        mOptionsDraw.forEach {
+        mOptionsDraw?.forEach {
             it.draw(
                 canvas
             )
-            it.scrollX = mScrollerHorizontal.scrollValue
         }
-
-        for (it in mTimeDividers) {
-            drawText(
-                it.time,
-                mScrollerHorizontal.triggerEndX
-                        + it.scrollPosition
-                        + mScrollerHorizontal.scrollValue,
-                it.y,
-                mPaintText
-            )
-        }
-
-        val scrollDuration = ((abs(
-            mScrollerHorizontal.scrollValue
-        ) + mTicker.tickPosition) / durationPx * duration).toInt()
-
-        drawText(
-            scrollDuration.toString(),
-            mTicker.tickPosition + mScrollerHorizontal.triggerEndX,
-            height.toFloat(),
-            mPaintText
-        )
 
         restore()
 
@@ -263,14 +193,6 @@ class VEViewAnimatorEditor(
             return true
         }
 
-        if (mScrollerHorizontal.onTouchEvent(
-            event
-        )) {
-            mCurrentTouch = mScrollerHorizontal
-            invalidate()
-            return true
-        }
-
         if (mScrollerVertical.onTouchEvent(
             event
         )) {
@@ -279,7 +201,7 @@ class VEViewAnimatorEditor(
             return true
         }
 
-        mOptionsDraw.forEach {
+        mOptionsDraw?.forEach {
             if (it.onTouchEvent(event)) {
                 mCurrentTouch = it
                 invalidate()
@@ -291,9 +213,3 @@ class VEViewAnimatorEditor(
     }
 
 }
-
-private data class TimeDivider(
-    val scrollPosition: Float,
-    val y: Float,
-    val time: String
-)

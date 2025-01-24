@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
+import good.damn.editor.editmodes.VEEditModeAnimation
 import good.damn.editor.editmodes.VEEditModeFillPoints
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
@@ -72,6 +73,40 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
         onAnchorPoint = this@VEActivityMain
     }
 
+    private val modeShape = VEEditModeShape(
+        mAnchor,
+        VEApp.width.toFloat(),
+        VEApp.width.toFloat()
+    ).apply {
+        onSelectShape = this@VEActivityMain
+    }
+
+    private val modeAnimation = VEEditModeAnimation(
+        modeShape.skeleton
+    )
+
+    private val modeExistingPoint = VEEditModeExistingPoint(
+        modeShape.skeleton,
+        mAnchor
+    )
+
+    private val modeFreeMove = VEEditModeSwap(
+        arrayOf(
+            modeExistingPoint,
+            VEEditModeExistingShape(
+                modeShape.shapes
+            ).apply {
+                onSelectShape = this@VEActivityMain
+            }
+        )
+    )
+
+    private val modeFillPoints = VEEditModeFillPoints(
+        modeShape.skeleton
+    ).apply {
+        onSelectPoint = this@VEActivityMain
+    }
+
     private val mFragmentVectorEdit = VEFragmentVectorOptions().apply {
         onClickDeleteAll = View.OnClickListener {
             onClickDeleteAll(it)
@@ -98,36 +133,8 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
         onClickBtnPrev = View.OnClickListener {
             onClickBtnPrev(it)
         }
-    }
 
-    private val modeShape = VEEditModeShape(
-        mAnchor,
-        VEApp.width.toFloat(),
-        VEApp.width.toFloat()
-    ).apply {
-        onSelectShape = this@VEActivityMain
-    }
-
-    private val modeExistingPoint = VEEditModeExistingPoint(
-        modeShape.skeleton,
-        mAnchor
-    )
-
-    private val modeFreeMove = VEEditModeSwap(
-        arrayOf(
-            modeExistingPoint,
-            VEEditModeExistingShape(
-                modeShape.shapes
-            ).apply {
-                onSelectShape = this@VEActivityMain
-            }
-        )
-    )
-
-    private val modeFillPoints = VEEditModeFillPoints(
-        modeShape.skeleton
-    ).apply {
-        onSelectPoint = this@VEActivityMain
+        modeAnimation.onSelectPoint = this
     }
 
     private val mLauncherPermission = VELauncherPermission(
@@ -467,6 +474,8 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
         v: View
     ) {
         mViewPager?.currentItem = 1
+        mViewVector?.mode = modeAnimation
+        //mCurrentAnchor = modeAnimation
     }
 
     override fun onSelectShape(

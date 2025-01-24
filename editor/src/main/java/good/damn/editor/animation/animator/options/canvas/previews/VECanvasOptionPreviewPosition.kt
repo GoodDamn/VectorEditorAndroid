@@ -6,11 +6,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.animation.animator.VEButtonKeyFrame
-import good.damn.editor.animation.animator.options.canvas.VEITransactionReceiver
 import good.damn.editor.animation.animator.options.canvas.VEITransactionRequest
-import good.damn.editor.animation.animator.options.canvas.VEITransactionResult
-import good.damn.editor.animation.animator.options.canvas.VETransactionKeyFrame
-import good.damn.sav.core.animation.keyframe.VEMKeyFrame
 
 class VECanvasOptionPreviewPosition(
     private val transactionKeyFrame: VEITransactionRequest
