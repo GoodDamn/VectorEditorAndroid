@@ -82,7 +82,8 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
     }
 
     private val modeAnimation = VEEditModeAnimation(
-        modeShape.skeleton
+        modeShape.skeleton,
+        mAnchor
     )
 
     private val modeExistingPoint = VEEditModeExistingPoint(
@@ -475,7 +476,7 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
     ) {
         mViewPager?.currentItem = 1
         mViewVector?.mode = modeAnimation
-        //mCurrentAnchor = modeAnimation
+        mCurrentAnchor = modeAnimation
     }
 
     override fun onSelectShape(

@@ -29,7 +29,6 @@ class VEViewAnimatorEditor(
         private val TAG = VEViewAnimatorEditor::class.simpleName
     }
 
-
     private var mOptionsDraw: Array<VECanvasOption>? = null
 
     var animation: VEIAnimationCanvas? = null
