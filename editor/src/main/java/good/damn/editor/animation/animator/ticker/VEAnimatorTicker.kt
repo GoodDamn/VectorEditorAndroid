@@ -23,12 +23,17 @@ VEIDrawable {
     val width: Float
         get() = mTriggerRect.width()
 
+    private val mPaintRect = Paint().apply {
+        color = 0x88ffaa00.toInt()
+    }
+
     @setparam:ColorInt
     @get:ColorInt
     var color: Int
         get() = mPaint.color
         set(v) {
             mPaint.color = v
+            mPaintRect.color = 0x88000000.toInt() or v
         }
 
     private val mPaint = Paint().apply {
@@ -60,12 +65,10 @@ VEIDrawable {
     override fun draw(
         canvas: Canvas
     ) {
-        mPaint.style = Paint.Style.FILL
         canvas.drawRect(
             mTriggerRect,
-            mPaint
+            mPaintRect
         )
-        mPaint.style = Paint.Style.STROKE
 
         canvas.drawLine(
             mTickPositionX,

@@ -14,8 +14,7 @@ import good.damn.sav.misc.interfaces.VEITouchable
 class VECanvasOption(
     private val preview: VEICanvasOptionPreview,
     private val keyFrame: VEICanvasOptionKeyFrame
-): VEILayoutable,
-VEIDrawable,
+): VEIDrawable,
 VEITouchable,
 VEIScrollable {
 
@@ -38,24 +37,24 @@ VEIScrollable {
         preview.draw(canvas)
     }
 
-    override fun layout(
+    fun layout(
         x: Float,
         y: Float,
         width: Float,
+        widthPreview: Float,
         height: Float
     ) {
-        val xKeyFrame = width * 0.15f
         preview.layout(
-            0f,
+            x,
             y,
-            xKeyFrame,
+            widthPreview,
             height
         )
 
         keyFrame.layout(
-            xKeyFrame,
+            widthPreview,
             y,
-            width - xKeyFrame,
+            width - widthPreview,
             height
         )
     }

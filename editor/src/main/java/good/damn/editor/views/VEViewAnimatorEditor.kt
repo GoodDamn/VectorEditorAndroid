@@ -116,8 +116,8 @@ class VEViewAnimatorEditor(
     }
 
     fun layoutEditor() {
-        val heightTicker = height * 0.16f
-        val widthPreview = width * 0.15f
+        val heightTicker = height * 0.22f
+        val widthPreview = width * 0.2f
         val widthOption = width.toFloat()
 
         var y = heightTicker
@@ -126,6 +126,7 @@ class VEViewAnimatorEditor(
                 0f,
                 y,
                 widthOption,
+                widthPreview,
                 heightTicker
             )
 
