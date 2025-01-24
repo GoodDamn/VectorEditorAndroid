@@ -10,8 +10,7 @@ import good.damn.sav.core.animation.keyframe.VEMKeyFrameDataPosition
 
 class VECanvasOptionKeyFramePosition(
     private val option: VEMAnimationOption
-): VEICanvasOptionKeyFrame,
-VEITransactionReceiver {
+): VEICanvasOptionKeyFrame {
 
     override var scrollX = 0f
     override var scrollY = 0f
@@ -48,28 +47,13 @@ VEITransactionReceiver {
         drawPaint(mPaintBack)
         option.keyFrames.forEach {
             drawCircle(
-                scrollX + mRect.left + it.factor * mRect.width(),
+                mRect.left + scrollX + it.factor * option.duration,
                 mRect.bottom * 0.75f,
                 mRect.height() * 0.25f,
                 mPaintKeyframe
             )
         }
         restore()
-    }
-
-    override fun onReceiveTransaction() {
-
-        val keyFrame = VEMKeyFrame(
-            0.1f,
-            VEMKeyFrameDataPosition(
-                50f,
-                50f
-            )
-        )
-
-        option.keyFrames.add(
-            keyFrame
-        )
     }
 
 }

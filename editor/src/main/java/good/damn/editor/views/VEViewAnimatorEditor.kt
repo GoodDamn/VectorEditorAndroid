@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.animation.animator.VEButtonKeyFrame
 import good.damn.editor.animation.animator.options.canvas.VECanvasOption
+import good.damn.editor.animation.animator.options.canvas.VEITransactionReceiver
 import good.damn.editor.animation.animator.options.canvas.VETransactionKeyFrame
 import good.damn.editor.animation.animator.options.canvas.keyframes.VECanvasOptionKeyFramePosition
 import good.damn.editor.animation.animator.options.canvas.previews.VECanvasOptionPreviewPosition
@@ -16,6 +17,8 @@ import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
 import good.damn.editor.animation.animators.VEAnimator
 import good.damn.editor.animation.animators.VEAnimatorTick
 import good.damn.sav.core.animation.keyframe.VEMAnimationOption
+import good.damn.sav.core.animation.keyframe.VEMKeyFrame
+import good.damn.sav.core.animation.keyframe.VEMKeyFrameDataPosition
 import good.damn.sav.misc.interfaces.VEITouchable
 import good.damn.sav.misc.structures.tree.BinaryTree
 import java.util.LinkedList
@@ -25,7 +28,7 @@ class VEViewAnimatorEditor(
     context: Context?
 ): View(
     context
-) {
+), VEITransactionReceiver {
 
     companion object {
         private val TAG = VEViewAnimatorEditor::class.simpleName
@@ -43,7 +46,7 @@ class VEViewAnimatorEditor(
     )
 
     private val mTransactionKeyFrame = VETransactionKeyFrame(
-        mCanvasKeyFramePosition
+        this@VEViewAnimatorEditor
     )
 
     private var mOptionsDraw = Array(1) {
@@ -70,6 +73,7 @@ class VEViewAnimatorEditor(
                 mTimeDividers.add(
                     TimeDivider(
                         i / fDuration * durationPx,
+                        height.toFloat(),
                         i.toString()
                     )
                 )
@@ -78,9 +82,10 @@ class VEViewAnimatorEditor(
             mAnimator.duration = duration
         }
 
-    var durationPx: Int = 0
+    var durationPx: Int
+        get () = mOptionPosition.duration
         private set(v) {
-            field = v
+            mOptionPosition.duration = v
         }
 
     private val mAnimator = VEAnimator().apply {
@@ -145,9 +150,24 @@ class VEViewAnimatorEditor(
             triggerEndX = widthPreview * 0.5f
         }
 
-        mPaintText.textSize = heightTicker * 0.18f
+        mPaintText.textSize = heightTicker * 0.25f
 
         duration = 2000
+    }
+
+    override fun onReceiveTransaction() {
+        val factor = (abs(mScrollerHorizontal.scrollValue)
+            + mTicker.tickPosition
+        ) / durationPx
+        mOptionPosition.keyFrames.add(
+            VEMKeyFrame(
+                factor,
+                VEMKeyFrameDataPosition(
+                    50f,
+                    50f,
+                )
+            )
+        )
     }
 
     override fun onLayout(
@@ -176,9 +196,6 @@ class VEViewAnimatorEditor(
             canvas
         )
 
-        var tickX = 0f
-        var tickY = mPaintText.textSize
-
         save()
 
         translate(
@@ -196,8 +213,10 @@ class VEViewAnimatorEditor(
         for (it in mTimeDividers) {
             drawText(
                 it.time,
-                tickX + it.scrollPosition + mScrollerHorizontal.scrollValue,
-                tickY,
+                mScrollerHorizontal.triggerEndX
+                        + it.scrollPosition
+                        + mScrollerHorizontal.scrollValue,
+                it.y,
                 mPaintText
             )
         }
@@ -208,7 +227,7 @@ class VEViewAnimatorEditor(
 
         drawText(
             scrollDuration.toString(),
-            tickX + mTicker.tickPosition,
+            mTicker.tickPosition + mScrollerHorizontal.triggerEndX,
             height.toFloat(),
             mPaintText
         )
@@ -269,9 +288,11 @@ class VEViewAnimatorEditor(
 
         return false
     }
+
 }
 
 private data class TimeDivider(
     val scrollPosition: Float,
+    val y: Float,
     val time: String
 )

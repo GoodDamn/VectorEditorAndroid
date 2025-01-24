@@ -17,9 +17,6 @@ VEIDrawable {
         private val TAG = VEAnimatorTicker::class.simpleName
     }
 
-    var tickPositionFactor = 0f
-        private set
-
     var tickPosition = 0f
         private set
 
@@ -50,7 +47,6 @@ VEIDrawable {
         right2: Float
     ) {
         tickPosition = 0f
-        tickPositionFactor = 0f
         mTriggerRect.apply {
             left = left2
             right = right2
@@ -102,7 +98,6 @@ VEIDrawable {
 
         if (event.x > mTriggerRect.left) {
             tickPosition = event.x - mTriggerRect.left + mPaint.strokeWidth * 0.5f
-            tickPositionFactor = tickPosition / width
             mTickPositionX = event.x
         } else {
             mTickPositionX = mTriggerRect.left
