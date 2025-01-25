@@ -29,7 +29,6 @@ class VECanvasOptionKeyframeBase<T: VEIKeyframe>(
     }
 
     private var mRadius = 0f
-    private var mcx = 0f
     private var mcy = 0f
 
     private var mScrollDuration = 0
@@ -73,7 +72,9 @@ class VECanvasOptionKeyframeBase<T: VEIKeyframe>(
         drawPaint(mPaintBack)
         option.keyframes.forEach {
             drawCircle(
-                mcx + it.factor * option.duration,
+                mRect.left
+                        + mScrollerHorizontal.scrollValue
+                        + it.factor * option.duration,
                 mcy,
                 mRadius,
                 mPaintKeyframe
@@ -100,8 +101,7 @@ class VECanvasOptionKeyframeBase<T: VEIKeyframe>(
 
     final override fun onTouchEvent(
         event: MotionEvent
-    ) = mScrollerHorizontal.run {
-        mcx = mRect.left + scrollValue
-        onTouchEvent(event)
-    }
+    ) = mScrollerHorizontal.onTouchEvent(
+        event
+    )
 }

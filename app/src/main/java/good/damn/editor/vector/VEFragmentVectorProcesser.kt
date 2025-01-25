@@ -1,8 +1,8 @@
 package good.damn.editor.vector
 
 import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
-import good.damn.editor.animation.animator.options.canvas.VEMAnimationOptionCanvasColor
-import good.damn.editor.animation.animator.options.canvas.VEMAnimationOptionCanvasPosition
+import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanvasColor
+import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanvasPosition
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.views.VEViewAnimatorEditor
@@ -40,7 +40,7 @@ VEIListenerOnSelectPoint {
     ) = selectAnimation(
         shape.hashCode()
     ) {
-        VEMAnimationOptionCanvasColor(
+        VEAnimationOptionCanvasColor(
             shape,
             VEMAnimationOptionColor(
                 BinaryTree(
@@ -58,7 +58,7 @@ VEIListenerOnSelectPoint {
     ) = selectAnimation(
         point.index
     ) {
-        VEMAnimationOptionCanvasPosition(
+        VEAnimationOptionCanvasPosition(
             point,
             VEMAnimationOptionPosition(
                 BinaryTree(

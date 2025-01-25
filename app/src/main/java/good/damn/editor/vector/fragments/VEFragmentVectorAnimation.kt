@@ -14,8 +14,7 @@ import good.damn.editor.views.VEViewAnimatorEditor
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 
 class VEFragmentVectorAnimation
-: Fragment(),
-VEIColorPickable {
+: Fragment() {
 
     val processer = VEFragmentVectorProcesser()
 
@@ -118,11 +117,4 @@ VEIColorPickable {
 
         return layout
     }
-
-    override fun pickColor(
-        color: Int
-    ) {
-
-    }
-
 }

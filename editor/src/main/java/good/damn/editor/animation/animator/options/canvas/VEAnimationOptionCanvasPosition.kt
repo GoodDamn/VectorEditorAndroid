@@ -1,7 +1,6 @@
 package good.damn.editor.animation.animator.options.canvas
 
 import android.graphics.PointF
-import good.damn.editor.animation.animator.options.canvas.keyframes.VECanvasOptionKeyframeBase
 import good.damn.editor.animation.animator.options.canvas.previews.VECanvasOptionPreviewPosition
 import good.damn.editor.transaction.VEIRequesterFloat
 import good.damn.editor.transaction.VEITransactionReceiver
@@ -10,13 +9,12 @@ import good.damn.sav.core.animation.animators.VEAnimatorPosition
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
 import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
 import good.damn.sav.misc.structures.tree.toList
-import kotlin.math.abs
 
-class VEMAnimationOptionCanvasPosition(
+class VEAnimationOptionCanvasPosition(
     private val point: PointF, // this point can be deleted
     option: VEIAnimationOption<VEMKeyframePosition>,
     requester: VEIRequesterFloat
-): VEMAnimationOptionCanvasBase<VEMKeyframePosition>(
+): VEAnimationOptionCanvasBase<VEMKeyframePosition>(
     option,
     requester
 ), VEITransactionReceiver {

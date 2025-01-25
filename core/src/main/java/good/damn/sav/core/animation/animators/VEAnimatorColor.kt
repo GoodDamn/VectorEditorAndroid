@@ -1,5 +1,6 @@
 package good.damn.sav.core.animation.animators
 
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import good.damn.sav.core.animation.keyframe.VEMKeyframeColor
 import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
@@ -13,7 +14,7 @@ class VEAnimatorColor(
     iterator: Iterator<VEMKeyframeColor>,
     duration: Int
 ): VEAnimatorBase<VEMKeyframeColor>(
-    OvershootInterpolator(),
+    AccelerateInterpolator(),
     iterator,
     duration
 ) {
