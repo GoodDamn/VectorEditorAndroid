@@ -9,10 +9,10 @@ public final class VEUtilsIntJava {
     }
 
     public static int int32(
-      final byte[] data
+         final byte[] data
     ) {
         return int32(
-          data,
+            data,
           0
         );
     }

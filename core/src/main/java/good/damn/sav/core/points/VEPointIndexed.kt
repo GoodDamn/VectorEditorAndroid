@@ -2,6 +2,7 @@ package good.damn.sav.core.points
 
 import android.graphics.PointF
 import good.damn.sav.core.VEIIndexable
+import kotlin.random.Random
 
 class VEPointIndexed(
     x: Float,
@@ -16,4 +17,8 @@ class VEPointIndexed(
         point.x,
         point.y
     )
+
+    private val hash = Random.nextInt()
+
+    override fun hashCode() = hash
 }

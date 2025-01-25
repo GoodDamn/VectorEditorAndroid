@@ -7,45 +7,20 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import good.damn.editor.editmodes.animation.VEEditAnimationEntity
-import good.damn.editor.animation.animator.options.VEOptionAnimatorBase
-import good.damn.editor.animation.animator.options.VEOptionAnimatorColor
-import good.damn.editor.animation.animator.options.VEOptionAnimatorPosition
-import good.damn.editor.editmodes.animation.data.VEEditAnimationDataPosition
-import good.damn.editor.editmodes.listeners.VEIListenerOnChangeEntityAnimation
-import good.damn.editor.editmodes.listeners.VEIListenerOnChangeValueAnimation
+import good.damn.editor.vector.VEFragmentVectorProcesser
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.interfaces.VEIColorPickable
 import good.damn.editor.views.VEViewAnimatorEditor
+import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 
 class VEFragmentVectorAnimation
-: Fragment(),
-VEIColorPickable,
-VEIListenerOnChangeEntityAnimation,
-VEIListenerOnChangeValueAnimation {
+: Fragment() {
+
+    val processer = VEFragmentVectorProcesser()
 
     var onClickBtnPrev: View.OnClickListener? = null
-    var onPlayAnimation: (() -> Array<VEOptionAnimatorBase>?)? = null
 
-    var onTickUpdateAnimation: (()->Unit)? = null
-
-    private var mViewEditor: VEViewAnimatorEditor? = null
-
-    override fun onChangeEntityAnimation(
-        entity: VEEditAnimationEntity
-    ) {
-        mViewEditor?.apply {
-            options = entity.options
-            layoutEditor()
-            invalidate()
-        }
-    }
-
-    override fun onChangeValueAnimation(
-        value: Any
-    ) = mViewEditor?.options?.forEach {
-        it.changeValueAnimation(value)
-    } ?: Unit
+    var onUpdateFrameAnimation: VEIListenerAnimationUpdateFrame? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,15 +41,13 @@ VEIListenerOnChangeValueAnimation {
             )
         }
 
-        mViewEditor = VEViewAnimatorEditor(
-            context,
-            0.35f,
-            0.2f,
-            0.25f
+        VEViewAnimatorEditor(
+            context
         ).apply {
+            processer.viewAnimatorEditor = this
+            onUpdateFrameAnimation = this@VEFragmentVectorAnimation
+                .onUpdateFrameAnimation
             setBackgroundColor(0)
-            tickUpdate = onTickUpdateAnimation
-
             layout.addView(
                 this,
                 -1,
@@ -109,11 +82,7 @@ VEIListenerOnChangeValueAnimation {
                 text = "Play"
 
                 setOnClickListener {
-                    mViewEditor?.apply {
-                        options = onPlayAnimation?.invoke()
-                        layoutEditor()
-                        play()
-                    }
+                    processer.play()
                 }
 
                 addView(
@@ -130,7 +99,7 @@ VEIListenerOnChangeValueAnimation {
                 text = "Pause"
 
                 setOnClickListener {
-                    mViewEditor?.pause()
+                    processer.pause()
                 }
 
                 addView(
@@ -148,11 +117,4 @@ VEIListenerOnChangeValueAnimation {
 
         return layout
     }
-
-    override fun pickColor(
-        color: Int
-    ) {
-
-    }
-
 }

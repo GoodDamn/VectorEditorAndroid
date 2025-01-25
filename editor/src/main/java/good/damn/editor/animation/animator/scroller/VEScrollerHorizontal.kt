@@ -1,5 +1,6 @@
 package good.damn.editor.animation.animator.scroller
 
+import android.graphics.RectF
 import android.util.Log
 import android.view.MotionEvent
 import good.damn.sav.misc.interfaces.VEITouchable
@@ -11,8 +12,7 @@ class VEScrollerHorizontal
         private val TAG = VEScrollerHorizontal::class.simpleName
     }
 
-    var triggerEndX = 0f
-    var triggerEndY = 0f
+    val rect = RectF()
 
     override var scrollValue = 0f
     override var mAnchorValue = 0f
@@ -29,7 +29,11 @@ class VEScrollerHorizontal
     ): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                if (event.x < triggerEndX || event.y < triggerEndY) {
+                if (event.x < rect.left ||
+                    event.x > rect.right ||
+                    event.y < rect.top ||
+                    event.y > rect.bottom
+                ) {
                     return false
                 }
 

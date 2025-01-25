@@ -10,6 +10,9 @@ class BinaryTree<T>(
 ) {
     private var root: Node<T>? = null
 
+    var size = 0
+        private set
+
     fun add(
         element: T
     ) {
@@ -17,6 +20,7 @@ class BinaryTree<T>(
             root = Node(
                 element
             )
+            size++
             return
         }
 
@@ -24,6 +28,8 @@ class BinaryTree<T>(
             root,
             element
         )
+
+        size++
     }
 
     fun forEach(

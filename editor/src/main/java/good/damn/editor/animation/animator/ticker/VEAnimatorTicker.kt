@@ -17,14 +17,15 @@ VEIDrawable {
         private val TAG = VEAnimatorTicker::class.simpleName
     }
 
-    var tickPositionFactor = 0f
-        private set
-
     var tickPosition = 0f
         private set
 
     val width: Float
         get() = mTriggerRect.width()
+
+    private val mPaintRect = Paint().apply {
+        color = 0x88ffaa00.toInt()
+    }
 
     @setparam:ColorInt
     @get:ColorInt
@@ -32,6 +33,7 @@ VEIDrawable {
         get() = mPaint.color
         set(v) {
             mPaint.color = v
+            mPaintRect.color = 0x88000000.toInt() or v
         }
 
     private val mPaint = Paint().apply {
@@ -50,7 +52,6 @@ VEIDrawable {
         right2: Float
     ) {
         tickPosition = 0f
-        tickPositionFactor = 0f
         mTriggerRect.apply {
             left = left2
             right = right2
@@ -64,12 +65,10 @@ VEIDrawable {
     override fun draw(
         canvas: Canvas
     ) {
-        mPaint.style = Paint.Style.FILL
         canvas.drawRect(
             mTriggerRect,
-            mPaint
+            mPaintRect
         )
-        mPaint.style = Paint.Style.STROKE
 
         canvas.drawLine(
             mTickPositionX,
@@ -88,11 +87,9 @@ VEIDrawable {
             event.action
         ) {
             MotionEvent.ACTION_DOWN -> {
-                Log.d(TAG, "onTouchEvent: ${event.action} ACTION_DOWN: ${event.x} < ${mTriggerRect.left};; ${event.y} > ${mTriggerRect.bottom}")
                 if ((event.y > mTriggerRect.bottom) ||
                     (event.x < mTriggerRect.left)
                 ) {
-                    Log.d(TAG, "onTouchEvent: ACTION_DOWN: FALSE")
                     return false
                 }
             }
@@ -102,11 +99,8 @@ VEIDrawable {
             }
         }
 
-        Log.d(TAG, "onTouchEvent: ${event.action} ACTION_MOVE:")
-
         if (event.x > mTriggerRect.left) {
             tickPosition = event.x - mTriggerRect.left + mPaint.strokeWidth * 0.5f
-            tickPositionFactor = tickPosition / width
             mTickPositionX = event.x
         } else {
             mTickPositionX = mTriggerRect.left
