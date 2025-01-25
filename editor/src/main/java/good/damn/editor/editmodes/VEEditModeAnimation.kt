@@ -6,17 +6,21 @@ import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.VEIAnchorable
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
+import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
+import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.interfaces.VEITouchable
 
 class VEEditModeAnimation(
+    private val shapes: VEListShapes,
     private val skeleton: VESkeleton2D,
     private val anchor: VEAnchor
 ): VEITouchable,
 VEIListenerOnAnchorPoint {
 
     var onSelectPoint: VEIListenerOnSelectPoint? = null
+    var onSelectShape: VEIListenerOnSelectShape? = null
 
     private var mSelectedPoint: VEPointIndexed? = null
 
@@ -29,13 +33,26 @@ VEIListenerOnAnchorPoint {
                 mSelectedPoint = skeleton.find(
                     event.x,
                     event.y
-                ) ?: return false
-
-                onSelectPoint?.onSelectPoint(
-                    mSelectedPoint!!
                 )
 
-                return true
+                mSelectedPoint?.apply {
+                    onSelectPoint?.onSelectPoint(
+                        this
+                    )
+                    return true
+                }
+
+                shapes.find(
+                    event.x,
+                    event.y
+                )?.apply {
+                    onSelectShape?.onSelectShape(
+                        this
+                    )
+                    return true
+                }
+
+                return false
             }
 
             MotionEvent.ACTION_MOVE -> {

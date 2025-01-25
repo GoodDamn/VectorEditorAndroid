@@ -1,6 +1,5 @@
 package good.damn.editor.vector.fragments
 
-import android.graphics.PointF
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,35 +7,21 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
-import good.damn.editor.animation.animator.options.canvas.VEMAnimationOptionCanvasPosition
-import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
+import good.damn.editor.vector.VEFragmentVectorProcesser
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.interfaces.VEIColorPickable
 import good.damn.editor.views.VEViewAnimatorEditor
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
-import good.damn.sav.core.animation.keyframe.VEMAnimationOptionPosition
-import good.damn.sav.core.points.VEPointIndexed
-import good.damn.sav.misc.structures.tree.BinaryTree
 
 class VEFragmentVectorAnimation
 : Fragment(),
-VEIColorPickable,
-VEIListenerOnSelectPoint {
+VEIColorPickable {
+
+    val processer = VEFragmentVectorProcesser()
 
     var onClickBtnPrev: View.OnClickListener? = null
 
     var onUpdateFrameAnimation: VEIListenerAnimationUpdateFrame? = null
-
-    private var mAnimations = HashMap<
-        Int,
-        List<VEIAnimationOptionCanvas>
-    >(10)
-
-    private var mCurrentAnimation: List<VEIAnimationOptionCanvas>? = null
-    private var mCurrentAnimationPoint: VEPointIndexed? = null
-
-    private var mViewEditor: VEViewAnimatorEditor? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,9 +42,10 @@ VEIListenerOnSelectPoint {
             )
         }
 
-        mViewEditor = VEViewAnimatorEditor(
+        VEViewAnimatorEditor(
             context
         ).apply {
+            processer.viewAnimatorEditor = this
             onUpdateFrameAnimation = this@VEFragmentVectorAnimation
                 .onUpdateFrameAnimation
             setBackgroundColor(0)
@@ -97,11 +83,7 @@ VEIListenerOnSelectPoint {
                 text = "Play"
 
                 setOnClickListener {
-                    mViewEditor?.apply {
-                        animations = mAnimations.flatMap { it.value }
-                        invalidate()
-                        play()
-                    }
+                    processer.play()
                 }
 
                 addView(
@@ -118,7 +100,7 @@ VEIListenerOnSelectPoint {
                 text = "Pause"
 
                 setOnClickListener {
-                    mViewEditor?.pause()
+                    processer.pause()
                 }
 
                 addView(
@@ -142,42 +124,5 @@ VEIListenerOnSelectPoint {
     ) {
 
     }
-
-    override fun onSelectPoint(
-        point: VEPointIndexed
-    ) = mViewEditor?.run {
-
-        mCurrentAnimationPoint?.apply {
-            if (index == point.index) {
-                return@run
-            }
-        }
-
-        mCurrentAnimationPoint = point
-
-        mCurrentAnimation = mAnimations[
-            point.index
-        ]
-
-        if (mCurrentAnimation == null) {
-            mCurrentAnimation = arrayListOf(
-                VEMAnimationOptionCanvasPosition(
-                    point,
-                    VEMAnimationOptionPosition(
-                        BinaryTree(
-                            equality = {v, vv -> v.factor == vv.factor},
-                            moreThan = {v, vv -> v.factor > vv.factor}
-                        ),
-                        duration = 2000
-                    ),
-                    this
-                )
-            )
-            mAnimations[point.index] = mCurrentAnimation!!
-        }
-
-        animations = mCurrentAnimation
-        invalidate()
-    } ?: Unit
 
 }

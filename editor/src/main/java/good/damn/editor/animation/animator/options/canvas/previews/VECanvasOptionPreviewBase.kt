@@ -1,12 +1,11 @@
 package good.damn.editor.animation.animator.options.canvas.previews
 
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.animation.animator.VEButtonKeyFrame
-import good.damn.editor.animation.animator.options.canvas.VEITransactionRequest
+import good.damn.editor.transaction.VEITransactionRequest
 
 abstract class VECanvasOptionPreviewBase(
     private val transactionKeyFrame: VEITransactionRequest

@@ -6,15 +6,13 @@ import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
 import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
-import good.damn.editor.animation.animator.options.canvas.VEIRequesterFloat
+import good.damn.editor.transaction.VEIRequesterFloat
 import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
 import good.damn.sav.core.animation.animators.VEAnimatorGlobal
 import good.damn.sav.core.animation.animators.VEIListenerAnimation
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 import good.damn.sav.misc.interfaces.VEITouchable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class VEViewAnimatorEditor(
     context: Context?

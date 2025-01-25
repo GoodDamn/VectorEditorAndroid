@@ -3,7 +3,7 @@ package good.damn.editor.animation.animator.options.canvas.previews
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import good.damn.editor.animation.animator.options.canvas.VETransactionKeyFrame
+import good.damn.editor.transaction.VETransactionKeyFrame
 
 class VECanvasOptionPreviewPosition(
     transactionKeyFrame: VETransactionKeyFrame

@@ -87,6 +87,7 @@ VEIListenerAnimationUpdateFrame {
     }
 
     private val modeAnimation = VEEditModeAnimation(
+        modeShape.shapes,
         modeShape.skeleton,
         mAnchor
     )
@@ -140,7 +141,8 @@ VEIListenerAnimationUpdateFrame {
             onClickBtnPrev(it)
         }
         onUpdateFrameAnimation = this@VEActivityMain
-        modeAnimation.onSelectPoint = this
+        modeAnimation.onSelectPoint = processer
+        modeAnimation.onSelectShape = processer
     }
 
     private val mLauncherPermission = VELauncherPermission(

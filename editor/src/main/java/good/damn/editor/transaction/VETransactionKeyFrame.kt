@@ -1,11 +1,11 @@
-package good.damn.editor.animation.animator.options.canvas
+package good.damn.editor.transaction
 
 import good.damn.sav.core.animation.keyframe.VEIKeyframe
 
 class VETransactionKeyFrame(
     private val receiver: VEITransactionReceiver
 ): VEITransactionRequest,
-VEITransactionSender<VEIKeyframe> {
+    VEITransactionSender<VEIKeyframe> {
 
     var receiverResult: VEITransactionResult<VEIKeyframe>? = null
 

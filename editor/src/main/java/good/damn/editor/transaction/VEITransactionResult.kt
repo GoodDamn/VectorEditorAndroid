@@ -1,4 +1,4 @@
-package good.damn.editor.animation.animator.options.canvas
+package good.damn.editor.transaction
 
 interface VEITransactionResult<T> {
     fun onResultTransaction(
