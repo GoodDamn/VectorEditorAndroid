@@ -8,11 +8,15 @@ import android.view.View
 import good.damn.editor.animation.animator.options.canvas.VECanvasOption
 import good.damn.editor.animation.animator.options.canvas.VEIAnimationCanvas
 import good.damn.editor.animation.animator.options.canvas.VEIRequesterFloat
+import good.damn.editor.animation.animator.options.canvas.VEMAnimationCanvas
 import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
 import good.damn.sav.core.animation.animators.VEAnimatorGlobal
-import good.damn.editor.animation.animators.VEAnimatorTick
+import good.damn.sav.core.animation.animators.VEIListenerAnimation
+import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 import good.damn.sav.misc.interfaces.VEITouchable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class VEViewAnimatorEditor(
     context: Context?
@@ -24,30 +28,7 @@ class VEViewAnimatorEditor(
         private val TAG = VEViewAnimatorEditor::class.simpleName
     }
 
-    private var mOptionsDraw: Array<VECanvasOption>? = null
-
-    var animation: VEIAnimationCanvas? = null
-        set(v) {
-            field = v
-            v?.apply {
-                mOptionsDraw = Array(
-                    options.size
-                ) {
-                    val option = options[it]
-                    VECanvasOption(
-                        option.preview,
-                        option.keyframe
-                    )
-                }
-
-                layoutEditor()
-            }
-        }
-
-
-    private val mAnimator = VEAnimatorGlobal().apply {
-        listener = VEAnimatorTick()
-    }
+    private val mAnimator = VEAnimatorGlobal()
 
     private val mTicker = VEAnimatorTicker()
     private val mScrollerVertical = VEScrollerVertical()
@@ -58,29 +39,60 @@ class VEViewAnimatorEditor(
         color = mTicker.color
     }
 
+    var onUpdateFrameAnimation: VEIListenerAnimationUpdateFrame?
+        get() = mAnimator.onUpdateFrameAnimation
+        set(v) {
+            mAnimator.onUpdateFrameAnimation = v
+        }
+
+    var animation: VEIAnimationCanvas? = null
+        set(v) {
+            field = v
+            layoutEditor()
+        }
+
     fun pause() {
         mAnimator.stop()
     }
 
     fun play(
         atTimeMs: Long = 0L
-    ) {
+    ) = animation?.run {
         mAnimator.play(
-            atTimeMs
+            atTimeMs,
+            ArrayList<VEIListenerAnimation>().apply {
+                var anim: VEIListenerAnimation?
+                for (i in options.indices) {
+                    anim = options[i].createAnimator()
+                    if (anim == null) {
+                        continue
+                    }
+
+                    add(anim)
+                }
+
+            }
         )
     }
 
     fun layoutEditor() {
         val heightTicker = height * 0.22f
-        val widthPreview = width * 0.2f
         val widthOption = width.toFloat()
+        val widthPreview = widthOption * 0.2f
+        val widthKeyframe = widthOption - widthPreview
 
         var y = heightTicker
-        mOptionsDraw?.forEach {
-            it.layout(
+        animation?.options?.forEach {
+            it.keyframe.layout(
+                widthPreview,
+                y,
+                widthKeyframe,
+                heightTicker
+            )
+
+            it.preview.layout(
                 0f,
                 y,
-                widthOption,
                 widthPreview,
                 heightTicker
             )
@@ -137,10 +149,9 @@ class VEViewAnimatorEditor(
             mScrollerVertical.scrollValue
         )
 
-        mOptionsDraw?.forEach {
-            it.draw(
-                canvas
-            )
+        animation?.options?.forEach {
+            it.keyframe.draw(canvas)
+            it.preview.draw(canvas)
         }
 
         restore()
@@ -181,9 +192,15 @@ class VEViewAnimatorEditor(
             return true
         }
 
-        mOptionsDraw?.forEach {
-            if (it.onTouchEvent(event)) {
-                mCurrentTouch = it
+        animation?.options?.forEach {
+            if (it.preview.onTouchEvent(event)) {
+                mCurrentTouch = it.preview
+                invalidate()
+                return true
+            }
+
+            if (it.keyframe.onTouchEvent(event)) {
+                mCurrentTouch = it.keyframe
                 invalidate()
                 return true
             }
@@ -191,5 +208,4 @@ class VEViewAnimatorEditor(
 
         return false
     }
-
 }

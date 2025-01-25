@@ -1,25 +1,35 @@
 package good.damn.sav.core.animation.animators
 
-class VEAnimatorPosition
-: VEIListenerTick {
-    var duration: Int = 0
+import android.graphics.PointF
+import android.view.animation.AccelerateDecelerateInterpolator
+import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
+import kotlin.time.Duration
 
-    private var mCurrent = 0
+class VEAnimatorPosition(
+    private val point: PointF,
+    iterator: Iterator<VEMKeyframePosition>,
+    duration: Int
+): VEAnimatorBase<VEMKeyframePosition>(
+    AccelerateDecelerateInterpolator(),
+    iterator,
+    duration
+) {
+    override fun onNextFrame(
+        start: VEMKeyframePosition,
+        end: VEMKeyframePosition,
+        factor: Float
+    ) {
+        point.x = interpolateValue(
+            start.x,
+            end.x,
+            factor
+        )
 
-    override fun animationTickContinuation(
-        dt: Long
-    ): VEEnumAnimationState {
-        if (mCurrent > duration) {
-            return VEEnumAnimationState.END
-        }
-
-
-
-        mCurrent += dt.toInt()
-        if (mCurrent > duration) {
-            return VEEnumAnimationState.HAS_END
-        }
-
-        return VEEnumAnimationState.RUNNING
+        point.y = interpolateValue(
+            start.y,
+            end.y,
+            factor
+        )
     }
+
 }

@@ -1,5 +1,7 @@
 package good.damn.sav.core.animation.animators
 
+import android.animation.ValueAnimator
+import android.util.Log
 import good.damn.sav.misc.scopes.TimeScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,7 +16,7 @@ class VEAnimatorGlobal {
     var isPlaying: Boolean = false
         private set
 
-    private var mAnimations: Array<VEIListenerTick>? = null
+    var onUpdateFrameAnimation: VEIListenerAnimationUpdateFrame? = null
 
     private val mScope = TimeScope(
         Dispatchers.IO
@@ -28,7 +30,8 @@ class VEAnimatorGlobal {
     }
 
     fun play(
-        atTimeMs: Long
+        atTimeMs: Long,
+        animations: List<VEIListenerAnimation>
     ) {
         if (isPlaying) {
             stop()
@@ -38,20 +41,28 @@ class VEAnimatorGlobal {
         isPlaying = true
 
         mJobPlay = mScope.launch {
-            playJob(atTimeMs)
+            playJob(
+                atTimeMs,
+                animations
+            )
         }
     }
 
-    private inline fun playJob(
-        atTimeMs: Long
+    private suspend inline fun playJob(
+        atTimeMs: Long,
+        animations: List<VEIListenerAnimation>
     ) {
         var currentMs = atTimeMs
         var dt: Long
-        mScope.remember()
-
-        val animsCount = mAnimations?.size ?: 0
+        val animsCount = animations.size
         var animsCompleted = 0
-        var state = VEEnumAnimationState.RUNNING
+        var state: VEEnumAnimationState
+
+        animations.forEach {
+            it.animationStart()
+        }
+
+        mScope.remember()
 
         while (isPlaying) {
             dt = mScope.deltaTime
@@ -59,12 +70,14 @@ class VEAnimatorGlobal {
                 continue
             }
 
-            mAnimations?.forEach {
+            animations.forEach {
                 state = it.animationTickContinuation(dt)
                 if (state == VEEnumAnimationState.HAS_END) {
                     animsCompleted++
                 }
             }
+
+            onUpdateFrameAnimation?.onUpdateFrameAnimation()
 
             if (animsCount == animsCompleted) {
                 return

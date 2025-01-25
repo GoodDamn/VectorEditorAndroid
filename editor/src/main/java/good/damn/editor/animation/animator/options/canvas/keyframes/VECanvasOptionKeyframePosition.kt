@@ -6,9 +6,10 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
+import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
 
 class VECanvasOptionKeyframePosition(
-    private val option: VEIAnimationOption
+    private val option: VEIAnimationOption<VEMKeyframePosition>
 ): VEICanvasOptionKeyFrame {
 
     val scrollX: Float

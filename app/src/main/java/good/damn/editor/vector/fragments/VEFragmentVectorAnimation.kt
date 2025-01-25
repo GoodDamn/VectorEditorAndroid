@@ -15,6 +15,7 @@ import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.interfaces.VEIColorPickable
 import good.damn.editor.views.VEViewAnimatorEditor
+import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionPosition
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.misc.structures.tree.BinaryTree
@@ -25,6 +26,8 @@ VEIColorPickable,
 VEIListenerOnSelectPoint {
 
     var onClickBtnPrev: View.OnClickListener? = null
+
+    var onUpdateFrameAnimation: VEIListenerAnimationUpdateFrame? = null
 
     private var mAnimations = HashMap<
         Int,
@@ -58,6 +61,8 @@ VEIListenerOnSelectPoint {
         mViewEditor = VEViewAnimatorEditor(
             context
         ).apply {
+            onUpdateFrameAnimation = this@VEFragmentVectorAnimation
+                .onUpdateFrameAnimation
             setBackgroundColor(0)
             layout.addView(
                 this,

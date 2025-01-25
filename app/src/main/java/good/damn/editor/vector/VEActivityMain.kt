@@ -39,12 +39,15 @@ import good.damn.editor.vector.launchers.VEListenerOnResultPermission
 import good.damn.editor.views.VEViewVectorEditor
 import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
+import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.VEShapeBezierQuad
 import good.damn.sav.core.shapes.VEShapeLine
 import good.damn.sav.misc.Size
 import good.damn.sav.misc.interfaces.VEIDrawable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class VEActivityMain
 : AppCompatActivity(),
@@ -52,7 +55,9 @@ VEListenerOnGetBrowserContent,
 VEIDrawable,
 VEIListenerOnAnchorPoint,
 VEIListenerOnSelectShape,
-VEIListenerOnSelectPoint, VEListenerOnResultPermission {
+VEIListenerOnSelectPoint,
+VEListenerOnResultPermission,
+VEIListenerAnimationUpdateFrame {
 
     companion object {
         private val TAG = VEActivityMain::class.simpleName
@@ -134,7 +139,7 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
         onClickBtnPrev = View.OnClickListener {
             onClickBtnPrev(it)
         }
-
+        onUpdateFrameAnimation = this@VEActivityMain
         modeAnimation.onSelectPoint = this
     }
 
@@ -360,7 +365,6 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
         )
     }
 
-
     override fun onGetBrowserContent(
         uri: Uri?
     ) {
@@ -524,6 +528,14 @@ VEIListenerOnSelectPoint, VEListenerOnResultPermission {
                     FILE_NAME
                 )
             }
+        }
+    }
+
+    override suspend fun onUpdateFrameAnimation() {
+        withContext(
+            Dispatchers.Main
+        ) {
+            mViewVector?.invalidate()
         }
     }
 }
