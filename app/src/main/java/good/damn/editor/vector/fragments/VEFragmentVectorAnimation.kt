@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import good.damn.editor.animation.animator.options.canvas.VEIAnimationCanvas
-import good.damn.editor.animation.animator.options.canvas.VEMAnimationCanvas
+import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
 import good.damn.editor.animation.animator.options.canvas.VEMAnimationOptionCanvasPosition
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.vector.VEApp
@@ -31,10 +30,10 @@ VEIListenerOnSelectPoint {
 
     private var mAnimations = HashMap<
         Int,
-        VEIAnimationCanvas
+        List<VEIAnimationOptionCanvas>
     >(10)
 
-    private var mCurrentAnimation: VEIAnimationCanvas? = null
+    private var mCurrentAnimation: List<VEIAnimationOptionCanvas>? = null
     private var mCurrentAnimationPoint: VEPointIndexed? = null
 
     private var mViewEditor: VEViewAnimatorEditor? = null
@@ -99,7 +98,8 @@ VEIListenerOnSelectPoint {
 
                 setOnClickListener {
                     mViewEditor?.apply {
-                        layoutEditor()
+                        animations = mAnimations.flatMap { it.value }
+                        invalidate()
                         play()
                     }
                 }
@@ -160,25 +160,23 @@ VEIListenerOnSelectPoint {
         ]
 
         if (mCurrentAnimation == null) {
-            mCurrentAnimation = VEMAnimationCanvas(
-                arrayListOf(
-                    VEMAnimationOptionCanvasPosition(
-                        point,
-                        VEMAnimationOptionPosition(
-                            BinaryTree(
-                                equality = {v, vv -> v.factor == vv.factor},
-                                moreThan = {v, vv -> v.factor > vv.factor}
-                            ),
-                            duration = 2000
+            mCurrentAnimation = arrayListOf(
+                VEMAnimationOptionCanvasPosition(
+                    point,
+                    VEMAnimationOptionPosition(
+                        BinaryTree(
+                            equality = {v, vv -> v.factor == vv.factor},
+                            moreThan = {v, vv -> v.factor > vv.factor}
                         ),
-                        this
-                    )
+                        duration = 2000
+                    ),
+                    this
                 )
             )
             mAnimations[point.index] = mCurrentAnimation!!
         }
 
-        animation = mCurrentAnimation
+        animations = mCurrentAnimation
         invalidate()
     } ?: Unit
 

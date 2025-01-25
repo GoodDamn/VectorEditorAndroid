@@ -5,10 +5,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
-import good.damn.editor.animation.animator.options.canvas.VECanvasOption
-import good.damn.editor.animation.animator.options.canvas.VEIAnimationCanvas
+import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
 import good.damn.editor.animation.animator.options.canvas.VEIRequesterFloat
-import good.damn.editor.animation.animator.options.canvas.VEMAnimationCanvas
 import good.damn.editor.animation.animator.scroller.vertical.VEScrollerVertical
 import good.damn.editor.animation.animator.ticker.VEAnimatorTicker
 import good.damn.sav.core.animation.animators.VEAnimatorGlobal
@@ -45,7 +43,7 @@ class VEViewAnimatorEditor(
             mAnimator.onUpdateFrameAnimation = v
         }
 
-    var animation: VEIAnimationCanvas? = null
+    var animations: List<VEIAnimationOptionCanvas>? = null
         set(v) {
             field = v
             layoutEditor()
@@ -57,13 +55,13 @@ class VEViewAnimatorEditor(
 
     fun play(
         atTimeMs: Long = 0L
-    ) = animation?.run {
+    ) = animations?.run {
         mAnimator.play(
             atTimeMs,
             ArrayList<VEIListenerAnimation>().apply {
                 var anim: VEIListenerAnimation?
-                for (i in options.indices) {
-                    anim = options[i].createAnimator()
+                for (i in this@run.indices) {
+                    anim = this@run[i].createAnimator()
                     if (anim == null) {
                         continue
                     }
@@ -82,7 +80,7 @@ class VEViewAnimatorEditor(
         val widthKeyframe = widthOption - widthPreview
 
         var y = heightTicker
-        animation?.options?.forEach {
+        animations?.forEach {
             it.keyframe.layout(
                 widthPreview,
                 y,
@@ -149,7 +147,7 @@ class VEViewAnimatorEditor(
             mScrollerVertical.scrollValue
         )
 
-        animation?.options?.forEach {
+        animations?.forEach {
             it.keyframe.draw(canvas)
             it.preview.draw(canvas)
         }
@@ -192,7 +190,7 @@ class VEViewAnimatorEditor(
             return true
         }
 
-        animation?.options?.forEach {
+        animations?.forEach {
             if (it.preview.onTouchEvent(event)) {
                 mCurrentTouch = it.preview
                 invalidate()

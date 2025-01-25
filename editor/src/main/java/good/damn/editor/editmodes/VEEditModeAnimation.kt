@@ -5,7 +5,6 @@ import android.view.MotionEvent
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.VEIAnchorable
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
-import good.damn.editor.animation.animator.options.canvas.VEIAnimationCanvas
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.skeleton.VESkeleton2D
