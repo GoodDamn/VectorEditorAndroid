@@ -1,9 +1,9 @@
 package good.damn.editor.animation.animator.options.canvas
 
 import android.graphics.PointF
-import good.damn.editor.animation.animator.options.canvas.keyframes.VECanvasOptionKeyframePosition
+import good.damn.editor.animation.animator.options.canvas.keyframes.VECanvasOptionKeyframeBase
+import good.damn.editor.animation.animator.options.canvas.previews.VECanvasOptionPreviewBase
 import good.damn.editor.animation.animator.options.canvas.previews.VECanvasOptionPreviewPosition
-import good.damn.sav.core.animation.animators.VEAnimatorBase
 import good.damn.sav.core.animation.animators.VEAnimatorPosition
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
 import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
@@ -21,7 +21,7 @@ VEITransactionReceiver {
         this
     )
 
-    override val keyframe = VECanvasOptionKeyframePosition(
+    override val keyframe = VECanvasOptionKeyframeBase(
         option
     )
 

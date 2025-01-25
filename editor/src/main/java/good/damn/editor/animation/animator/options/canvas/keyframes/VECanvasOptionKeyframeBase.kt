@@ -6,11 +6,11 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
-import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
+import good.damn.sav.core.animation.keyframe.VEIKeyframe
 
-class VECanvasOptionKeyframePosition(
-    private val option: VEIAnimationOption<VEMKeyframePosition>
-): VEICanvasOptionKeyFrame {
+class VECanvasOptionKeyframeBase<T: VEIKeyframe>(
+    private val option: VEIAnimationOption<T>
+): VEICanvasOptionKeyframe {
 
     val scrollX: Float
         get() = mScrollerHorizontal.scrollValue
@@ -27,7 +27,7 @@ class VECanvasOptionKeyframePosition(
 
     private val mScrollerHorizontal = VEScrollerHorizontal()
 
-    override fun layout(
+    final override fun layout(
         x: Float,
         y: Float,
         width: Float,
@@ -44,7 +44,7 @@ class VECanvasOptionKeyframePosition(
         )
     }
 
-    override fun draw(
+    final override fun draw(
         canvas: Canvas
     ) = canvas.run {
         save()
@@ -55,7 +55,7 @@ class VECanvasOptionKeyframePosition(
                 mRect.left
                         + mScrollerHorizontal.scrollValue
                         + it.factor * option.duration,
-                mRect.bottom * 0.75f,
+                mRect.top + mRect.height() * 0.5f,
                 mRect.height() * 0.25f,
                 mPaintKeyframe
             )
@@ -63,10 +63,9 @@ class VECanvasOptionKeyframePosition(
         restore()
     }
 
-    override fun onTouchEvent(
+    final override fun onTouchEvent(
         event: MotionEvent
     ) = mScrollerHorizontal.onTouchEvent(
         event
     )
-
 }
