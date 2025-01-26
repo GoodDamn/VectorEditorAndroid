@@ -121,14 +121,22 @@ class VEExport {
                 animations.size
             )
 
+            var type: Byte
+            var props: Int
+            var id: Int
             animations.forEach {
-                write(
-                    it.entity.index
-                )
+                type = if (it.entity.index > 0xffff) {
+                    id = it.entity.index shr 0xffff and 0xff
+                    0 // shape
+                } else {
+                    id = it.entity.index
+                    1
+                } // point
 
-                write(
-                    it.propertyId
-                )
+                write(id)
+
+                props = type.toInt() shl 5 or (it.propertyId.toInt() and 0b00011111)
+                write(props)
 
                 it.keyframes.forEach { keyframe ->
                     keyframe.export(

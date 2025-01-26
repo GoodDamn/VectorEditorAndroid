@@ -158,18 +158,9 @@ VEIListenerAnimationUpdateFrame {
             savedInstanceState
         )
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            mLauncherPermission.register(
-                this
-            )
-            mLauncherPermission.launch(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-        } else {
-            mFileExport = VEFile(
-                FILE_NAME
-            )
-        }
+        mLauncherPermission.register(
+            this
+        )
 
         mBrowserContent.register(
             this
@@ -429,11 +420,17 @@ VEIListenerAnimationUpdateFrame {
     private fun onClickExportVector(
         v: View
     ) {
-        if (mFileExport == null) {
-            mLauncherPermission.launch(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            if (mFileExport == null) {
+                mLauncherPermission.launch(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                return
+            }
+        } else {
+            mFileExport = VEFile(
+                FILE_NAME
             )
-            return
         }
 
         mFileExport?.apply {

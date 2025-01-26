@@ -49,10 +49,8 @@ class VEImport {
 
             for (j in 0 until shapesCount) {
                 defineShape(
-                    readU(),
-                    canvasSize
+                    readU()
                 ).apply {
-
                     if (shapeType() == VEShapeFill.shapeType) {
                         val p = readU()
                         for (i in 0 until p) {
@@ -88,14 +86,13 @@ class VEImport {
             )
         }
 
-
         private inline fun defineShape(
-            type: Int,
-            canvasSize: Size
+            type: Int
         ) = when (type) {
             VEShapeFill.shapeType -> VEShapeFill()
             VEShapeBezierQuad.shapeType -> VEShapeBezierQuad()
             else -> VEShapeLine()
         }
+
     }
 }
