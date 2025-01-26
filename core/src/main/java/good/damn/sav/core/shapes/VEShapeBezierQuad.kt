@@ -9,13 +9,8 @@ import good.damn.sav.core.utils.VEUtilsHit
 import good.damn.sav.misc.extensions.moveTo
 import good.damn.sav.misc.extensions.quadTo
 
-class VEShapeBezierQuad(
-    canvasWidth: Float,
-    canvasHeight: Float
-): VEShapeBase(
-    canvasWidth,
-    canvasHeight
-) {
+class VEShapeBezierQuad
+: VEShapeBase() {
 
     companion object {
         private val TAG = VEShapeBezierQuad::class.simpleName
@@ -142,9 +137,6 @@ class VEShapeBezierQuad(
     override fun newInstance(
         width: Float,
         height: Float
-    ) = VEShapeBezierQuad(
-        width,
-        height
-    )
+    ) = VEShapeBezierQuad()
 
 }

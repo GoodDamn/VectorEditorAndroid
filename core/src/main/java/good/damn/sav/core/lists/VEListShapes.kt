@@ -4,7 +4,8 @@ import good.damn.sav.core.listeners.VEICallbackOnAddShape
 import good.damn.sav.core.shapes.VEShapeBase
 import java.util.LinkedList
 
-class VEListShapes: LinkedList<VEShapeBase>() {
+class VEListShapes
+: LinkedList<VEShapeBase>() {
 
     var onAddShape: VEICallbackOnAddShape? = null
 
@@ -25,9 +26,14 @@ class VEListShapes: LinkedList<VEShapeBase>() {
     }
 
     override fun add(
-        e: VEShapeBase
+        element: VEShapeBase
     ): Boolean {
-        onAddShape?.onAddShape(e)
-        return super.add(e)
+        element.index = size shl 16
+        onAddShape?.onAddShape(
+            element
+        )
+        return super.add(
+            element
+        )
     }
 }

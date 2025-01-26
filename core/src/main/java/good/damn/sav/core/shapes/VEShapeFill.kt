@@ -9,13 +9,8 @@ import good.damn.sav.misc.extensions.lineTo
 import good.damn.sav.misc.extensions.moveTo
 import java.util.LinkedList
 
-class VEShapeFill(
-    canvasWidth: Float,
-    canvasHeight: Float
-): VEShapeBase(
-    canvasWidth,
-    canvasHeight
-) {
+class VEShapeFill
+: VEShapeBase() {
 
     companion object {
         const val shapeType = 1
@@ -36,10 +31,7 @@ class VEShapeFill(
     override fun newInstance(
         width: Float,
         height: Float
-    ) = VEShapeFill(
-        width,
-        height
-    ).apply {
+    ) = VEShapeFill().apply {
         color = this@VEShapeFill.color
     }
 

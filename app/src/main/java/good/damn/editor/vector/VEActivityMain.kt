@@ -158,7 +158,7 @@ VEIListenerAnimationUpdateFrame {
             savedInstanceState
         )
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             mLauncherPermission.register(
                 this
             )
@@ -302,9 +302,7 @@ VEIListenerAnimationUpdateFrame {
             )
 
             setOnClickListener {
-                modeShape.currentPrimitive = VEShapeLine(
-                    0f, 0f
-                )
+                modeShape.currentPrimitive = VEShapeLine()
             }
 
             root.addView(
@@ -325,9 +323,7 @@ VEIListenerAnimationUpdateFrame {
             )
 
             setOnClickListener {
-                modeShape.currentPrimitive = VEShapeBezierQuad(
-                    0f, 0f
-                )
+                modeShape.currentPrimitive = VEShapeBezierQuad()
             }
 
             root.addView(
@@ -440,15 +436,20 @@ VEIListenerAnimationUpdateFrame {
             return
         }
 
-        VEExport.export(
-            modeShape.skeleton,
-            modeShape.shapes,
-            Size(
-                modeShape.canvasWidth,
-                modeShape.canvasHeight
-            ),
-            mFileExport!!
-        )
+        mFileExport?.apply {
+            VEExport.export(
+                modeShape.skeleton,
+                modeShape.shapes,
+                mFragmentVectorAnimation
+                    .processer
+                    .exportAnimations(),
+                Size(
+                    modeShape.canvasWidth,
+                    modeShape.canvasHeight
+                ),
+                this
+            )
+        }
     }
 
     private fun onClickImportVector(
