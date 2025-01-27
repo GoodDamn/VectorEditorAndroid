@@ -158,18 +158,9 @@ VEIListenerAnimationUpdateFrame {
             savedInstanceState
         )
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            mLauncherPermission.register(
-                this
-            )
-            mLauncherPermission.launch(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-        } else {
-            mFileExport = VEFile(
-                FILE_NAME
-            )
-        }
+        mLauncherPermission.register(
+            this
+        )
 
         mBrowserContent.register(
             this
@@ -302,9 +293,7 @@ VEIListenerAnimationUpdateFrame {
             )
 
             setOnClickListener {
-                modeShape.currentPrimitive = VEShapeLine(
-                    0f, 0f
-                )
+                modeShape.currentPrimitive = VEShapeLine()
             }
 
             root.addView(
@@ -325,9 +314,7 @@ VEIListenerAnimationUpdateFrame {
             )
 
             setOnClickListener {
-                modeShape.currentPrimitive = VEShapeBezierQuad(
-                    0f, 0f
-                )
+                modeShape.currentPrimitive = VEShapeBezierQuad()
             }
 
             root.addView(
@@ -433,22 +420,33 @@ VEIListenerAnimationUpdateFrame {
     private fun onClickExportVector(
         v: View
     ) {
-        if (mFileExport == null) {
-            mLauncherPermission.launch(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            if (mFileExport == null) {
+                mLauncherPermission.launch(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                return
+            }
+        } else {
+            mFileExport = VEFile(
+                FILE_NAME
             )
-            return
         }
 
-        VEExport.export(
-            modeShape.skeleton,
-            modeShape.shapes,
-            Size(
-                modeShape.canvasWidth,
-                modeShape.canvasHeight
-            ),
-            mFileExport!!
-        )
+        mFileExport?.apply {
+            VEExport.export(
+                modeShape.skeleton,
+                modeShape.shapes,
+                mFragmentVectorAnimation
+                    .processer
+                    .exportAnimations(),
+                Size(
+                    modeShape.canvasWidth,
+                    modeShape.canvasHeight
+                ),
+                this
+            )
+        }
     }
 
     private fun onClickImportVector(

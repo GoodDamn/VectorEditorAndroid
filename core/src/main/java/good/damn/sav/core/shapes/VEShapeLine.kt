@@ -6,13 +6,8 @@ import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.utils.VEUtilsHit
 import good.damn.sav.misc.extensions.drawLine
 
-class VEShapeLine(
-    canvasWidth: Float,
-    canvasHeight: Float
-): VEShapeBase(
-    canvasWidth,
-    canvasHeight
-) {
+class VEShapeLine
+: VEShapeBase() {
     companion object {
         private val TAG = VEShapeLine::class.simpleName
     }
@@ -92,8 +87,5 @@ class VEShapeLine(
     override fun newInstance(
         width: Float,
         height: Float
-    ) = VEShapeLine(
-        width,
-        height
-    )
+    ) = VEShapeLine()
 }

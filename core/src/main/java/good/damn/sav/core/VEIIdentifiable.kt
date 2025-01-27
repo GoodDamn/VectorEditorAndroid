@@ -1,5 +1,5 @@
 package good.damn.sav.core
 
-interface VEIIndexable {
+interface VEIIdentifiable {
     var index: Int
 }

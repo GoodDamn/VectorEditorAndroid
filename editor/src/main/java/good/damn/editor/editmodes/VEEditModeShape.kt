@@ -40,10 +40,7 @@ VEIListenerOnAnchorPoint {
 
     var onSelectShape: VEIListenerOnSelectShape? = null
 
-    var currentPrimitive: VEShapeBase = VEShapeLine(
-        canvasWidth,
-        canvasHeight
-    )
+    var currentPrimitive: VEShapeBase = VEShapeLine()
 
     val shapes = VEListShapes().apply {
         onAddShape = this@VEEditModeShape

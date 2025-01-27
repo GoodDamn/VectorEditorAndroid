@@ -14,7 +14,7 @@ import java.io.InputStream
 
 class VEImport {
     companion object {
-        const val VERSION = 1
+        const val VERSION = 2
         fun import(
             canvasSize: Size,
             stream: InputStream
@@ -49,10 +49,8 @@ class VEImport {
 
             for (j in 0 until shapesCount) {
                 defineShape(
-                    readU(),
-                    canvasSize
+                    readU()
                 ).apply {
-
                     if (shapeType() == VEShapeFill.shapeType) {
                         val p = readU()
                         for (i in 0 until p) {
@@ -88,25 +86,13 @@ class VEImport {
             )
         }
 
-
         private inline fun defineShape(
-            type: Int,
-            canvasSize: Size
+            type: Int
         ) = when (type) {
-            VEShapeFill.shapeType -> VEShapeFill(
-                canvasSize.width,
-                canvasSize.height
-            )
-
-            VEShapeBezierQuad.shapeType -> VEShapeBezierQuad(
-                canvasSize.width,
-                canvasSize.height
-            )
-
-            else -> VEShapeLine(
-                canvasSize.width,
-                canvasSize.height
-            )
+            VEShapeFill.shapeType -> VEShapeFill()
+            VEShapeBezierQuad.shapeType -> VEShapeBezierQuad()
+            else -> VEShapeLine()
         }
+
     }
 }

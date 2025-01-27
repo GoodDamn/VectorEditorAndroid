@@ -18,10 +18,7 @@ class VEEditModeFillPoints(
         width: Float,
         height: Float,
     ): VEShapeFill {
-        val shape = VEShapeFill(
-            width,
-            height
-        ).apply {
+        val shape = VEShapeFill().apply {
             color = 0xffff0000.toInt()
         }
 

@@ -7,6 +7,7 @@ import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanva
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.views.VEViewAnimatorEditor
+import good.damn.sav.core.VEMExportAnimation
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionColor
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionPosition
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionWidth
@@ -25,9 +26,15 @@ VEIListenerOnSelectPoint {
 
     private var mCurrentAnimation: List<VEIAnimationOptionCanvas>? = null
 
-    private var mCurrentAnimationId = -1
+    private var mCurrentAnimationId = 0xffffff
 
     var viewAnimatorEditor: VEViewAnimatorEditor? = null
+
+    fun exportAnimations() = mAnimations.flatMap {
+        it.value.mapNotNull {
+            anim -> anim.exportAnimation()
+        }
+    }
 
     fun play() = viewAnimatorEditor?.run {
         animations = mAnimations.flatMap { it.value }
