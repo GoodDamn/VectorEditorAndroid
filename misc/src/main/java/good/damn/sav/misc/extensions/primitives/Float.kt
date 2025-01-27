@@ -1,14 +1,15 @@
 package good.damn.sav.misc.extensions.primitives
 
+import good.damn.sav.misc.utils.VEUtilsFloatJava
+
 inline fun Float.toDigitalFraction(
     int2: Float
-) = (this / int2 * 255).toInt().toByte()
+) = VEUtilsFloatJava.toDigitalFraction(
+    this,
+    int2
+)
 
-inline fun Float.toDigitalFraction() = (
-    this * 255
-).toInt()
-
-inline fun Float.isInRange(
-    from: Float,
-    to: Float
-) = !(this < from || this > to)
+inline fun Float.toDigitalFraction(
+) = VEUtilsFloatJava.getDigitalFraction(
+    this
+)

@@ -28,6 +28,7 @@ project("misc")
 add_library(${CMAKE_PROJECT_NAME} SHARED
         VEUtilsByteArray.cpp
         VEUtilsInt.cpp
+        VEUtilsFloat.cpp
 )
 
 # Specifies libraries CMake should link to your target library. You

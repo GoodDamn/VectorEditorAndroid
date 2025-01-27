@@ -1,6 +1,7 @@
 package good.damn.sav.core.animation.keyframe
 
 import good.damn.sav.misc.Size
+import good.damn.sav.misc.extensions.io.write
 import good.damn.sav.misc.extensions.primitives.toDigitalFraction
 import java.io.OutputStream
 
