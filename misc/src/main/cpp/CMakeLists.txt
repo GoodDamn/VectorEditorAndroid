@@ -26,8 +26,8 @@ project("misc")
 # for GameActivity/NativeActivity derived applications, the same library name must be
 # used in the AndroidManifest.xml file.
 add_library(${CMAKE_PROJECT_NAME} SHARED
-    VEByteArrayUtilsCpp.cpp
-    VEUtilsIntCpp.cpp
+        VEUtilsByteArray.cpp
+        VEUtilsInt.cpp
 )
 
 # Specifies libraries CMake should link to your target library. You

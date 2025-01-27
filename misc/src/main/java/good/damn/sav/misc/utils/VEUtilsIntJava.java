@@ -4,7 +4,7 @@ public final class VEUtilsIntJava {
 
     static {
         System.loadLibrary(
-            "VEUtilsIntCpp"
+            "VEUtilsInt"
         );
     }
 

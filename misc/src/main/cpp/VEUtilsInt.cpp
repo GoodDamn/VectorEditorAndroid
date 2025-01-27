@@ -2,6 +2,7 @@
 // Created by gooddamn on 02.11.2024.
 //
 #include "jni.h"
+#define LEN_COLOR 4
 
 extern "C"
 JNIEXPORT jint JNICALL
@@ -31,8 +32,11 @@ Java_good_damn_sav_misc_utils_VEUtilsIntJava_int32__I(
     jclass self,
     jint n
 ) {
-    jbyteArray data = env->NewByteArray(4);
-    jbyte fill[4] {
+    jbyteArray data = env->NewByteArray(
+        LEN_COLOR
+    );
+
+    jbyte fill[LEN_COLOR] {
         static_cast<jbyte>(n >> 24),
         static_cast<jbyte>(n >> 16 & 0xff),
         static_cast<jbyte>(n >> 8 & 0xff),
@@ -42,7 +46,7 @@ Java_good_damn_sav_misc_utils_VEUtilsIntJava_int32__I(
     env->SetByteArrayRegion(
         data,
         0,
-        4,
+        LEN_COLOR,
         fill
     );
 
