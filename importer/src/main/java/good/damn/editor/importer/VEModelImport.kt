@@ -1,6 +1,5 @@
 package good.damn.editor.importer
 
-import android.content.Context
 import android.content.res.Resources
 import androidx.annotation.RawRes
 import good.damn.sav.core.lists.VEListShapes
@@ -30,7 +29,7 @@ data class VEModelImport(
         inline fun createFromStream(
             inp: InputStream,
             canvasSize: Size
-        ) = VEImport.import(
+        ) = VEImport.static(
             canvasSize,
             inp
         )

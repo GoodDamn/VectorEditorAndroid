@@ -1,4 +1,4 @@
-package good.damn.editor.importer
+package good.damn.editor.importer.exceptions
 
 class VEExceptionDifferentVersion(
     fileVersion: Int,

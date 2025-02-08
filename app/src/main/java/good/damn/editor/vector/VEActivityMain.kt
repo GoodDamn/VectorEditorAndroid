@@ -5,9 +5,7 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -361,7 +359,7 @@ VEIListenerAnimationUpdateFrame {
         contentResolver.openInputStream(
             uri
         )?.apply {
-            val model = VEImport.import(
+            val model = VEImport.static(
                 Size(
                     modeShape.canvasWidth,
                     modeShape.canvasHeight

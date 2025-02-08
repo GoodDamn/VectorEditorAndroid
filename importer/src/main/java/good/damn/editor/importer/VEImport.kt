@@ -1,5 +1,8 @@
 package good.damn.editor.importer
 
+import good.damn.editor.importer.exceptions.VEExceptionDifferentVersion
+import good.damn.editor.importer.exceptions.VEExceptionNoAnimation
+import good.damn.sav.core.animation.animators.VEIListenerAnimation
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBezierQuad
@@ -15,13 +18,67 @@ import java.io.InputStream
 class VEImport {
     companion object {
         const val VERSION = 2
-        fun import(
+
+        fun animation(
+            canvasSize: Size,
+            stream: InputStream
+        ) = stream.run {
+            val model = static(
+                canvasSize,
+                stream
+            )
+
+            val animSize = readU()
+
+            if (animSize == -1) {
+                close()
+                throw VEExceptionNoAnimation()
+            }
+
+            val animations = ArrayList<VEIListenerAnimation>(
+                animSize
+            )
+
+            var type: Int
+            var property: Int
+            var entityId: Int
+            var keyframesCount: Int
+
+            for (i in 0 until animSize) {
+                entityId = readU()
+                readU().apply {
+                    type = this shr 5 and 0xff
+                    property = this and 0b00011111
+
+                    // 0 - shape
+                    // 1 - point
+                    entityId = entityId shl if (
+                        type == 0
+                    ) 16 else 0
+                }
+
+                keyframesCount = readU()
+
+                for (j in 0 until keyframesCount) {
+
+                }
+            }
+
+
+            VEModelImportAnimation(
+                model,
+                animations
+            )
+        }
+
+        fun static(
             canvasSize: Size,
             stream: InputStream
         ) = stream.run {
 
             val version = readU()
             if (version != VERSION) {
+                close()
                 throw VEExceptionDifferentVersion(
                     version,
                     VERSION
@@ -38,7 +95,9 @@ class VEImport {
                     VEPointIndexed(
                         readFraction() * canvasSize.width,
                         readFraction() * canvasSize.height
-                    )
+                    ).apply {
+                        index = j
+                    }
                 )
             }
 
@@ -67,6 +126,9 @@ class VEImport {
                             )
                         }
                     }
+
+                    index = 0
+                    index = (j shl 16) or 0x0000ffff
 
                     color = readInt32(
                         buffer4

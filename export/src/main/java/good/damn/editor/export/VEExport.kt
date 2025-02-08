@@ -135,9 +135,11 @@ class VEExport {
 
                 write(id)
 
-                props = type.toInt() shl 5 or (it.propertyId.toInt() and 0b00011111)
+                props = type.toInt() shl 5 or (
+                    it.propertyId.toInt() and 0b00011111
+                )
                 write(props)
-
+                write(it.keyframes.size)
                 it.keyframes.forEach { keyframe ->
                     keyframe.export(
                         this,
