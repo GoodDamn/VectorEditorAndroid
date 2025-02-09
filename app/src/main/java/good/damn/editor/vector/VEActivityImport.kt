@@ -1,7 +1,11 @@
 package good.damn.editor.vector
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import good.damn.editor.importer.VEModelImport
 import good.damn.editor.importer.VEViewAVS
@@ -50,17 +54,20 @@ class VEActivityImport
 
                 model = animation?.static
 
-                animator.onUpdateFrameAnimation = object: VEIListenerAnimationUpdateFrame {
-                    override suspend fun onUpdateFrameAnimation() {
-                        withContext(
-                            Dispatchers.Main
-                        ) {
-                            invalidate()
-                        }
+                animator.onUpdateFrameAnimation = VEIListenerAnimationUpdateFrame {
+                    withContext(
+                        Dispatchers.Main
+                    ) {
+                        invalidate()
                     }
                 }
 
                 setOnClickListener {
+
+                    if (animator.isPlaying) {
+                        animator.stop()
+                    }
+
                     animation?.animations?.apply {
                         animator.play(
                             0L,
@@ -73,6 +80,63 @@ class VEActivityImport
                     this,
                     VEApp.width,
                     VEApp.width
+                )
+            }
+
+            LinearLayout(
+                context
+            ).let { lay ->
+
+                lay.orientation = LinearLayout.HORIZONTAL
+
+                animation?.animations?.forEach {
+                    EditText(
+                        context
+                    ).apply {
+                        setText(
+                            it.duration.toString()
+                        )
+
+                        setTextColor(
+                            0xafafafaf.toInt()
+                        )
+
+                        addTextChangedListener(
+                            object: TextWatcher {
+                                override fun beforeTextChanged(
+                                    s: CharSequence?,
+                                    start: Int,
+                                    count: Int,
+                                    after: Int
+                                ) = Unit
+
+                                override fun onTextChanged(
+                                    s: CharSequence?,
+                                    start: Int,
+                                    before: Int,
+                                    count: Int
+                                ) {
+                                    it.duration = s?.toString()?.toIntOrNull() ?: 1000
+                                }
+
+                                override fun afterTextChanged(s: Editable?) = Unit
+
+                            }
+                        )
+
+                        lay.addView(
+                            this,
+                            -2,
+                            -2
+                        )
+                    }
+
+                }
+
+                addView(
+                    lay,
+                    -1,
+                    -2
                 )
             }
 

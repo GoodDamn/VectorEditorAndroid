@@ -1,5 +1,5 @@
 package good.damn.sav.core.animation.animators
 
-interface VEIListenerAnimationUpdateFrame {
+fun interface VEIListenerAnimationUpdateFrame {
     suspend fun onUpdateFrameAnimation()
 }

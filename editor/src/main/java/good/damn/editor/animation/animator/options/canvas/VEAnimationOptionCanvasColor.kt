@@ -40,9 +40,10 @@ class VEAnimationOptionCanvasColor(
         option.keyframes.size > 1
     ) VEAnimatorColor(
         shape,
-        option.keyframes.toList().iterator(),
-        option.duration
-    ) else null
+        option.keyframes.toList()
+    ).apply {
+        duration = option.duration
+    } else null
 
     override fun onReceiveTransaction() = option.keyframes.add(
         VEMKeyframeColor(

@@ -9,26 +9,40 @@ abstract class VEAnimatorBase<
 T: VEIKeyframe
 >(
     private val interpolator: TimeInterpolator,
-    private val keyframes: Iterator<T>,
-    private val duration: Int
+    private val keyframes: List<T>
 ): VEIListenerAnimation {
 
     companion object {
         private val TAG = VEAnimatorBase::class.simpleName
     }
 
+    override var duration = 1000
+
     private var mCurrentFactor = 0f
     private var mCurrentSubFactor = 0f
 
     private var mCurrentDt = 0f
 
-    private var mStartKeyframe = keyframes.next()
-    private var mEndKeyframe = keyframes.next()
-    private var mSubDurationFactor = mEndKeyframe.factor - mStartKeyframe.factor
+    private lateinit var mStartKeyframe: T
+    private lateinit var mEndKeyframe: T
+    private lateinit var mKeyframeIterator: Iterator<T>
+
+    private var mSubDurationFactor = 0f
 
     private var mHasEnded = false
 
     final override fun animationStart() {
+        mCurrentFactor = 0f
+        mCurrentSubFactor = 0f
+        mHasEnded = false
+
+        mKeyframeIterator = keyframes.iterator()
+
+        mStartKeyframe = mKeyframeIterator.next()
+        mEndKeyframe = mKeyframeIterator.next()
+
+        mSubDurationFactor = mEndKeyframe.factor - mStartKeyframe.factor
+
         onNextFrame(
             mStartKeyframe,
             mEndKeyframe,
@@ -60,12 +74,12 @@ T: VEIKeyframe
         if (mCurrentFactor > mEndKeyframe.factor) {
             mStartKeyframe = mEndKeyframe
 
-            if (!keyframes.hasNext()) {
+            if (!mKeyframeIterator.hasNext()) {
                 mHasEnded = true
                 return VEEnumAnimationState.HAS_END
             }
 
-            mEndKeyframe = keyframes.next()
+            mEndKeyframe = mKeyframeIterator.next()
 
             mSubDurationFactor = mEndKeyframe.factor - mStartKeyframe.factor
         }

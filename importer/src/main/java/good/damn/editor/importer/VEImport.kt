@@ -203,8 +203,7 @@ private inline fun createShapeAnimation(
         }
     ) { VEAnimatorColor(
         shape,
-        it,
-        2000
+        it
     )}
 
     else -> extractAnimation(
@@ -221,8 +220,7 @@ private inline fun createShapeAnimation(
     ) {
         VEAnimatorWidth(
             shape,
-            it,
-            2000
+            it
         )
     }
 }
@@ -249,8 +247,7 @@ private inline fun createPointAnimation(
 ) {
     VEAnimatorPosition(
         model.skeleton.getPointIndexed(id),
-        it,
-        2000
+        it
     )
 }
 
@@ -265,7 +262,7 @@ private inline fun <
         stream: InputStream,
         factor: Float
     ) -> KEYFRAME,
-    animationCreate: (Iterator<KEYFRAME>) -> ANIMATOR
+    animationCreate: (List<KEYFRAME>) -> ANIMATOR
 ) {
     val keyframes = ArrayList<KEYFRAME>(
         keyframesCount
@@ -282,7 +279,7 @@ private inline fun <
 
     animations.add(
         animationCreate(
-            keyframes.iterator()
+            keyframes
         )
     )
 }

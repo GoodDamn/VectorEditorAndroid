@@ -7,12 +7,10 @@ import good.damn.sav.core.shapes.VEShapeBase
 
 class VEAnimatorWidth(
     private val shape: VEShapeBase,
-    iterator: Iterator<VEMKeyframeWidth>,
-    duration: Int
+    list: List<VEMKeyframeWidth>
 ): VEAnimatorBase<VEMKeyframeWidth>(
     DecelerateInterpolator(),
-    iterator,
-    duration
+    list
 ) {
     override fun onNextFrame(
         start: VEMKeyframeWidth,

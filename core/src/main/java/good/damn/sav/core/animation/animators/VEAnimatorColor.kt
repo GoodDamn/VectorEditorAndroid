@@ -11,12 +11,10 @@ import good.damn.sav.misc.utils.VEUtilsIntJava
 
 class VEAnimatorColor(
     private val shape: VEShapeBase,
-    iterator: Iterator<VEMKeyframeColor>,
-    duration: Int
+    list: List<VEMKeyframeColor>
 ): VEAnimatorBase<VEMKeyframeColor>(
     AccelerateInterpolator(),
-    iterator,
-    duration
+    list
 ) {
 
     private val mTempColor = ByteArray(4)

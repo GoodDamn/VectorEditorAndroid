@@ -7,12 +7,10 @@ import kotlin.time.Duration
 
 class VEAnimatorPosition(
     private val point: PointF,
-    iterator: Iterator<VEMKeyframePosition>,
-    duration: Int
+    list: List<VEMKeyframePosition>
 ): VEAnimatorBase<VEMKeyframePosition>(
     AccelerateDecelerateInterpolator(),
-    iterator,
-    duration
+    list
 ) {
     override fun onNextFrame(
         start: VEMKeyframePosition,
