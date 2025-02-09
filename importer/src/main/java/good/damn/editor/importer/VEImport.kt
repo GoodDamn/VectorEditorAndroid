@@ -90,7 +90,7 @@ class VEImport {
                     this,
                     keyframesCount,
                     animations,
-                    model.shapes[entityId shr 16 and 0xff],
+                    model.shapes[(entityId shr 16) and 0xff],
                     canvasSize
                 )
 

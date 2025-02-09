@@ -1,5 +1,6 @@
 package good.damn.sav.core.animation.animators
 
+import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import good.damn.sav.core.animation.keyframe.VEMKeyframeColor
@@ -29,6 +30,7 @@ class VEAnimatorColor(
             end.color,
             factor
         )
+        Log.d("VEAnimatorColor:", "onNextFrame: $factor")
 
         shape.color = mTempColor.toInt32()
     }

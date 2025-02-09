@@ -1,5 +1,6 @@
 package good.damn.editor.export
 
+import android.util.Log
 import good.damn.sav.core.VEMExportAnimation
 import good.damn.sav.misc.Size
 import good.damn.sav.core.shapes.VEShapeBase
@@ -125,16 +126,18 @@ class VEExport {
             var props: Int
             var id: Int
             animations.forEach {
-                type = if (it.entity.index > 0xffff) {
-                    id = it.entity.index shr 0xffff and 0xff
+                type = if (it.entity.index >= 0xffff) {
+                    id = (it.entity.index shr 16) and 0xff
                     0 // shape
                 } else {
                     id = it.entity.index
                     1
                 } // point
 
+                Log.d("VEExport", "exportAnimation: $id")
                 write(id)
 
+                props = 0
                 props = type.toInt() shl 5 or (
                     it.propertyId.toInt() and 0b00011111
                 )

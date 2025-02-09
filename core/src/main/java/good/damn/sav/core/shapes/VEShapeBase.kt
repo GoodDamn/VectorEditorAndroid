@@ -13,7 +13,7 @@ VEIPointIndexable,
 VEIHittable,
 VEIIdentifiable {
 
-    override var index = -1
+    override var index = 0
 
     @get:ColorInt
     @setparam:ColorInt

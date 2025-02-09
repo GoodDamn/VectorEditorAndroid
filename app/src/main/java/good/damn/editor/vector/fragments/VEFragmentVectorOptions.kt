@@ -1,12 +1,15 @@
 package good.damn.editor.vector.fragments
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import good.damn.editor.vector.VEActivityImport
 import good.damn.editor.vector.interfaces.VEIColorPickable
 
 class VEFragmentVectorOptions
@@ -104,6 +107,32 @@ VEIColorPickable {
                 this,
                 -2,
                 -2
+            )
+        }
+
+        Button(
+            context
+        ).apply {
+            text = "Test"
+
+            layoutParams = LinearLayout.LayoutParams(
+                -2,
+                -2
+            ).apply {
+                gravity = Gravity.END
+            }
+
+            setOnClickListener {
+                context.startActivity(
+                    Intent(
+                        context,
+                        VEActivityImport::class.java
+                    )
+                )
+            }
+
+            root.addView(
+                this
             )
         }
 

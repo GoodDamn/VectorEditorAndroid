@@ -24,7 +24,7 @@ JNIEXPORT void JNICALL Java_good_damn_sav_misc_utils_VEUtilsByteArrayJava_interp
 
     jbyte* toElements = env->GetByteArrayElements(
         to,
-        0
+        nullptr
     );
 
     float fromVal;

@@ -1,6 +1,6 @@
 package good.damn.sav.misc
 
 data class Size(
-    val width: Float,
-    val height: Float
+    var width: Float = 0f,
+    var height: Float = 0f
 )

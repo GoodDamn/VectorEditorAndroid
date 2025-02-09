@@ -28,7 +28,7 @@ class VEListShapes
     override fun add(
         element: VEShapeBase
     ): Boolean {
-        element.index = size shl 16
+        element.index = (size shl 16) or 0x0000ffff
         onAddShape?.onAddShape(
             element
         )
