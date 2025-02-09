@@ -364,7 +364,8 @@ VEIListenerAnimationUpdateFrame {
                     modeShape.canvasWidth,
                     modeShape.canvasHeight
                 ),
-                this
+                this,
+                true
             )
             close()
 

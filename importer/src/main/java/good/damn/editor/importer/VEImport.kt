@@ -2,9 +2,17 @@ package good.damn.editor.importer
 
 import good.damn.editor.importer.exceptions.VEExceptionDifferentVersion
 import good.damn.editor.importer.exceptions.VEExceptionNoAnimation
+import good.damn.sav.core.animation.animators.VEAnimatorColor
+import good.damn.sav.core.animation.animators.VEAnimatorPosition
+import good.damn.sav.core.animation.animators.VEAnimatorWidth
 import good.damn.sav.core.animation.animators.VEIListenerAnimation
+import good.damn.sav.core.animation.keyframe.VEIKeyframe
+import good.damn.sav.core.animation.keyframe.VEMKeyframeColor
+import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
+import good.damn.sav.core.animation.keyframe.VEMKeyframeWidth
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
+import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.VEShapeBezierQuad
 import good.damn.sav.core.shapes.VEShapeFill
 import good.damn.sav.core.shapes.VEShapeLine
@@ -21,18 +29,23 @@ class VEImport {
 
         fun animation(
             canvasSize: Size,
-            stream: InputStream
+            stream: InputStream,
+            throwException: Boolean
         ) = stream.run {
             val model = static(
                 canvasSize,
-                stream
+                stream,
+                throwException
             )
 
             val animSize = readU()
 
             if (animSize == -1) {
                 close()
-                throw VEExceptionNoAnimation()
+                if (throwException) {
+                    throw VEExceptionNoAnimation()
+                }
+                return@run null
             }
 
             val animations = ArrayList<VEIListenerAnimation>(
@@ -59,13 +72,32 @@ class VEImport {
 
                 keyframesCount = readU()
 
-                for (j in 0 until keyframesCount) {
-
+                if (type == 1) {
+                    createPointAnimation(
+                        property,
+                        this,
+                        keyframesCount,
+                        animations,
+                        entityId,
+                        canvasSize,
+                        model
+                    )
+                    continue
                 }
+
+                createShapeAnimation(
+                    property,
+                    this,
+                    keyframesCount,
+                    animations,
+                    model.shapes[entityId shr 16 and 0xff],
+                    canvasSize
+                )
+
             }
 
 
-            VEModelImportAnimation(
+            return@run VEModelImportAnimation(
                 model,
                 animations
             )
@@ -73,11 +105,12 @@ class VEImport {
 
         fun static(
             canvasSize: Size,
-            stream: InputStream
+            stream: InputStream,
+            throwException: Boolean
         ) = stream.run {
 
             val version = readU()
-            if (version != VERSION) {
+            if (throwException && version != VERSION) {
                 close()
                 throw VEExceptionDifferentVersion(
                     version,
@@ -147,14 +180,117 @@ class VEImport {
                 shapes
             )
         }
-
-        private inline fun defineShape(
-            type: Int
-        ) = when (type) {
-            VEShapeFill.shapeType -> VEShapeFill()
-            VEShapeBezierQuad.shapeType -> VEShapeBezierQuad()
-            else -> VEShapeLine()
-        }
-
     }
+}
+
+private inline fun createShapeAnimation(
+    property: Int,
+    inp: InputStream,
+    keyframesCount: Int,
+    animations: ArrayList<VEIListenerAnimation>,
+    shape: VEShapeBase,
+    size: Size
+) = when (property) {
+    0 -> extractAnimation(
+        inp,
+        keyframesCount,
+        animations,
+        keyframeCreate = { stream, fraction ->
+            VEMKeyframeColor.import(
+                fraction,
+                stream
+            )
+        }
+    ) { VEAnimatorColor(
+        shape,
+        it,
+        2000
+    )}
+
+    else -> extractAnimation(
+        inp,
+        keyframesCount,
+        animations,
+        keyframeCreate = { stream, fraction ->
+            VEMKeyframeWidth.import(
+                size,
+                fraction,
+                stream
+            )
+        }
+    ) {
+        VEAnimatorWidth(
+            shape,
+            it,
+            2000
+        )
+    }
+}
+
+private inline fun createPointAnimation(
+    property: Int,
+    inp: InputStream,
+    keyframesCount: Int,
+    animations: ArrayList<VEIListenerAnimation>,
+    id: Int,
+    size: Size,
+    model: VEModelImport
+) = extractAnimation(
+    inp,
+    keyframesCount,
+    animations,
+    keyframeCreate = { stream, factor ->
+        VEMKeyframePosition.import(
+            size,
+            factor,
+            stream
+        )
+    }
+) {
+    VEAnimatorPosition(
+        model.skeleton.getPointIndexed(id),
+        it,
+        2000
+    )
+}
+
+private inline fun <
+    reified KEYFRAME: VEIKeyframe,
+    reified ANIMATOR: VEIListenerAnimation
+> extractAnimation(
+    inp: InputStream,
+    keyframesCount: Int,
+    animations: ArrayList<VEIListenerAnimation>,
+    keyframeCreate: (
+        stream: InputStream,
+        factor: Float
+    ) -> KEYFRAME,
+    animationCreate: (Iterator<KEYFRAME>) -> ANIMATOR
+) {
+    val keyframes = ArrayList<KEYFRAME>(
+        keyframesCount
+    )
+
+    for (j in 0 until keyframesCount) {
+        keyframes.add(
+            keyframeCreate(
+                inp,
+                inp.readFraction()
+            )
+        )
+    }
+
+    animations.add(
+        animationCreate(
+            keyframes.iterator()
+        )
+    )
+}
+
+private inline fun defineShape(
+    type: Int
+) = when (type) {
+    VEShapeFill.shapeType -> VEShapeFill()
+    VEShapeBezierQuad.shapeType -> VEShapeBezierQuad()
+    else -> VEShapeLine()
 }

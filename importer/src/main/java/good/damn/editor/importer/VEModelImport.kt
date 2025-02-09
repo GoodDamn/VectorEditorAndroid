@@ -12,26 +12,57 @@ data class VEModelImport(
     val shapes: VEListShapes
 ) {
     companion object {
-        inline fun createFromResource(
+
+        inline fun createAnimationFromResource(
             res: Resources,
             @RawRes id: Int,
-            canvasSize: Size
+            canvasSize: Size,
+            throwException: Boolean = true
         ) = res.openRawResource(id).run {
-            val model = createFromStream(
+            val model = createAnimationFromStream(
                 this,
-                canvasSize
+                canvasSize,
+                throwException
             )
             close()
 
             return@run model
         }
 
-        inline fun createFromStream(
+        inline fun createStaticFromResource(
+            res: Resources,
+            @RawRes id: Int,
+            canvasSize: Size,
+            throwException: Boolean = true
+        ) = res.openRawResource(id).run {
+            val model = createStaticFromStream(
+                this,
+                canvasSize,
+                throwException
+            )
+            close()
+
+            return@run model
+        }
+
+        inline fun createAnimationFromStream(
             inp: InputStream,
-            canvasSize: Size
+            canvasSize: Size,
+            throwException: Boolean
+        ) = VEImport.animation(
+            canvasSize,
+            inp,
+            throwException
+        )
+
+        inline fun createStaticFromStream(
+            inp: InputStream,
+            canvasSize: Size,
+            throwException: Boolean
         ) = VEImport.static(
             canvasSize,
-            inp
+            inp,
+            throwException
         )
     }
 }
