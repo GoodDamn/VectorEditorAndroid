@@ -4,18 +4,21 @@ import android.util.Log
 import good.damn.sav.core.VEMExportAnimation
 import good.damn.sav.misc.Size
 import good.damn.sav.core.shapes.VEShapeBase
+import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.core.shapes.primitives.VEShapeFill
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.io.write
 import good.damn.sav.misc.extensions.primitives.toByteArray
 import good.damn.sav.misc.extensions.primitives.toDigitalFraction
+import kotlinx.coroutines.android.awaitFrame
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.util.LinkedList
 
 class VEExport {
     companion object {
-        const val VERSION = 2
+        const val VERSION = 3
 
         fun export(
             skeleton: VESkeleton2D,
@@ -75,6 +78,8 @@ class VEExport {
                 shapes.size
             )
 
+            val setFill = HashMap<Int, FillId>()
+
             shapes.forEach {
                 it.shapeType().apply {
                     write(
@@ -88,8 +93,8 @@ class VEExport {
                     }
                 }
 
-                it.points.forEach {
-                    it?.index?.apply {
+                it.points.forEach { point ->
+                    point?.index?.apply {
                         write(
                             this
                         )
@@ -97,8 +102,18 @@ class VEExport {
                 }
 
                 it.fill?.apply {
-                    write(
-                        toByteArray()
+                    setFill[it.hashCode()]?.apply {
+                        ids.add(
+                            it.index.toByte()
+                        )
+                        return@apply
+                    }
+
+                    setFill[it.hashCode()] = FillId(
+                        this,
+                        LinkedList<Byte>().apply {
+                            add(it.index.toByte())
+                        }
                     )
                 }
 
@@ -106,6 +121,25 @@ class VEExport {
                     it.strokeWidth.toDigitalFraction(
                         canvasSize.width
                     )
+                )
+            }
+
+            write(
+                setFill.size
+            )
+
+            setFill.forEach {
+                write(
+                    it.value.ids.size
+                )
+
+                it.value.ids.forEach { id ->
+                    write(id)
+                }
+
+                it.value.fill.write(
+                    this,
+                    canvasSize
                 )
             }
         }
@@ -154,5 +188,18 @@ class VEExport {
             }
         }
 
+    }
+}
+
+private data class FillId(
+    val fill: VEIFill,
+    val ids: LinkedList<Byte>
+) {
+    override fun hashCode() = fill.hashCode()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as FillId
+        return fill == other.fill
     }
 }

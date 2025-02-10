@@ -9,6 +9,7 @@ import good.damn.sav.core.animation.animators.VEAnimatorColor
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
 import good.damn.sav.core.animation.keyframe.VEMKeyframeColor
 import good.damn.sav.core.shapes.VEShapeBase
+import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.misc.extensions.primitives.toByteArray
 import good.damn.sav.misc.structures.tree.toList
 
@@ -48,7 +49,8 @@ class VEAnimationOptionCanvasColor(
     override fun onReceiveTransaction() = option.keyframes.add(
         VEMKeyframeColor(
             getFactor(),
-            shape.fill?.toByteArray() ?: byteArrayOf(0,0,0,0)
+            (shape.fill as? VEMFillColor)?.color?.toByteArray()
+                ?: byteArrayOf(0,0,0,0)
         )
     )
 

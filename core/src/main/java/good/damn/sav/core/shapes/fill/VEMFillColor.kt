@@ -2,13 +2,20 @@ package good.damn.sav.core.shapes.fill
 
 import android.graphics.Paint
 import androidx.annotation.ColorInt
+import good.damn.sav.misc.Size
 import good.damn.sav.misc.extensions.primitives.toByteArray
+import java.io.OutputStream
 
-class VEMFillColor(
+data class VEMFillColor(
     @setparam:ColorInt
     @get:ColorInt
     var color: Int
 ): VEIFill {
+
+    companion object {
+        private const val TYPE = 0
+    }
+
     override fun fillPaint(
         paint: Paint
     ) {
@@ -16,5 +23,11 @@ class VEMFillColor(
         paint.color = color
     }
 
-    override fun toByteArray(): ByteArray = color.toByteArray()
+    override fun write(
+        os: OutputStream,
+        s: Size
+    ) = os.run {
+        write(TYPE)
+        write(color.toByteArray())
+    }
 }
