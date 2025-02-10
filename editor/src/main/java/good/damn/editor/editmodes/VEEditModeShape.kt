@@ -16,10 +16,12 @@ import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.core.shapes.VEShapeLine
+import good.damn.sav.core.shapes.primitives.VEShapeLine
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.interpolate
 import good.damn.sav.core.extensions.interpolateWith
+import good.damn.sav.core.shapes.fill.VEIFill
+import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
 import java.util.LinkedList
@@ -47,7 +49,7 @@ VEIListenerOnAnchorPoint {
     }
 
     var vectorStrokeWidth = 5f
-    var vectorColor = Color.RED
+    var vectorFill: VEIFill? = null
 
     private val mActions = LinkedList<VEIActionable>()
 
@@ -139,14 +141,14 @@ VEIListenerOnAnchorPoint {
                     )
                 }
 
-                vectorColor = currentPrimitive.color
+                vectorFill = currentPrimitive.fill
                 vectorStrokeWidth = currentPrimitive.strokeWidth
 
                 currentPrimitive = currentPrimitive.newInstance(
                     canvasWidth,
                     canvasHeight
                 ).apply {
-                    color = vectorColor
+                    fill = vectorFill
                     strokeWidth = vectorStrokeWidth
 
                     points[0] = mPointFrom

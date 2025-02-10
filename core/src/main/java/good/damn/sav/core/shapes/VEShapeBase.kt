@@ -5,6 +5,7 @@ import androidx.annotation.ColorInt
 import good.damn.sav.core.VEIIdentifiable
 import good.damn.sav.core.listeners.VEIHittable
 import good.damn.sav.core.listeners.VEIPointIndexable
+import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.misc.interfaces.VEIDrawable
 
 abstract class VEShapeBase
@@ -15,12 +16,10 @@ VEIIdentifiable {
 
     override var index = 0
 
-    @get:ColorInt
-    @setparam:ColorInt
-    var color: Int
-        get() = mPaint.color
+    var fill: VEIFill? = null
         set(v) {
-            mPaint.color = v
+            field = v
+            v?.fillPaint(mPaint)
         }
 
     var strokeWidth: Float

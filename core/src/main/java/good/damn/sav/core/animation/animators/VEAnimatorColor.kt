@@ -2,13 +2,11 @@ package good.damn.sav.core.animation.animators
 
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.OvershootInterpolator
 import good.damn.sav.core.animation.keyframe.VEMKeyframeColor
-import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
 import good.damn.sav.core.shapes.VEShapeBase
+import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.misc.extensions.interpolate
 import good.damn.sav.misc.extensions.toInt32
-import good.damn.sav.misc.utils.VEUtilsIntJava
 
 class VEAnimatorColor(
     private val shape: VEShapeBase,
@@ -19,6 +17,7 @@ class VEAnimatorColor(
 ) {
 
     private val mTempColor = ByteArray(4)
+    private val mFillColor = VEMFillColor(0)
 
     override fun onNextFrame(
         start: VEMKeyframeColor,
@@ -32,6 +31,7 @@ class VEAnimatorColor(
         )
         Log.d("VEAnimatorColor:", "onNextFrame: $factor")
 
-        shape.color = mTempColor.toInt32()
+        mFillColor.color = mTempColor.toInt32()
+        shape.fill = mFillColor
     }
 }

@@ -1,8 +1,11 @@
-package good.damn.sav.core.shapes
+package good.damn.sav.core.shapes.primitives
 
 import android.graphics.Canvas
+import android.graphics.LinearGradient
 import android.graphics.Paint
+import android.graphics.Shader
 import good.damn.sav.core.points.VEPointIndexed
+import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.utils.VEUtilsHit
 import good.damn.sav.misc.extensions.drawLine
 

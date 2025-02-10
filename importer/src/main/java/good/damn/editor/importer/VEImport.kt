@@ -13,9 +13,10 @@ import good.damn.sav.core.animation.keyframe.VEMKeyframeWidth
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.core.shapes.VEShapeBezierQuad
-import good.damn.sav.core.shapes.VEShapeFill
-import good.damn.sav.core.shapes.VEShapeLine
+import good.damn.sav.core.shapes.fill.VEMFillColor
+import good.damn.sav.core.shapes.primitives.VEShapeBezierQuad
+import good.damn.sav.core.shapes.primitives.VEShapeFill
+import good.damn.sav.core.shapes.primitives.VEShapeLine
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.Size
 import good.damn.sav.misc.extensions.io.readFraction
@@ -163,8 +164,12 @@ class VEImport {
                     index = 0
                     index = (j shl 16) or 0x0000ffff
 
-                    color = readInt32(
-                        buffer4
+                    // NOTE:
+                    // it can be gradient or color
+                    fill = VEMFillColor(
+                        readInt32(
+                            buffer4
+                        )
                     )
 
                     strokeWidth = readFraction() * canvasSize.width

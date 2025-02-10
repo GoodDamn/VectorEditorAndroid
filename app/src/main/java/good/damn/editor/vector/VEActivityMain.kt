@@ -40,8 +40,9 @@ import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.core.shapes.VEShapeBezierQuad
-import good.damn.sav.core.shapes.VEShapeLine
+import good.damn.sav.core.shapes.fill.VEMFillColor
+import good.damn.sav.core.shapes.primitives.VEShapeBezierQuad
+import good.damn.sav.core.shapes.primitives.VEShapeLine
 import good.damn.sav.misc.Size
 import good.damn.sav.misc.interfaces.VEIDrawable
 import kotlinx.coroutines.Dispatchers
@@ -499,8 +500,10 @@ VEIListenerAnimationUpdateFrame {
                     mViewVector?.invalidate()
                 }
             }
+            val colorFill = VEMFillColor(0)
             onPickColor = OnPickColorListener {
-                shape.color = it
+                colorFill.color = it
+                shape.fill = colorFill
                 mViewVector?.invalidate()
             }
             show()

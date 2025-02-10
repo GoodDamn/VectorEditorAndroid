@@ -1,13 +1,13 @@
-package good.damn.sav.core.shapes
+package good.damn.sav.core.shapes.primitives
 
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import good.damn.sav.core.points.VEPointIndexed
+import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.utils.VEUtilsHit
 import good.damn.sav.misc.extensions.lineTo
 import good.damn.sav.misc.extensions.moveTo
-import java.util.LinkedList
 
 class VEShapeFill
 : VEShapeBase() {
@@ -32,7 +32,7 @@ class VEShapeFill
         width: Float,
         height: Float
     ) = VEShapeFill().apply {
-        color = this@VEShapeFill.color
+        fill = this@VEShapeFill.fill
     }
 
     override fun draw(

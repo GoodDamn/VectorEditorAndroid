@@ -4,7 +4,7 @@ import android.util.Log
 import good.damn.sav.core.VEMExportAnimation
 import good.damn.sav.misc.Size
 import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.core.shapes.VEShapeFill
+import good.damn.sav.core.shapes.primitives.VEShapeFill
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.io.write
 import good.damn.sav.misc.extensions.primitives.toByteArray
@@ -96,9 +96,11 @@ class VEExport {
                     }
                 }
 
-                write(
-                    it.color.toByteArray()
-                )
+                it.fill?.apply {
+                    write(
+                        toByteArray()
+                    )
+                }
 
                 write(
                     it.strokeWidth.toDigitalFraction(

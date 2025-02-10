@@ -48,7 +48,7 @@ class VEAnimationOptionCanvasColor(
     override fun onReceiveTransaction() = option.keyframes.add(
         VEMKeyframeColor(
             getFactor(),
-            shape.color.toByteArray()
+            shape.fill?.toByteArray() ?: byteArrayOf(0,0,0,0)
         )
     )
 
