@@ -28,7 +28,7 @@ abstract class VEBottomSheet(
         )
     }
 
-    fun dismiss() {
+    open fun dismiss() {
         mView?.apply {
             mViewGroup.removeView(
                 this

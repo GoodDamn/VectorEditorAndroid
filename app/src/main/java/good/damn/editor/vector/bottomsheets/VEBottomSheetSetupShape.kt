@@ -2,11 +2,14 @@ package good.damn.editor.vector.bottomsheets
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.PointF
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import good.damn.editor.vector.VEApp
+import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.extensions.views.bounds
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.extensions.views.boundsLinear
@@ -14,15 +17,18 @@ import good.damn.gradient_color_picker.GradientColorPicker
 import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
+import good.damn.sav.core.shapes.fill.VEMFillColor
+import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
 
 class VEBottomSheetSetupShape(
-    toView: ViewGroup
+    private val toView: ViewGroup,
+    private val p: PointF?,
+    private val pp: PointF?,
+    private val onConfirmFill: VEIListenerBottomSheetFill
 ): VEBottomSheet(
     toView
 ) {
-
     var onSeekProgressWidth: VSIListenerSeekBarProgress? = null
-    var onPickColor: OnPickColorListener? = null
 
     override fun onCreateView(
         context: Context
@@ -67,25 +73,58 @@ class VEBottomSheetSetupShape(
             addView(this)
         }
 
-        GradientColorPicker(
+
+        val btnHeight = rootHeight * 0.12f
+        Button(
             context
         ).apply {
+            text = "color"
 
-            setOnPickColorListener(
-                onPickColor
-            )
+            setOnClickListener {
+                VEBottomSheetSelectColor(
+                    toView,
+                    onConfirmFill
+                ).apply {
+                    show()
+                }
+            }
 
-            val start = rootWidth * 0.2f
-
+            val width = rootWidth * 0.8f
             boundsFrame(
-                start = start,
-                width = rootWidth - start,
-                height = rootHeight * 0.5f
+                start = rootWidth - width,
+                width = width,
+                height = btnHeight
             )
+
+            addView(
+                this
+            )
+        }
+
+        Button(
+            context
+        ).apply {
+            text = "gradient"
+
+            val width = rootWidth * 0.8f
+            boundsFrame(
+                top = btnHeight,
+                start = rootWidth - width,
+                width = width,
+                height = btnHeight
+            )
+
+            setOnClickListener {
+                VEBottomSheetMakeGradient(
+                    toView,
+                    p,
+                    pp,
+                    onConfirmFill
+                ).show()
+            }
 
             addView(this)
         }
-
 
     }
 

@@ -12,6 +12,7 @@ class VEMFillColor(
     override fun fillPaint(
         paint: Paint
     ) {
+        paint.shader = null
         paint.color = color
     }
 

@@ -29,6 +29,7 @@ import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.export.VEExport
 import good.damn.editor.importer.VEImport
 import good.damn.editor.vector.bottomsheets.VEBottomSheetSetupShape
+import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
 import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
 import good.damn.editor.vector.fragments.VEFragmentVectorOptions
@@ -40,6 +41,7 @@ import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
+import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.core.shapes.primitives.VEShapeBezierQuad
 import good.damn.sav.core.shapes.primitives.VEShapeLine
@@ -490,20 +492,15 @@ VEIListenerAnimationUpdateFrame {
             as? ViewGroup ?: return
 
         VEBottomSheetSetupShape(
-            view
-        ).apply {
-            onSeekProgressWidth = object: VSIListenerSeekBarProgress {
-                override fun onSeekProgress(
-                    progress: Float
-                ) {
-                    shape.strokeWidth = progress * modeShape.canvasWidth
-                    mViewVector?.invalidate()
-                }
-            }
-            val colorFill = VEMFillColor(0)
-            onPickColor = OnPickColorListener {
-                colorFill.color = it
-                shape.fill = colorFill
+            view,
+            shape.points.firstOrNull(),
+            shape.points.lastOrNull()
+        ) {
+            shape.fill = it
+            mViewVector?.invalidate()
+        }.apply {
+            onSeekProgressWidth = VSIListenerSeekBarProgress {
+                shape.strokeWidth = it * modeShape.canvasWidth
                 mViewVector?.invalidate()
             }
             show()
