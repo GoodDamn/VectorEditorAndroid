@@ -1,7 +1,10 @@
 package good.damn.editor.importer
 
+import android.graphics.PointF
+import android.util.Log
 import good.damn.editor.importer.exceptions.VEExceptionDifferentVersion
 import good.damn.editor.importer.exceptions.VEExceptionNoAnimation
+import good.damn.sav.core.VEMIdentifier
 import good.damn.sav.core.animation.animators.VEAnimatorColor
 import good.damn.sav.core.animation.animators.VEAnimatorPosition
 import good.damn.sav.core.animation.animators.VEAnimatorWidth
@@ -14,6 +17,7 @@ import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.fill.VEMFillColor
+import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
 import good.damn.sav.core.shapes.primitives.VEShapeBezierQuad
 import good.damn.sav.core.shapes.primitives.VEShapeFill
 import good.damn.sav.core.shapes.primitives.VEShapeLine
@@ -24,9 +28,9 @@ import good.damn.sav.misc.extensions.io.readInt32
 import good.damn.sav.misc.extensions.io.readU
 import java.io.InputStream
 
-class VEImport {
+class VEImport2 {
     companion object {
-        const val VERSION = 2
+        const val VERSION = 3
 
         fun animation(
             canvasSize: Size,
@@ -41,12 +45,15 @@ class VEImport {
 
             val animSize = readU()
 
-            if (animSize == -1) {
+            if (animSize == 0) {
                 close()
                 if (throwException) {
                     throw VEExceptionNoAnimation()
                 }
-                return@run null
+                return@run VEModelImportAnimation(
+                    model,
+                    null
+                )
             }
 
             val animations = ArrayList<VEIListenerAnimation>(
@@ -130,15 +137,16 @@ class VEImport {
                         readFraction() * canvasSize.width,
                         readFraction() * canvasSize.height
                     ).apply {
-                        index = j
+                        id = VEMIdentifier(
+                            j,
+                            0
+                        )
                     }
                 )
             }
 
             val shapesCount = readU()
             val shapes = VEListShapes()
-
-            val buffer4 = ByteArray(4)
 
             for (j in 0 until shapesCount) {
                 defineShape(
@@ -161,15 +169,9 @@ class VEImport {
                         }
                     }
 
-                    index = 0
-                    index = (j shl 16) or 0x0000ffff
-
-                    // NOTE:
-                    // it can be gradient or color
-                    fill = VEMFillColor(
-                        readInt32(
-                            buffer4
-                        )
+                    id = VEMIdentifier(
+                        j shl 16,
+                        16
                     )
 
                     strokeWidth = readFraction() * canvasSize.width
@@ -177,6 +179,57 @@ class VEImport {
                     shapes.add(
                         this
                     )
+                }
+            }
+
+            // Filling
+            val buffer4 = ByteArray(4)
+            val paletteSize = readU()
+            for (i in 0 until paletteSize) {
+                val idsCount = readU()
+
+                val fill = when (readU()) {
+                    VEMFillGradientLinear.TYPE -> {
+
+                        val p = PointF(
+                            readFraction() * canvasSize.width,
+                            readFraction() * canvasSize.height
+                        )
+
+                        val pp = PointF(
+                            readFraction() * canvasSize.width,
+                            readFraction() * canvasSize.height
+                        )
+
+                        val s = readU()
+
+                        val colors = IntArray(s).apply {
+                            for (ic in indices) {
+                                this[ic] = readInt32(buffer4)
+                            }
+                        }
+
+                        val positions = FloatArray(s).apply {
+                            for (ic in indices) {
+                                this[ic] = readFraction()
+                            }
+                        }
+
+                        VEMFillGradientLinear(
+                            p,
+                            pp,
+                            colors,
+                            positions
+                        )
+                    }
+                    else -> VEMFillColor(
+                        readInt32(buffer4)
+                    )
+                }
+
+                for (j in 0 until idsCount) {
+                    val id = readU()
+                    shapes[id].fill = fill
                 }
             }
 
@@ -209,7 +262,8 @@ private inline fun createShapeAnimation(
     ) { VEAnimatorColor(
         shape,
         it
-    )}
+    )
+    }
 
     else -> extractAnimation(
         inp,
@@ -257,9 +311,9 @@ private inline fun createPointAnimation(
 }
 
 private inline fun <
-    reified KEYFRAME: VEIKeyframe,
-    reified ANIMATOR: VEIListenerAnimation
-> extractAnimation(
+        reified KEYFRAME: VEIKeyframe,
+        reified ANIMATOR: VEIListenerAnimation
+        > extractAnimation(
     inp: InputStream,
     keyframesCount: Int,
     animations: ArrayList<VEIListenerAnimation>,

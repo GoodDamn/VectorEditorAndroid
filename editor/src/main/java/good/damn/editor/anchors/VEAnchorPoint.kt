@@ -1,8 +1,6 @@
 package good.damn.editor.anchors
 
 import android.graphics.Canvas
-import android.graphics.Point
-import android.graphics.PointF
 import good.damn.sav.core.skeleton.VESkeleton2D
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -21,7 +19,7 @@ class VEAnchorPoint(
         touchY: Float
     ): Boolean {
         for (it in skeleton.points) {
-            if (selectedIndex == it.index) {
+            if (selectedIndex == it.id.id) {
                 continue
             }
 

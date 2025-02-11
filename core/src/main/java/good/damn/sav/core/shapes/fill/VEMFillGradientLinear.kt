@@ -20,7 +20,7 @@ data class VEMFillGradientLinear(
 ): VEIFill {
 
     companion object {
-        private const val TYPE = 1
+        const val TYPE = 1
     }
 
     private val gradient = LinearGradient(

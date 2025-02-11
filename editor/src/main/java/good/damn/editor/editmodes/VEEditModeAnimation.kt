@@ -1,9 +1,7 @@
 package good.damn.editor.editmodes
 
-import android.graphics.PointF
 import android.view.MotionEvent
 import good.damn.editor.anchors.VEAnchor
-import good.damn.editor.anchors.VEIAnchorable
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
@@ -61,7 +59,7 @@ VEIListenerOnAnchorPoint {
                         skeleton,
                         event.x,
                         event.y,
-                        index
+                        id.id
                     )
                 }
 

@@ -2,15 +2,14 @@ package good.damn.editor.export
 
 import android.util.Log
 import good.damn.sav.core.VEMExportAnimation
+import good.damn.sav.core.VEMIdentifier
 import good.damn.sav.misc.Size
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.core.shapes.primitives.VEShapeFill
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.io.write
-import good.damn.sav.misc.extensions.primitives.toByteArray
 import good.damn.sav.misc.extensions.primitives.toDigitalFraction
-import kotlinx.coroutines.android.awaitFrame
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -49,7 +48,7 @@ class VEExport {
         }
 
 
-        private inline fun exportStatic(
+        private fun exportStatic(
             os: OutputStream,
             skeleton: VESkeleton2D,
             canvasSize: Size,
@@ -94,25 +93,25 @@ class VEExport {
                 }
 
                 it.points.forEach { point ->
-                    point?.index?.apply {
-                        write(
-                            this
-                        )
-                    }
+                    point?.id?.write(
+                        this
+                    )
                 }
 
                 it.fill?.apply {
-                    setFill[it.hashCode()]?.apply {
-                        ids.add(
-                            it.index.toByte()
+                    setFill[
+                        hashCode()
+                    ]?.let { fill ->
+                        fill.ids.add(
+                            it.id.normalized.toByte()
                         )
                         return@apply
                     }
 
-                    setFill[it.hashCode()] = FillId(
+                    setFill[hashCode()] = FillId(
                         this,
                         LinkedList<Byte>().apply {
-                            add(it.index.toByte())
+                            add(it.id.normalized.toByte())
                         }
                     )
                 }
@@ -133,24 +132,25 @@ class VEExport {
                     it.value.ids.size
                 )
 
-                it.value.ids.forEach { id ->
-                    write(id)
-                }
-
                 it.value.fill.write(
                     this,
                     canvasSize
                 )
+
+                it.value.ids.forEach { id ->
+                    write(id)
+                }
             }
         }
 
-        private inline fun exportAnimation(
+        private fun exportAnimation(
             os: OutputStream,
             canvasSize: Size,
             animations: List<VEMExportAnimation>,
         ) = os.run {
 
             if (animations.isEmpty()) {
+                write(0)
                 return@run
             }
 
@@ -160,18 +160,14 @@ class VEExport {
 
             var type: Byte
             var props: Int
-            var id: Int
             animations.forEach {
-                type = if (it.entity.index >= 0xffff) {
-                    id = (it.entity.index shr 16) and 0xff
+                type = if (it.entity.id.offset > 0)
                     0 // shape
-                } else {
-                    id = it.entity.index
-                    1
-                } // point
+                else 1 // point
 
-                Log.d("VEExport", "exportAnimation: $id")
-                write(id)
+                it.entity.id.write(
+                    this
+                )
 
                 props = 0
                 props = type.toInt() shl 5 or (

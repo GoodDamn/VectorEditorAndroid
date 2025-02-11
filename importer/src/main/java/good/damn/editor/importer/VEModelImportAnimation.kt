@@ -4,5 +4,5 @@ import good.damn.sav.core.animation.animators.VEIListenerAnimation
 
 data class VEModelImportAnimation(
     val static: VEModelImport,
-    val animations: List<VEIListenerAnimation>
+    val animations: List<VEIListenerAnimation>?
 )

@@ -35,7 +35,7 @@ VEITouchable {
                         mSkeleton,
                         event.x,
                         event.y,
-                        index
+                        id.id
                     )
                 }
 

@@ -2,13 +2,10 @@ package good.damn.editor.anchors
 
 import android.graphics.Canvas
 import android.graphics.PointF
-import android.util.Log
 import good.damn.editor.anchors.internal.VEAnchorInternalBase
 import good.damn.editor.anchors.internal.VEAnchorInternalPropLenVertical
-import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.drawLine
 import kotlin.math.abs
-import kotlin.math.cos
 
 class VEAnchorStraightVertical
 : VEBaseAnchor() {
@@ -68,7 +65,7 @@ class VEAnchorStraightVertical
 
         for (it in skeleton.points) {
 
-            if (selectedIndex == it.index) {
+            if (selectedIndex == it.id.id) {
                 continue
             }
 

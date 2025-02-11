@@ -13,7 +13,7 @@ data class VEMFillColor(
 ): VEIFill {
 
     companion object {
-        private const val TYPE = 0
+        const val TYPE = 0
     }
 
     override fun fillPaint(

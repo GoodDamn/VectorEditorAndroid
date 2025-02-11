@@ -108,7 +108,7 @@ VEIListenerAnimationUpdateFrame {
             inp,
             mCanvasSize,
             false
-        )?.apply {
+        ).apply {
             inp.close()
 
             mViewAvs?.model = static
@@ -144,7 +144,7 @@ private inline fun placeDurations(
 ).apply {
     orientation = LinearLayout.HORIZONTAL
 
-    animation.animations.forEach {
+    animation.animations?.forEach {
         EditText(
             context
         ).apply {

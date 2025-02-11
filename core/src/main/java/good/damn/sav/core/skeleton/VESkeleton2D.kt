@@ -2,6 +2,7 @@ package good.damn.sav.core.skeleton
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import good.damn.sav.core.VEMIdentifier
 import good.damn.sav.core.listeners.VEICallbackOnAddSkeletonPoint
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.misc.extensions.drawCircle
@@ -59,7 +60,11 @@ class VESkeleton2D(
     fun addSkeletonPoint(
         point: VEPointIndexed
     ) {
-        point.index = size
+        point.id = VEMIdentifier(
+            size,
+            0
+        )
+
         mPoints.add(
             point
         )

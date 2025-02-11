@@ -1,5 +1,6 @@
 package good.damn.sav.core.lists
 
+import good.damn.sav.core.VEMIdentifier
 import good.damn.sav.core.listeners.VEICallbackOnAddShape
 import good.damn.sav.core.shapes.VEShapeBase
 import java.util.LinkedList
@@ -28,7 +29,10 @@ class VEListShapes
     override fun add(
         element: VEShapeBase
     ): Boolean {
-        element.index = (size shl 16) or 0x0000ffff
+        element.id = VEMIdentifier(
+            size shl 16,
+            16
+        )
         onAddShape?.onAddShape(
             element
         )

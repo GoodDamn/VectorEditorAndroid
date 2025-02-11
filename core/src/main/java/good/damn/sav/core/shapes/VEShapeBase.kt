@@ -3,6 +3,7 @@ package good.damn.sav.core.shapes
 import android.graphics.Paint
 import androidx.annotation.ColorInt
 import good.damn.sav.core.VEIIdentifiable
+import good.damn.sav.core.VEMIdentifier
 import good.damn.sav.core.listeners.VEIHittable
 import good.damn.sav.core.listeners.VEIPointIndexable
 import good.damn.sav.core.shapes.fill.VEIFill
@@ -14,7 +15,7 @@ VEIPointIndexable,
 VEIHittable,
 VEIIdentifiable {
 
-    override var index = 0
+    override var id = VEMIdentifier.ZERO
 
     var fill: VEIFill? = null
         set(v) {

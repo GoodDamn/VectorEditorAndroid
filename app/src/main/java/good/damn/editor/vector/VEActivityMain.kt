@@ -27,7 +27,7 @@ import good.damn.editor.editmodes.freemove.VEEditModeExistingShape
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.export.VEExport
-import good.damn.editor.importer.VEImport
+import good.damn.editor.importer.VEImport2
 import good.damn.editor.vector.bottomsheets.VEBottomSheetSetupShape
 import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
@@ -362,7 +362,7 @@ VEIListenerAnimationUpdateFrame {
         contentResolver.openInputStream(
             uri
         )?.apply {
-            val model = VEImport.static(
+            val model = VEImport2.static(
                 Size(
                     modeShape.canvasWidth,
                     modeShape.canvasHeight

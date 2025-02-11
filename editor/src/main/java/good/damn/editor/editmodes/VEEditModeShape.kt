@@ -1,7 +1,6 @@
 package good.damn.editor.editmodes
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.PointF
 import android.view.MotionEvent
 import good.damn.editor.actions.VEDataActionPosition
@@ -21,7 +20,6 @@ import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.interpolate
 import good.damn.sav.core.extensions.interpolateWith
 import good.damn.sav.core.shapes.fill.VEIFill
-import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
 import java.util.LinkedList
@@ -182,7 +180,7 @@ VEIListenerOnAnchorPoint {
                         skeleton,
                         mTouchX,
                         mTouchY,
-                        to.index
+                        to.id.id
                     )
 
                     mPointFrom?.let { from ->
@@ -203,7 +201,7 @@ VEIListenerOnAnchorPoint {
                         event.x,
                         event.y
                     )?.apply {
-                        if (index == to.index) {
+                        if (id == to.id) {
                             return@let
                         }
                         currentPrimitive.points[1] = this
