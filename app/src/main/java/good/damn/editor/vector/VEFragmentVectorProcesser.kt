@@ -1,19 +1,18 @@
 package good.damn.editor.vector
 
 import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
-import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanvasColor
+import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanvasFill
 import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanvasPosition
 import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanvasWidth
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.views.VEViewAnimatorEditor
-import good.damn.sav.core.VEMIdentifier
-import good.damn.sav.core.animation.keyframe.VEMAnimationOptionColor
+import good.damn.sav.core.animation.keyframe.VEKeyframes
+import good.damn.sav.core.animation.keyframe.VEMAnimationOptionFill
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionPosition
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionWidth
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.misc.structures.tree.BinaryTree
 
 class VEFragmentVectorProcesser
 : VEIListenerOnSelectShape,
@@ -50,13 +49,10 @@ VEIListenerOnSelectPoint {
         shape.hashCode()
     ) {
         arrayListOf(
-            VEAnimationOptionCanvasColor(
+            VEAnimationOptionCanvasFill(
                 shape,
-                VEMAnimationOptionColor(
-                    BinaryTree(
-                        equality = {v, vv -> v.factor == vv.factor},
-                        moreThan = {v, vv -> v.factor > vv.factor}
-                    ),
+                VEMAnimationOptionFill(
+                    VEKeyframes(),
                     duration = 1000
                 ),
                 it
@@ -64,10 +60,7 @@ VEIListenerOnSelectPoint {
             VEAnimationOptionCanvasWidth(
                 shape,
                 VEMAnimationOptionWidth(
-                    BinaryTree(
-                        equality = {v, vv -> v.factor == vv.factor},
-                        moreThan = {v, vv -> v.factor > vv.factor}
-                    ),
+                    VEKeyframes(),
                     duration = 1500
                 ),
                 it
@@ -84,10 +77,7 @@ VEIListenerOnSelectPoint {
             VEAnimationOptionCanvasPosition(
                 point,
                 VEMAnimationOptionPosition(
-                    BinaryTree(
-                        equality = {v, vv -> v.factor == vv.factor},
-                        moreThan = {v, vv -> v.factor > vv.factor}
-                    ),
+                    VEKeyframes(),
                     duration = 2000
                 ),
                 it

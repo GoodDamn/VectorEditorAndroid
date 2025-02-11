@@ -1,16 +1,17 @@
 package good.damn.editor.importer
 
 import android.graphics.PointF
-import android.util.Log
 import good.damn.editor.importer.exceptions.VEExceptionDifferentVersion
 import good.damn.editor.importer.exceptions.VEExceptionNoAnimation
 import good.damn.sav.core.VEMIdentifier
-import good.damn.sav.core.animation.animators.VEAnimatorColor
-import good.damn.sav.core.animation.animators.VEAnimatorPosition
-import good.damn.sav.core.animation.animators.VEAnimatorWidth
+import good.damn.sav.core.animation.animators.VEAnimatorBase
 import good.damn.sav.core.animation.animators.VEIListenerAnimation
+import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorFill
+import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorPosition
+import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorStrokeWidth
+import good.damn.sav.core.animation.interpolators.VEIAnimationInterpolator
 import good.damn.sav.core.animation.keyframe.VEIKeyframe
-import good.damn.sav.core.animation.keyframe.VEMKeyframeColor
+import good.damn.sav.core.animation.keyframe.fill.VEMKeyframeFill
 import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
 import good.damn.sav.core.animation.keyframe.VEMKeyframeWidth
 import good.damn.sav.core.lists.VEListShapes
@@ -42,7 +43,6 @@ class VEImport2 {
                 stream,
                 throwException
             )
-
             val animSize = readU()
 
             if (animSize == 0) {
@@ -59,6 +59,8 @@ class VEImport2 {
             val animations = ArrayList<VEIListenerAnimation>(
                 animSize
             )
+
+            val buffer4 = ByteArray(4)
 
             var type: Int
             var property: Int
@@ -81,14 +83,17 @@ class VEImport2 {
                 keyframesCount = readU()
 
                 if (type == 1) {
-                    createPointAnimation(
-                        property,
-                        this,
-                        keyframesCount,
-                        animations,
-                        entityId,
-                        canvasSize,
-                        model
+                    animations.add(
+                        VEAnimatorBase(
+                            createPointAnimation(
+                                property,
+                                this,
+                                keyframesCount,
+                                entityId,
+                                canvasSize,
+                                model.skeleton
+                            )
+                        )
                     )
                     continue
                 }
@@ -97,9 +102,9 @@ class VEImport2 {
                     property,
                     this,
                     keyframesCount,
-                    animations,
                     model.shapes[(entityId shr 16) and 0xff],
-                    canvasSize
+                    canvasSize,
+                    buffer4
                 )
 
             }
@@ -188,44 +193,11 @@ class VEImport2 {
             for (i in 0 until paletteSize) {
                 val idsCount = readU()
 
-                val fill = when (readU()) {
-                    VEMFillGradientLinear.TYPE -> {
-
-                        val p = PointF(
-                            readFraction() * canvasSize.width,
-                            readFraction() * canvasSize.height
-                        )
-
-                        val pp = PointF(
-                            readFraction() * canvasSize.width,
-                            readFraction() * canvasSize.height
-                        )
-
-                        val s = readU()
-
-                        val colors = IntArray(s).apply {
-                            for (ic in indices) {
-                                this[ic] = readInt32(buffer4)
-                            }
-                        }
-
-                        val positions = FloatArray(s).apply {
-                            for (ic in indices) {
-                                this[ic] = readFraction()
-                            }
-                        }
-
-                        VEMFillGradientLinear(
-                            p,
-                            pp,
-                            colors,
-                            positions
-                        )
-                    }
-                    else -> VEMFillColor(
-                        readInt32(buffer4)
-                    )
-                }
+                val fill = VEMFillColor.import(
+                    this,
+                    buffer4,
+                    canvasSize
+                )
 
                 for (j in 0 until idsCount) {
                     val id = readU()
@@ -245,30 +217,32 @@ private inline fun createShapeAnimation(
     property: Int,
     inp: InputStream,
     keyframesCount: Int,
-    animations: ArrayList<VEIListenerAnimation>,
     shape: VEShapeBase,
-    size: Size
+    size: Size,
+    buffer4: ByteArray
 ) = when (property) {
     0 -> extractAnimation(
         inp,
         keyframesCount,
-        animations,
         keyframeCreate = { stream, fraction ->
-            VEMKeyframeColor.import(
+            VEMKeyframeFill.import(
                 fraction,
+                size,
+                buffer4,
                 stream
             )
         }
-    ) { VEAnimatorColor(
-        shape,
-        it
-    )
+    ) { start, end ->
+        VEAnimationInterpolatorFill(
+            start,
+            end,
+            shape
+        )
     }
 
     else -> extractAnimation(
         inp,
         keyframesCount,
-        animations,
         keyframeCreate = { stream, fraction ->
             VEMKeyframeWidth.import(
                 size,
@@ -276,10 +250,11 @@ private inline fun createShapeAnimation(
                 stream
             )
         }
-    ) {
-        VEAnimatorWidth(
-            shape,
-            it
+    ) { start, end ->
+        VEAnimationInterpolatorStrokeWidth(
+            start,
+            end,
+            shape
         )
     }
 }
@@ -288,14 +263,12 @@ private inline fun createPointAnimation(
     property: Int,
     inp: InputStream,
     keyframesCount: Int,
-    animations: ArrayList<VEIListenerAnimation>,
     id: Int,
     size: Size,
-    model: VEModelImport
+    skeleton: VESkeleton2D
 ) = extractAnimation(
     inp,
     keyframesCount,
-    animations,
     keyframeCreate = { stream, factor ->
         VEMKeyframePosition.import(
             size,
@@ -303,44 +276,58 @@ private inline fun createPointAnimation(
             stream
         )
     }
-) {
-    VEAnimatorPosition(
-        model.skeleton.getPointIndexed(id),
-        it
+) { start, end ->
+    VEAnimationInterpolatorPosition(
+        start,
+        end,
+        skeleton.getPointIndexed(
+            id
+        )
     )
 }
 
 private inline fun <
-        reified KEYFRAME: VEIKeyframe,
-        reified ANIMATOR: VEIListenerAnimation
-        > extractAnimation(
+    reified INTERPOLATOR: VEIAnimationInterpolator,
+    reified KEYFRAME: VEIKeyframe
+> extractAnimation(
     inp: InputStream,
     keyframesCount: Int,
-    animations: ArrayList<VEIListenerAnimation>,
     keyframeCreate: (
         stream: InputStream,
         factor: Float
     ) -> KEYFRAME,
-    animationCreate: (List<KEYFRAME>) -> ANIMATOR
-) {
-    val keyframes = ArrayList<KEYFRAME>(
-        keyframesCount
-    )
-
+    interpolatorCreate: (
+        KEYFRAME,
+        KEYFRAME
+    ) -> INTERPOLATOR
+) = ArrayList<INTERPOLATOR>(
+    keyframesCount - 1
+).apply {
+    var start: KEYFRAME? = null
+    var end: KEYFRAME
     for (j in 0 until keyframesCount) {
-        keyframes.add(
-            keyframeCreate(
+        if (start == null) {
+            start = keyframeCreate(
                 inp,
                 inp.readFraction()
             )
-        )
-    }
+            continue
+        }
 
-    animations.add(
-        animationCreate(
-            keyframes
+        end = keyframeCreate(
+            inp,
+            inp.readFraction()
         )
-    )
+
+        add(
+            interpolatorCreate(
+                start,
+                end
+            )
+        )
+
+        start = end
+    }
 }
 
 private inline fun defineShape(

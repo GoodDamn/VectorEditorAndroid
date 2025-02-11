@@ -4,7 +4,7 @@ import java.util.LinkedList
 import java.util.Stack
 import java.util.function.Consumer
 
-class BinaryTree<T>(
+open class BinaryTree<T>(
     val equality: ((T,T) -> Boolean),
     val moreThan: ((T,T) -> Boolean)
 ) {

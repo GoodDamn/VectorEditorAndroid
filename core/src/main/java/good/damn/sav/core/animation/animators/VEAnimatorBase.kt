@@ -1,15 +1,10 @@
 package good.damn.sav.core.animation.animators
 
-import android.animation.TimeInterpolator
-import android.graphics.PointF
-import good.damn.sav.core.animation.keyframe.VEIKeyframe
-import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
+import android.util.Log
+import good.damn.sav.core.animation.interpolators.VEIAnimationInterpolator
 
-abstract class VEAnimatorBase<
-T: VEIKeyframe
->(
-    private val interpolator: TimeInterpolator,
-    private val keyframes: List<T>
+class VEAnimatorBase(
+    private val interpolators: List<VEIAnimationInterpolator>
 ): VEIListenerAnimation {
 
     companion object {
@@ -23,11 +18,10 @@ T: VEIKeyframe
 
     private var mCurrentDt = 0f
 
-    private lateinit var mStartKeyframe: T
-    private lateinit var mEndKeyframe: T
-    private lateinit var mKeyframeIterator: Iterator<T>
-
     private var mSubDurationFactor = 0f
+
+    private lateinit var mCurrentInterpolator: VEIAnimationInterpolator
+    private lateinit var mIteratorInterpolator: Iterator<VEIAnimationInterpolator>
 
     private var mHasEnded = false
 
@@ -36,16 +30,11 @@ T: VEIKeyframe
         mCurrentSubFactor = 0f
         mHasEnded = false
 
-        mKeyframeIterator = keyframes.iterator()
+        mIteratorInterpolator = interpolators.iterator()
+        mCurrentInterpolator = mIteratorInterpolator.next()
 
-        mStartKeyframe = mKeyframeIterator.next()
-        mEndKeyframe = mKeyframeIterator.next()
-
-        mSubDurationFactor = mEndKeyframe.factor - mStartKeyframe.factor
-
-        onNextFrame(
-            mStartKeyframe,
-            mEndKeyframe,
+        mSubDurationFactor = mCurrentInterpolator.factorGlobalDuration
+        mCurrentInterpolator.interpolate(
             0.0f
         )
     }
@@ -63,50 +52,29 @@ T: VEIKeyframe
             return VEEnumAnimationState.HAS_END
         }
         
-        if (mCurrentFactor < mStartKeyframe.factor) {
+        if (mCurrentFactor < mCurrentInterpolator.start.factor) {
             return VEEnumAnimationState.RUNNING
         }
 
         mCurrentSubFactor = (
-            mCurrentFactor - mStartKeyframe.factor
+            mCurrentFactor - mCurrentInterpolator.start.factor
         ) / mSubDurationFactor
 
-        if (mCurrentFactor > mEndKeyframe.factor) {
-            mStartKeyframe = mEndKeyframe
-
-            if (!mKeyframeIterator.hasNext()) {
+        if (mCurrentFactor > mCurrentInterpolator.end.factor) {
+            if (!mIteratorInterpolator.hasNext()) {
                 mHasEnded = true
                 return VEEnumAnimationState.HAS_END
             }
 
-            mEndKeyframe = mKeyframeIterator.next()
-
-            mSubDurationFactor = mEndKeyframe.factor - mStartKeyframe.factor
+            mCurrentInterpolator = mIteratorInterpolator.next()
+            mSubDurationFactor = mCurrentInterpolator.factorGlobalDuration
         }
 
-        onNextFrame(
-            mStartKeyframe,
-            mEndKeyframe,
-            interpolator.getInterpolation(
-                mCurrentSubFactor
-            )
+        mCurrentInterpolator.interpolate(
+            mCurrentSubFactor
         )
 
         return VEEnumAnimationState.RUNNING
     }
-
-
-    protected abstract fun onNextFrame(
-        start: T,
-        end: T,
-        factor: Float
-    )
-
-    protected inline fun interpolateValue(
-        start: Float,
-        end: Float,
-        factor: Float
-    ) = start + (end - start) * factor
-
 
 }

@@ -12,9 +12,9 @@ import good.damn.sav.misc.extensions.primitives.toDigitalFraction
 import good.damn.sav.misc.extensions.writeToStream
 import java.io.OutputStream
 
-data class VEMFillGradientLinear(
-    private val p0: PointF,
-    private val p1: PointF,
+class VEMFillGradientLinear(
+    p: PointF,
+    pp: PointF,
     private val colors: IntArray,
     private val positions: FloatArray
 ): VEIFill {
@@ -22,6 +22,9 @@ data class VEMFillGradientLinear(
     companion object {
         const val TYPE = 1
     }
+
+    private val p0 = PointF(p.x, p.y)
+    private val p1 = PointF(pp.x, pp.y)
 
     private val gradient = LinearGradient(
         p0.x,

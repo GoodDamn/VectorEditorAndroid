@@ -6,8 +6,9 @@ import good.damn.editor.transaction.VEIRequesterFloat
 import good.damn.editor.transaction.VEITransactionReceiver
 import good.damn.editor.transaction.VETransactionKeyFrame
 import good.damn.sav.core.VEMExportAnimation
-import good.damn.sav.core.animation.animators.VEAnimatorWidth
+import good.damn.sav.core.animation.animators.VEAnimatorBase
 import good.damn.sav.core.animation.animators.VEIListenerAnimation
+import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorStrokeWidth
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
 import good.damn.sav.core.animation.keyframe.VEMKeyframeWidth
 import good.damn.sav.core.shapes.VEShapeBase
@@ -36,14 +37,20 @@ class VEAnimationOptionCanvasWidth(
         option.keyframes.toList()
     ) else null
 
-    override fun createAnimator() = if (
-        option.keyframes.size > 1
-    ) VEAnimatorWidth(
-        shape,
-        option.keyframes.toList()
-    ).apply {
-        duration = option.duration
-    } else null
+    override fun createAnimator() = option.keyframes.convertToInterpolators {
+        start, end ->
+        VEAnimationInterpolatorStrokeWidth(
+            start,
+            end,
+            shape
+        )
+    }?.run {
+        VEAnimatorBase(
+            this
+        ).apply {
+            duration = option.duration
+        }
+    }
 
     override fun onReceiveTransaction() = option.keyframes.add(
         VEMKeyframeWidth(
