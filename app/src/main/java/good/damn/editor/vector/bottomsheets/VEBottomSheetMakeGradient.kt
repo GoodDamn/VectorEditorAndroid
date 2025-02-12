@@ -11,6 +11,7 @@ import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
+import good.damn.sav.misc.extensions.toInt32
 
 class VEBottomSheetMakeGradient(
     private val toView: ViewGroup,
@@ -106,7 +107,7 @@ private inline fun addColorView(
         VEBottomSheetSelectColor(
             toView
         ) {
-            mColors[index] = (it as? VEMFillColor)?.color ?: 0
+            mColors[index] = (it as? VEMFillColor)?.color?.toInt32() ?: 0
             setBackgroundColor(
                 mColors[index]
             )

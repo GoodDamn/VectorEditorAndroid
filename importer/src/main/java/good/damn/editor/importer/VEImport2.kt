@@ -4,9 +4,9 @@ import android.graphics.PointF
 import good.damn.editor.importer.exceptions.VEExceptionDifferentVersion
 import good.damn.editor.importer.exceptions.VEExceptionNoAnimation
 import good.damn.sav.core.VEMIdentifier
-import good.damn.sav.core.animation.animators.VEAnimatorBase
+import good.damn.sav.core.animation.animators.VEAnimatorInterpolation
 import good.damn.sav.core.animation.animators.VEIListenerAnimation
-import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorFill
+import good.damn.sav.core.animation.interpolators.fill.VEAnimationInterpolatorFill
 import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorPosition
 import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorStrokeWidth
 import good.damn.sav.core.animation.interpolators.VEIAnimationInterpolator
@@ -84,7 +84,7 @@ class VEImport2 {
 
                 if (type == 1) {
                     animations.add(
-                        VEAnimatorBase(
+                        VEAnimatorInterpolation(
                             createPointAnimation(
                                 property,
                                 this,
@@ -103,8 +103,7 @@ class VEImport2 {
                     this,
                     keyframesCount,
                     model.shapes[(entityId shr 16) and 0xff],
-                    canvasSize,
-                    buffer4
+                    canvasSize
                 )
 
             }
@@ -188,14 +187,12 @@ class VEImport2 {
             }
 
             // Filling
-            val buffer4 = ByteArray(4)
             val paletteSize = readU()
             for (i in 0 until paletteSize) {
                 val idsCount = readU()
 
-                val fill = VEMFillColor.import(
+                val fill = importFill(
                     this,
-                    buffer4,
                     canvasSize
                 )
 
@@ -218,18 +215,16 @@ private inline fun createShapeAnimation(
     inp: InputStream,
     keyframesCount: Int,
     shape: VEShapeBase,
-    size: Size,
-    buffer4: ByteArray
+    size: Size
 ) = when (property) {
     0 -> extractAnimation(
         inp,
         keyframesCount,
         keyframeCreate = { stream, fraction ->
-            VEMKeyframeFill.import(
+            importFillKeyframe(
                 fraction,
-                size,
-                buffer4,
-                stream
+                stream,
+                size
             )
         }
     ) { start, end ->
@@ -336,4 +331,63 @@ private inline fun defineShape(
     VEShapeFill.shapeType -> VEShapeFill()
     VEShapeBezierQuad.shapeType -> VEShapeBezierQuad()
     else -> VEShapeLine()
+}
+
+private inline fun importFillKeyframe(
+    factor: Float,
+    inp: InputStream,
+    canvasSize: Size
+) = VEMKeyframeFill(
+    factor,
+    importFill(
+        inp,
+        canvasSize
+    )
+)
+
+private fun importFill(
+    inp: InputStream,
+    canvasSize: Size
+) = inp.run {
+    when (readU()) {
+        VEMFillGradientLinear.TYPE -> {
+            val p = PointF(
+                readFraction() * canvasSize.width,
+                readFraction() * canvasSize.height
+            )
+
+            val pp = PointF(
+                readFraction() * canvasSize.width,
+                readFraction() * canvasSize.height
+            )
+
+            val s = readU()
+
+            val colors = IntArray(s).apply {
+                for (ic in indices) {
+                    this[ic] = readInt32(
+                        ByteArray(4)
+                    )
+                }
+            }
+
+            val positions = FloatArray(s).apply {
+                for (ic in indices) {
+                    this[ic] = readFraction()
+                }
+            }
+
+            VEMFillGradientLinear(
+                p,
+                pp,
+                colors,
+                positions
+            )
+        }
+        else -> {
+            val b = ByteArray(4)
+            readInt32(b)
+            VEMFillColor(b)
+        }
+    }
 }

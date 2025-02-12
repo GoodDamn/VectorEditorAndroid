@@ -5,6 +5,7 @@ import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.core.shapes.primitives.VEShapeFill
 import good.damn.sav.core.skeleton.VESkeleton2D
+import good.damn.sav.misc.extensions.primitives.toByteArray
 import good.damn.sav.misc.interfaces.VEITouchable
 
 class VEEditModeFillPoints(
@@ -21,7 +22,7 @@ class VEEditModeFillPoints(
     ): VEShapeFill {
         val shape = VEShapeFill().apply {
             fill = VEMFillColor(
-                0xffff0000.toInt()
+                0xffff0000.toInt().toByteArray()
             )
         }
 

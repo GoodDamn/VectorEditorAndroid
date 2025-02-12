@@ -1,14 +1,13 @@
 package good.damn.sav.core.animation.animators
 
-import android.util.Log
 import good.damn.sav.core.animation.interpolators.VEIAnimationInterpolator
 
-class VEAnimatorBase(
+class VEAnimatorInterpolation(
     private val interpolators: List<VEIAnimationInterpolator>
 ): VEIListenerAnimation {
 
     companion object {
-        private val TAG = VEAnimatorBase::class.simpleName
+        private val TAG = VEAnimatorInterpolation::class.simpleName
     }
 
     override var duration = 1000
@@ -60,6 +59,10 @@ class VEAnimatorBase(
             mCurrentFactor - mCurrentInterpolator.start.factor
         ) / mSubDurationFactor
 
+        mCurrentInterpolator.interpolate(
+            mCurrentSubFactor
+        )
+
         if (mCurrentFactor > mCurrentInterpolator.end.factor) {
             if (!mIteratorInterpolator.hasNext()) {
                 mHasEnded = true
@@ -69,10 +72,6 @@ class VEAnimatorBase(
             mCurrentInterpolator = mIteratorInterpolator.next()
             mSubDurationFactor = mCurrentInterpolator.factorGlobalDuration
         }
-
-        mCurrentInterpolator.interpolate(
-            mCurrentSubFactor
-        )
 
         return VEEnumAnimationState.RUNNING
     }

@@ -18,6 +18,7 @@ import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
 import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
+import good.damn.sav.misc.extensions.primitives.toByteArray
 
 class VEBottomSheetSelectColor(
     toView: ViewGroup,
@@ -26,7 +27,7 @@ class VEBottomSheetSelectColor(
     toView
 ), OnPickColorListener {
 
-    private val mFillColor = VEMFillColor(0)
+    private val mFillColor = VEMFillColor(byteArrayOf(0))
 
     override fun onCreateView(
         context: Context
@@ -49,7 +50,7 @@ class VEBottomSheetSelectColor(
     override fun onPickColor(
         color: Int
     ) {
-        mFillColor.color = color
+        mFillColor.color = color.toByteArray()
         onConfirmFill.onConfirmFill(
             mFillColor
         )

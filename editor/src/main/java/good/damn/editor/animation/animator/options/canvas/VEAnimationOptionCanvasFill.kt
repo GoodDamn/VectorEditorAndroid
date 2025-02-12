@@ -5,9 +5,8 @@ import good.damn.editor.transaction.VEIRequesterFloat
 import good.damn.editor.transaction.VEITransactionReceiver
 import good.damn.editor.transaction.VETransactionKeyFrame
 import good.damn.sav.core.VEMExportAnimation
-import good.damn.sav.core.animation.animators.VEAnimatorBase
-import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorFill
-import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorPosition
+import good.damn.sav.core.animation.animators.VEAnimatorInterpolation
+import good.damn.sav.core.animation.interpolators.fill.VEAnimationInterpolatorFill
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
 import good.damn.sav.core.animation.keyframe.fill.VEMKeyframeFill
 import good.damn.sav.core.shapes.VEShapeBase
@@ -45,7 +44,7 @@ class VEAnimationOptionCanvasFill(
             shape
         )
     }?.run {
-        VEAnimatorBase(
+        VEAnimatorInterpolation(
             this
         ).apply {
             duration = option.duration
@@ -55,7 +54,9 @@ class VEAnimationOptionCanvasFill(
     override fun onReceiveTransaction() = option.keyframes.add(
         VEMKeyframeFill(
             getFactor(),
-            shape.fill ?: VEMFillColor(0)
+            shape.fill ?: VEMFillColor(
+                byteArrayOf(0)
+            )
         )
     )
 

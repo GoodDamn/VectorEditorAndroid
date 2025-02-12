@@ -1,12 +1,11 @@
 package good.damn.editor.animation.animator.options.canvas
 
-import android.graphics.PointF
 import good.damn.editor.animation.animator.options.canvas.previews.VECanvasOptionPreviewPosition
 import good.damn.editor.transaction.VEIRequesterFloat
 import good.damn.editor.transaction.VEITransactionReceiver
 import good.damn.editor.transaction.VETransactionKeyFrame
 import good.damn.sav.core.VEMExportAnimation
-import good.damn.sav.core.animation.animators.VEAnimatorBase
+import good.damn.sav.core.animation.animators.VEAnimatorInterpolation
 import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorPosition
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
 import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
@@ -43,7 +42,7 @@ class VEAnimationOptionCanvasPosition(
             point
         )
     }?.run {
-        VEAnimatorBase(
+        VEAnimatorInterpolation(
             this
         ).apply {
             duration = option.duration
