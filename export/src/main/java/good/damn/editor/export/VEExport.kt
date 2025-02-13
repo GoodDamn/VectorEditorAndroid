@@ -10,6 +10,7 @@ import good.damn.sav.core.shapes.primitives.VEShapeFill
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.io.write
 import good.damn.sav.misc.extensions.primitives.toDigitalFraction
+import good.damn.sav.misc.extensions.writeToStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -60,16 +61,9 @@ class VEExport {
             )
 
             skeleton.points.forEach {
-                write(
-                    it.x.toDigitalFraction(
-                        canvasSize.width
-                    )
-                )
-
-                write(
-                    it.y.toDigitalFraction(
-                        canvasSize.height
-                    )
+                it.writeToStream(
+                    this,
+                    canvasSize
                 )
             }
 

@@ -16,13 +16,14 @@ import good.damn.gradient_color_picker.GradientColorPicker
 import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
+import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
 import good.damn.sav.misc.extensions.primitives.toByteArray
 
 class VEBottomSheetSelectColor(
     toView: ViewGroup,
-    private val onConfirmFill: VEIListenerBottomSheetFill
+    private val onConfirmFill: VEIListenerBottomSheetFill<VEMFillColor>
 ): VEBottomSheet(
     toView
 ), OnPickColorListener {

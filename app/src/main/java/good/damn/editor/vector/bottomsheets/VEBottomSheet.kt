@@ -54,6 +54,7 @@ abstract class VEBottomSheet(
             onCreateView(
                 context
             ).apply {
+                isClickable = true
                 if (layoutParams != null) {
                     return@apply
                 }

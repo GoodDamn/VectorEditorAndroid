@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 
-fun View.bounds(
+inline fun View.bounds(
     width: Float,
     height: Float
 ) {
@@ -16,7 +16,7 @@ fun View.bounds(
     )
 }
 
-fun View.boundsLinear(
+inline fun View.boundsLinear(
     top: Float = 0f,
     start: Float = 0f,
     bottom: Float = 0f,
@@ -37,7 +37,7 @@ fun View.boundsLinear(
     }
 }
 
-fun View.boundsFrame(
+inline fun View.boundsFrame(
     top: Float = 0f,
     start: Float = 0f,
     bottom: Float = 0f,

@@ -17,14 +17,19 @@ import good.damn.gradient_color_picker.GradientColorPicker
 import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.VSViewSeekBarV
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
+import good.damn.sav.core.lists.VEListShapes
+import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
+import good.damn.sav.misc.extensions.toInt32
 
 class VEBottomSheetSetupShape(
     private val toView: ViewGroup,
+    private val currentFill: VEIFill?,
+    private val shapes: VEListShapes,
     private val p: PointF?,
     private val pp: PointF?,
-    private val onConfirmFill: VEIListenerBottomSheetFill
+    private val onConfirmFill: VEIListenerBottomSheetFill<VEIFill>
 ): VEBottomSheet(
     toView
 ) {
@@ -34,18 +39,18 @@ class VEBottomSheetSetupShape(
         context: Context
     ) = FrameLayout(
         context
-    ).apply {
+    ).let { root ->
 
         val rootWidth = VEApp.width.toFloat()
         val rootHeight = VEApp.height * 0.5f
 
-        boundsFrame(
+        root.boundsFrame(
             top = VEApp.height - rootHeight,
             width = rootWidth,
             height = rootHeight
         )
 
-        setBackgroundColor(
+        root.setBackgroundColor(
             0xff000315.toInt()
         )
 
@@ -70,62 +75,135 @@ class VEBottomSheetSetupShape(
             progress = 0.1f
             progressColor = 0xffffffff.toInt()
 
-            addView(this)
+            root.addView(this)
         }
 
-
-        val btnHeight = rootHeight * 0.12f
-        Button(
+        LinearLayout(
             context
         ).apply {
-            text = "color"
 
-            setOnClickListener {
-                VEBottomSheetSelectColor(
-                    toView,
-                    onConfirmFill
-                ).apply {
-                    show()
+            orientation = LinearLayout.VERTICAL
+
+            Button(
+                context
+            ).apply {
+                text = "color"
+
+                setOnClickListener {
+                    VEBottomSheetSelectColor(
+                        toView
+                    ) {
+                        onConfirmFill.onConfirmFill(it)
+                    }.apply {
+                        show()
+                    }
+                }
+
+
+                addView(
+                    this,
+                    -1,
+                    -2
+                )
+            }
+
+            Button(
+                context
+            ).apply {
+                text = "gradient"
+
+                setOnClickListener {
+                    VEBottomSheetMakeGradient(
+                        toView,
+                        p,
+                        pp
+                    ) {
+                        onConfirmFill.onConfirmFill(it)
+                    }.show()
+                }
+
+                addView(
+                    this,
+                    -1,
+                    -2
+                )
+            }
+
+            currentFill?.let { fill ->
+
+                when (fill) {
+                    is VEMFillColor -> addView(
+                        placeColorView(
+                            shapes,
+                            toView,
+                            fill,
+                            onConfirmFill
+                        )
+                    )
+                    is VEMFillGradientLinear -> {
+                        addView(
+                            VEBottomSheetMakeGradient.makeView(
+                                toView.context,
+                                toView,
+                                fill.colors,
+                                fill.positions,
+                                p,
+                                pp
+                            ) {
+                                shapes.forEach { shape ->
+                                    shape.fill = it
+                                }
+                                onConfirmFill.onConfirmFill(it)
+                            }
+                        )
+                    }
                 }
             }
 
-            val width = rootWidth * 0.8f
             boundsFrame(
-                start = rootWidth - width,
-                width = width,
-                height = btnHeight
+                start = rootWidth * 0.2f,
+                width = rootWidth * 0.8f,
+                height = -2f
             )
 
-            addView(
+            root.addView(
                 this
             )
         }
 
-        Button(
-            context
-        ).apply {
-            text = "gradient"
-
-            val width = rootWidth * 0.8f
-            boundsFrame(
-                top = btnHeight,
-                start = rootWidth - width,
-                width = width,
-                height = btnHeight
-            )
-
-            setOnClickListener {
-                VEBottomSheetMakeGradient(
-                    toView,
-                    p,
-                    pp,
-                    onConfirmFill
-                ).show()
-            }
-
-            addView(this)
-        }
-
+        return@let root
     }
 
+}
+
+private inline fun placeColorView(
+    shapes: VEListShapes,
+    toView: ViewGroup,
+    fill: VEMFillColor,
+    onConfirmFill: VEIListenerBottomSheetFill<VEIFill>
+) = View(
+    toView.context
+).apply {
+
+    setBackgroundColor(
+        fill.color.toInt32()
+    )
+
+    setOnClickListener {
+        VEBottomSheetSelectColor(
+            toView
+        ) {
+            fill.color = it?.color ?: byteArrayOf(0)
+            setBackgroundColor(
+                fill.color.toInt32()
+            )
+            shapes.forEach { shape ->
+                shape.fill = fill
+            }
+            onConfirmFill.onConfirmFill(fill)
+        }.show()
+    }
+
+    val s = VEApp.width * 0.2f
+    bounds(s, s)
 }

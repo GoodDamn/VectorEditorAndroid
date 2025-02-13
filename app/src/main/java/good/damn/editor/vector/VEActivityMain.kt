@@ -135,6 +135,7 @@ VEIListenerAnimationUpdateFrame {
         onClickBtnNext = View.OnClickListener {
             onClickBtnNext(it)
         }
+
     }
 
     private val mFragmentVectorAnimation = VEFragmentVectorAnimation().apply {
@@ -323,7 +324,6 @@ VEIListenerAnimationUpdateFrame {
             )
         }
 
-
         mViewPager = ViewPager2(
             context
         ).apply {
@@ -419,7 +419,7 @@ VEIListenerAnimationUpdateFrame {
         mCurrentAnchor?.onAnchorY(y)
     }
 
-    private fun onClickExportVector(
+    private inline fun onClickExportVector(
         v: View
     ) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
@@ -451,25 +451,25 @@ VEIListenerAnimationUpdateFrame {
         }
     }
 
-    private fun onClickImportVector(
+    private inline fun onClickImportVector(
         v: View
     ) = mBrowserContent.launch()
 
-    private fun onClickDeleteAll(
+    private inline fun onClickDeleteAll(
         v: View
     ) {
         modeShape.clearActions()
         mViewVector?.invalidate()
     }
 
-    private fun onClickUndoAction(
+    private inline fun onClickUndoAction(
         v: View
     ) {
         modeShape.undoAction()
         mViewVector?.invalidate()
     }
 
-    private fun onClickBtnPrev(
+    private inline fun onClickBtnPrev(
         v: View
     ) {
         mViewPager?.currentItem = 0
@@ -477,7 +477,7 @@ VEIListenerAnimationUpdateFrame {
         mCurrentAnchor = modeShape
     }
 
-    private fun onClickBtnNext(
+    private inline fun onClickBtnNext(
         v: View
     ) {
         mViewPager?.currentItem = 1
@@ -493,6 +493,8 @@ VEIListenerAnimationUpdateFrame {
 
         VEBottomSheetSetupShape(
             view,
+            shape.fill,
+            modeShape.shapes,
             shape.points.firstOrNull(),
             shape.points.lastOrNull()
         ) {

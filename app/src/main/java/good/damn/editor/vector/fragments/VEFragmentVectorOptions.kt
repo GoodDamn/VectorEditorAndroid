@@ -93,46 +93,58 @@ VEIColorPickable {
             )
         }
 
-        Button(
+        LinearLayout(
             context
         ).apply {
+            orientation = LinearLayout.HORIZONTAL
 
-            text = ">"
-
-            setOnClickListener(
-                onClickBtnNext
-            )
-
-            root.addView(
-                this,
-                -2,
-                -2
-            )
-        }
-
-        Button(
-            context
-        ).apply {
-            text = "Test"
-
-            layoutParams = LinearLayout.LayoutParams(
-                -2,
-                -2
+            Button(
+                context
             ).apply {
-                gravity = Gravity.END
+
+                text = ">"
+
+                setOnClickListener(
+                    onClickBtnNext
+                )
+
+                addView(
+                    this,
+                    -2,
+                    -2
+                )
             }
 
-            setOnClickListener {
-                context.startActivity(
-                    Intent(
-                        context,
-                        VEActivityImport::class.java
+            Button(
+                context
+            ).apply {
+                text = "Test"
+
+                layoutParams = LinearLayout.LayoutParams(
+                    -2,
+                    -2
+                ).apply {
+                    gravity = Gravity.END
+                }
+
+                setOnClickListener {
+                    context.startActivity(
+                        Intent(
+                            context,
+                            VEActivityImport::class.java
+                        )
                     )
+                }
+
+                addView(
+                    this
                 )
             }
 
             root.addView(
-                this
+                this,
+                -1,
+                -2
             )
         }
 
