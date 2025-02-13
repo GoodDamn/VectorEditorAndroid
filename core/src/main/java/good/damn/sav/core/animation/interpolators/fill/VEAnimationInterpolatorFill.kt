@@ -1,6 +1,5 @@
 package good.damn.sav.core.animation.interpolators.fill
 
-import android.util.Log
 import good.damn.sav.core.animation.interpolators.VEIAnimationInterpolator
 import good.damn.sav.core.animation.keyframe.fill.VEMKeyframeFill
 import good.damn.sav.core.shapes.VEShapeBase
@@ -11,22 +10,17 @@ class VEAnimationInterpolatorFill(
     private val shape: VEShapeBase
 ): VEIAnimationInterpolator {
 
-    private val mPriorityKeyframe = if (
-        start.fill.priority > end.fill.priority
-    )start else end
-
-    init {
-        start.fill.startInterpolate()
-        end.fill.startInterpolate()
-    }
+    private val mPriorityFill = if (
+        start.fillPriority.priority > end.fillPriority.priority
+    ) start.fillPriority else end.fillPriority
 
     override fun interpolate(
         factor: Float
     ) {
-        shape.fill = mPriorityKeyframe.fill.priorityInterpolate(
+        shape.fill = mPriorityFill.priorityInterpolate(
             factor,
-            start.fill,
-            end.fill
+            start.fillPriority,
+            end.fillPriority
         )
     }
 }

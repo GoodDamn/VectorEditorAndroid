@@ -1,5 +1,6 @@
 package good.damn.sav.core.animation.keyframe.fill
 
+import good.damn.sav.core.animation.keyframe.VEIInterpolatablePriority
 import good.damn.sav.core.animation.keyframe.VEIKeyframe
 import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.core.shapes.fill.VEMFillColor
@@ -12,7 +13,8 @@ import java.io.OutputStream
 
 data class VEMKeyframeFill(
     override val factor: Float,
-    val fill: VEIFill
+    val fill: VEIFill,
+    val fillPriority: VEIInterpolatablePriority
 ): VEIKeyframe {
 
     override fun export(

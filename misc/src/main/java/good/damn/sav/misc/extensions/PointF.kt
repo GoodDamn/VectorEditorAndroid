@@ -1,8 +1,8 @@
 package good.damn.sav.misc.extensions
 
 import android.graphics.PointF
-import good.damn.sav.misc.extensions.io.write
-import good.damn.sav.misc.extensions.primitives.toDigitalFraction
+import good.damn.sav.misc.Size
+import good.damn.sav.misc.utils.VEUtilsWrite
 import java.io.OutputStream
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -23,21 +23,13 @@ inline fun PointF.angle(
 
 inline fun PointF.writeToStream(
     out: OutputStream,
-    width: Float,
-    height: Float
-) = out.run {
-    write(
-        x.toDigitalFraction(
-            width
-        )
-    )
-
-    write(
-        y.toDigitalFraction(
-            height
-        )
-    )
-}
+    size: Size
+) = VEUtilsWrite.xy(
+    x,
+    y,
+    size,
+    out
+)
 
 inline fun PointF.interpolate(
     f: Float,

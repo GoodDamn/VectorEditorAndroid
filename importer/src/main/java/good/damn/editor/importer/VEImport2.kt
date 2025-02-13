@@ -10,6 +10,8 @@ import good.damn.sav.core.animation.interpolators.fill.VEAnimationInterpolatorFi
 import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorPosition
 import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorStrokeWidth
 import good.damn.sav.core.animation.interpolators.VEIAnimationInterpolator
+import good.damn.sav.core.animation.interpolators.fill.VEMFillColorPriority
+import good.damn.sav.core.animation.interpolators.fill.VEMFillGradientPriority
 import good.damn.sav.core.animation.keyframe.VEIKeyframe
 import good.damn.sav.core.animation.keyframe.fill.VEMKeyframeFill
 import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
@@ -60,8 +62,6 @@ class VEImport2 {
                 animSize
             )
 
-            val buffer4 = ByteArray(4)
-
             var type: Int
             var property: Int
             var entityId: Int
@@ -98,16 +98,18 @@ class VEImport2 {
                     continue
                 }
 
-                createShapeAnimation(
-                    property,
-                    this,
-                    keyframesCount,
-                    model.shapes[(entityId shr 16) and 0xff],
-                    canvasSize
+                animations.add(
+                    VEAnimatorInterpolation(
+                        createShapeAnimation(
+                            property,
+                            this,
+                            keyframesCount,
+                            model.shapes[(entityId shr 16) and 0xff],
+                            canvasSize
+                        )
+                    )
                 )
-
             }
-
 
             return@run VEModelImportAnimation(
                 model,
@@ -210,7 +212,7 @@ class VEImport2 {
     }
 }
 
-private inline fun createShapeAnimation(
+private fun createShapeAnimation(
     property: Int,
     inp: InputStream,
     keyframesCount: Int,
@@ -254,7 +256,7 @@ private inline fun createShapeAnimation(
     }
 }
 
-private inline fun createPointAnimation(
+private fun createPointAnimation(
     property: Int,
     inp: InputStream,
     keyframesCount: Int,
@@ -281,9 +283,9 @@ private inline fun createPointAnimation(
     )
 }
 
-private inline fun <
-    reified INTERPOLATOR: VEIAnimationInterpolator,
-    reified KEYFRAME: VEIKeyframe
+private fun <
+    INTERPOLATOR: VEIAnimationInterpolator,
+    KEYFRAME: VEIKeyframe
 > extractAnimation(
     inp: InputStream,
     keyframesCount: Int,
@@ -325,7 +327,7 @@ private inline fun <
     }
 }
 
-private inline fun defineShape(
+private fun defineShape(
     type: Int
 ) = when (type) {
     VEShapeFill.shapeType -> VEShapeFill()
@@ -333,17 +335,20 @@ private inline fun defineShape(
     else -> VEShapeLine()
 }
 
-private inline fun importFillKeyframe(
+private fun importFillKeyframe(
     factor: Float,
     inp: InputStream,
     canvasSize: Size
-) = VEMKeyframeFill(
-    factor,
-    importFill(
-        inp,
-        canvasSize
+) = importFill(
+    inp,
+    canvasSize
+).run {
+    VEMKeyframeFill(
+        factor,
+        this,
+        createPriority()
     )
-)
+}
 
 private fun importFill(
     inp: InputStream,
@@ -351,39 +356,34 @@ private fun importFill(
 ) = inp.run {
     when (readU()) {
         VEMFillGradientLinear.TYPE -> {
-            val p = PointF(
-                readFraction() * canvasSize.width,
-                readFraction() * canvasSize.height
-            )
+            val p0x = readFraction() * canvasSize.width
+            val p0y = readFraction() * canvasSize.height
 
-            val pp = PointF(
-                readFraction() * canvasSize.width,
-                readFraction() * canvasSize.height
-            )
+            val p1x = readFraction() * canvasSize.width
+            val p1y = readFraction() * canvasSize.height
 
             val s = readU()
 
-            val colors = IntArray(s).apply {
-                for (ic in indices) {
-                    this[ic] = readInt32(
-                        ByteArray(4)
-                    )
-                }
-            }
-
-            val positions = FloatArray(s).apply {
-                for (ic in indices) {
-                    this[ic] = readFraction()
-                }
-            }
-
             VEMFillGradientLinear(
-                p,
-                pp,
-                colors,
-                positions
+                p0x,
+                p0y,
+                p1x,
+                p1y,
+                IntArray(s).apply {
+                    for (ic in indices) {
+                        this[ic] = readInt32(
+                            ByteArray(4)
+                        )
+                    }
+                },
+                FloatArray(s).apply {
+                    for (ic in indices) {
+                        this[ic] = readFraction()
+                    }
+                }
             )
         }
+
         else -> {
             val b = ByteArray(4)
             readInt32(b)

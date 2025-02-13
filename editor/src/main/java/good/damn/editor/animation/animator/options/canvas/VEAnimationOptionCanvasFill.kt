@@ -7,6 +7,7 @@ import good.damn.editor.transaction.VETransactionKeyFrame
 import good.damn.sav.core.VEMExportAnimation
 import good.damn.sav.core.animation.animators.VEAnimatorInterpolation
 import good.damn.sav.core.animation.interpolators.fill.VEAnimationInterpolatorFill
+import good.damn.sav.core.animation.interpolators.fill.VEMFillColorPriority
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
 import good.damn.sav.core.animation.keyframe.fill.VEMKeyframeFill
 import good.damn.sav.core.shapes.VEShapeBase
@@ -51,13 +52,17 @@ class VEAnimationOptionCanvasFill(
         }
     }
 
-    override fun onReceiveTransaction() = option.keyframes.add(
-        VEMKeyframeFill(
-            getFactor(),
-            shape.fill ?: VEMFillColor(
-                byteArrayOf(0)
+    override fun onReceiveTransaction() {
+        val fill = shape.fill
+            ?: return
+
+        option.keyframes.add(
+            VEMKeyframeFill(
+                getFactor(),
+                fill,
+                fill.createPriority()
             )
         )
-    )
+    }
 
 }

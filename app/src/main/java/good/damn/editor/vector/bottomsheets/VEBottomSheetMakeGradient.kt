@@ -21,12 +21,14 @@ class VEBottomSheetMakeGradient(
 ): VEBottomSheet(
     toView
 ) {
-
-    private val mColors = IntArray(3)
     private val mPositions = floatArrayOf(
         0.0f,
         0.5f,
         1.0f
+    )
+
+    private val mColors = IntArray(
+        mPositions.size
     )
 
     override fun onCreateView(
@@ -34,6 +36,9 @@ class VEBottomSheetMakeGradient(
     ) = LinearLayout(
         context
     ).apply {
+
+        p ?: return@apply
+        pp ?: return@apply
 
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER
@@ -44,7 +49,11 @@ class VEBottomSheetMakeGradient(
             this,
             w,
             mColors,
-            0
+            mPositions,
+            0,
+            onConfirmFill,
+            p,
+            pp
         )
 
         addColorView(
@@ -52,7 +61,11 @@ class VEBottomSheetMakeGradient(
             this,
             w,
             mColors,
-            1
+            mPositions,
+            1,
+            onConfirmFill,
+            p,
+            pp
         )
 
         addColorView(
@@ -60,7 +73,11 @@ class VEBottomSheetMakeGradient(
             this,
             w,
             mColors,
-            2
+            mPositions,
+            2,
+            onConfirmFill,
+            p,
+            pp
         )
 
         setBackgroundColor(
@@ -75,20 +92,6 @@ class VEBottomSheetMakeGradient(
         )
     }
 
-    override fun dismiss() {
-        p ?: return
-        pp ?: return
-        onConfirmFill.onConfirmFill(
-            VEMFillGradientLinear(
-                p,
-                pp,
-                mColors,
-                mPositions
-            )
-        )
-        super.dismiss()
-    }
-
 }
 
 private inline fun addColorView(
@@ -96,7 +99,11 @@ private inline fun addColorView(
     root: LinearLayout,
     w: Int,
     mColors: IntArray,
-    index: Int
+    mPositions: FloatArray,
+    index: Int,
+    onConfirmFill: VEIListenerBottomSheetFill,
+    p: PointF,
+    pp: PointF
 ) = View(
     toView.context
 ).apply {
@@ -110,6 +117,17 @@ private inline fun addColorView(
             mColors[index] = (it as? VEMFillColor)?.color?.toInt32() ?: 0
             setBackgroundColor(
                 mColors[index]
+            )
+
+            onConfirmFill.onConfirmFill(
+                VEMFillGradientLinear(
+                    p.x,
+                    p.y,
+                    pp.x,
+                    pp.y,
+                    mColors,
+                    mPositions
+                )
             )
         }.show()
     }

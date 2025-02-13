@@ -4,6 +4,7 @@ import android.graphics.Paint
 import androidx.annotation.ColorInt
 import good.damn.sav.core.VEIIdentifiable
 import good.damn.sav.core.VEMIdentifier
+import good.damn.sav.core.animation.keyframe.VEIInterpolatablePriority
 import good.damn.sav.core.listeners.VEIHittable
 import good.damn.sav.core.listeners.VEIPointIndexable
 import good.damn.sav.core.shapes.fill.VEIFill
