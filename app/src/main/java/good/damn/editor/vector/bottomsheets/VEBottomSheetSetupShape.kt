@@ -26,7 +26,6 @@ import good.damn.sav.misc.extensions.toInt32
 class VEBottomSheetSetupShape(
     private val toView: ViewGroup,
     private val currentFill: VEIFill?,
-    private val shapes: VEListShapes,
     private val p: PointF?,
     private val pp: PointF?,
     private val onConfirmFill: VEIListenerBottomSheetFill<VEIFill>
@@ -134,7 +133,6 @@ class VEBottomSheetSetupShape(
                 when (fill) {
                     is VEMFillColor -> addView(
                         placeColorView(
-                            shapes,
                             toView,
                             fill,
                             onConfirmFill
@@ -150,9 +148,16 @@ class VEBottomSheetSetupShape(
                                 p,
                                 pp
                             ) {
-                                shapes.forEach { shape ->
-                                    shape.fill = it
-                                }
+                                it ?: return@makeView
+                                fill.updateGradient(
+                                    it.p0x,
+                                    it.p0y,
+                                    it.p1x,
+                                    it.p1y,
+                                    it.colors,
+                                    it.positions,
+                                    it.gradient
+                                )
                                 onConfirmFill.onConfirmFill(it)
                             }
                         )
@@ -177,7 +182,6 @@ class VEBottomSheetSetupShape(
 }
 
 private inline fun placeColorView(
-    shapes: VEListShapes,
     toView: ViewGroup,
     fill: VEMFillColor,
     onConfirmFill: VEIListenerBottomSheetFill<VEIFill>
@@ -197,9 +201,6 @@ private inline fun placeColorView(
             setBackgroundColor(
                 fill.color.toInt32()
             )
-            shapes.forEach { shape ->
-                shape.fill = fill
-            }
             onConfirmFill.onConfirmFill(fill)
         }.show()
     }

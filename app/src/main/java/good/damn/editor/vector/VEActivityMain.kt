@@ -494,11 +494,13 @@ VEIListenerAnimationUpdateFrame {
         VEBottomSheetSetupShape(
             view,
             shape.fill,
-            modeShape.shapes,
             shape.points.firstOrNull(),
             shape.points.lastOrNull()
         ) {
             shape.fill = it
+            modeShape.shapes.forEach { shape ->
+                shape.updateFillPaint()
+            }
             mViewVector?.invalidate()
         }.apply {
             onSeekProgressWidth = VSIListenerSeekBarProgress {

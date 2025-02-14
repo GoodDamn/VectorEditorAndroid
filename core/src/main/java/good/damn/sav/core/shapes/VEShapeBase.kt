@@ -34,6 +34,10 @@ VEIIdentifiable {
         style = Paint.Style.STROKE
     }
 
+    fun updateFillPaint() {
+        fill?.fillPaint(mPaint)
+    }
+
     abstract fun shapeType(): Int
 
     abstract fun newInstance(
