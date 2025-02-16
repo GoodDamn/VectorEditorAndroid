@@ -59,7 +59,7 @@ class VEAnimationOptionCanvasFill(
         option.keyframes.add(
             VEMKeyframeFill(
                 getFactor(),
-                fill,
+                fill.copy(),
                 fill.createPriority()
             )
         )

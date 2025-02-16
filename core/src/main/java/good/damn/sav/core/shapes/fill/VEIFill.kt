@@ -13,6 +13,8 @@ interface VEIFill {
 
     fun createPriority(): VEIInterpolatablePriority
 
+    fun copy(): VEIFill
+
     fun write(
         os: OutputStream,
         s: Size

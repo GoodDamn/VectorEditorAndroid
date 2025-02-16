@@ -56,6 +56,13 @@ data class VEMFillGradientLinear(
         this.gradient = gradient
     }
 
+    override fun copy() = VEMFillGradientLinear(
+        p0x, p0y,
+        p1x, p1y,
+        colors.clone(),
+        positions.clone()
+    )
+
     override fun createPriority() = VEMFillGradientPriority(
         this
     )

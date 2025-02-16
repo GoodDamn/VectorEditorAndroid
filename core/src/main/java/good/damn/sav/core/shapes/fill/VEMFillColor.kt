@@ -33,6 +33,10 @@ data class VEMFillColor(
         write(color)
     }
 
+    override fun copy() = VEMFillColor(
+        color.clone()
+    )
+
     override fun createPriority() = VEMFillColorPriority(
         this
     )
