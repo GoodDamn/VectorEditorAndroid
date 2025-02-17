@@ -5,10 +5,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import good.damn.editor.importer.VEModelImport
 import good.damn.editor.importer.VEModelImportAnimation
@@ -34,7 +36,7 @@ VEIListenerAnimationUpdateFrame {
     private val mCanvasSize = Size()
     private var mViewAvs: VEViewAVS? = null
 
-    private var mRootLayout: FrameLayout? = null
+    private var mScrollLayout: LinearLayout? = null
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -44,11 +46,12 @@ VEIListenerAnimationUpdateFrame {
         )
 
         val context = this
-        FrameLayout(
+        val heightAnim = (VEApp.height * 0.25f).toInt()
+        LinearLayout(
             context
         ).apply {
 
-            mRootLayout = this
+            orientation = LinearLayout.VERTICAL
 
             setBackgroundColor(
                 0xff000315.toInt()
@@ -57,13 +60,40 @@ VEIListenerAnimationUpdateFrame {
             mCanvasSize.width = VEApp.width.toFloat()
             mCanvasSize.height = VEApp.width.toFloat()
 
+            ScrollView(
+                context
+            ).let { scrollView ->
+
+                scrollView.setBackgroundColor(0)
+
+                LinearLayout(
+                    context
+                ).let { scrollLayout ->
+                    scrollLayout.orientation = LinearLayout
+                        .VERTICAL
+
+                    mScrollLayout = scrollLayout
+                    scrollLayout.setBackgroundColor(0)
+                    scrollView.addView(
+                        scrollLayout
+                    )
+                }
+
+                addView(
+                    scrollView,
+                    VEApp.width,
+                    heightAnim
+                )
+            }
+
             VEViewAVS(
                 context
             ).apply {
                 mViewAvs = this
 
-                setOnClickListener {
+                setBackgroundColor(0)
 
+                setOnClickListener {
                     if (mAnimator.isPlaying) {
                         mAnimator.stop()
                     }
@@ -78,8 +108,8 @@ VEIListenerAnimationUpdateFrame {
 
                 addView(
                     this,
-                    VEApp.width,
-                    VEApp.width
+                    mCanvasSize.width.toInt(),
+                    mCanvasSize.height.toInt()
                 )
             }
 
@@ -113,15 +143,11 @@ VEIListenerAnimationUpdateFrame {
 
             mViewAvs?.model = static
 
-            mRootLayout?.let {
-                if (it.childCount > 1) {
-                    it.removeViewAt(0)
-                }
-
+            mScrollLayout?.let {
                 placeDurations(
-                    mRootLayout!!,
+                    it,
                     this@VEActivityImport,
-                    this@apply
+                    this
                 )
             }
         }
@@ -136,61 +162,49 @@ VEIListenerAnimationUpdateFrame {
 }
 
 private inline fun placeDurations(
-    rootLayout: ViewGroup,
+    rootLayout: LinearLayout,
     context: Context,
     animation: VEModelImportAnimation
-) = LinearLayout(
-    context
-).apply {
-    orientation = LinearLayout.HORIZONTAL
+) = animation.animations?.forEach {
+    EditText(
+        context
+    ).apply {
+        setText(
+            it.duration.toString()
+        )
 
-    animation.animations?.forEach {
-        EditText(
-            context
-        ).apply {
-            setText(
-                it.duration.toString()
-            )
+        setTextColor(
+            0xafafafaf.toInt()
+        )
 
-            setTextColor(
-                0xafafafaf.toInt()
-            )
+        addTextChangedListener(
+            object: TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
 
-            addTextChangedListener(
-                object: TextWatcher {
-                    override fun beforeTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        count: Int,
-                        after: Int
-                    ) = Unit
-
-                    override fun onTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        before: Int,
-                        count: Int
-                    ) {
-                        it.duration = s?.toString()?.toIntOrNull() ?: 1000
-                    }
-
-                    override fun afterTextChanged(s: Editable?) = Unit
-
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+                    it.duration = s?.toString()?.toIntOrNull() ?: 1000
                 }
-            )
 
-            addView(
-                this,
-                -2,
-                -2
-            )
-        }
+                override fun afterTextChanged(s: Editable?) = Unit
 
+            }
+        )
+
+        rootLayout.addView(
+            this,
+            -1,
+            -2
+        )
     }
 
-    rootLayout.addView(
-        this,
-        -1,
-        -2
-    )
 }
