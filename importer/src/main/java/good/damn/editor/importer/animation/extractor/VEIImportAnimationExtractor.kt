@@ -1,5 +1,7 @@
 package good.damn.editor.importer.animation.extractor
 
+import good.damn.sav.core.animation.keyframe.VEIKeyframe
+import good.damn.sav.core.animation.keyframe.VEKeyframes
 import good.damn.sav.misc.extensions.io.readFraction
 import java.io.InputStream
 
@@ -9,7 +11,26 @@ interface VEIImportAnimationExtractor<
 > {
 
     companion object {
-        fun <KEYFRAME, INTERPOLATOR> extractAnimation(
+
+        fun <KEYFRAME: VEIKeyframe, INTERPOLATOR> extractAnimationKeyframes(
+            keyframesCount: Int,
+            inp: InputStream,
+            extractor: VEIImportAnimationExtractor<
+                KEYFRAME,
+                INTERPOLATOR
+            >
+        ) = VEKeyframes<KEYFRAME>().apply {
+            for (j in 0 until keyframesCount) {
+                add(
+                    extractor.createKeyframe(
+                        inp,
+                        inp.readFraction()
+                    )
+                )
+            }
+        }
+
+        fun <KEYFRAME, INTERPOLATOR> extractAnimationInterpolators(
             keyframesCount: Int,
             inp: InputStream,
             extractor: VEIImportAnimationExtractor<

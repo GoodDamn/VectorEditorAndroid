@@ -16,6 +16,7 @@ import androidx.constraintlayout.motion.widget.KeyFrames
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
+import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
 import good.damn.editor.editmodes.VEEditModeAnimation
 import good.damn.editor.editmodes.VEEditModeFillPoints
 import good.damn.editor.vector.browsers.VEBrowserContent
@@ -34,6 +35,7 @@ import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
 import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
 import good.damn.editor.vector.fragments.VEFragmentVectorOptions
+import good.damn.editor.vector.importer.VEImportAnimationMutable
 import good.damn.editor.vector.launchers.VELauncherPermission
 import good.damn.editor.vector.launchers.VEListenerOnResultPermission
 import good.damn.editor.views.VEViewVectorEditor
@@ -365,13 +367,23 @@ VEIListenerAnimationUpdateFrame {
         contentResolver.openInputStream(
             uri
         )?.apply {
-            val model = VEImport2.animation(
-                Size(
-                    modeShape.canvasWidth,
-                    modeShape.canvasHeight
-                ),
+            val canvasSize = Size(
+                modeShape.canvasWidth,
+                modeShape.canvasHeight
+            )
+
+            val processer = mFragmentVectorAnimation
+                .processer
+
+            val model = VEImport2.animationWrapper(
+                canvasSize,
                 this,
-                true
+                true,
+                VEImportAnimationMutable(
+                    canvasSize,
+                    processer.viewAnimatorEditor!!,
+                    2000
+                )
             )
             close()
 
@@ -384,10 +396,18 @@ VEIListenerAnimationUpdateFrame {
                 shapes.addAll(
                     model.static.shapes
                 )
-
-                mViewVector?.invalidate()
             }
 
+            processer.clearAnimations()
+
+            model.animations?.forEach {
+                processer.addAnimation(
+                    it.id,
+                    it.animation
+                )
+            }
+
+            mViewVector?.invalidate()
         }
 
     }

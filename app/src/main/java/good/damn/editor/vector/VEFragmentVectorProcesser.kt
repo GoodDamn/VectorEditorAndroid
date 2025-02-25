@@ -7,8 +7,6 @@ import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanva
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.views.VEViewAnimatorEditor
-import good.damn.sav.core.animation.animators.VEAnimatorInterpolation
-import good.damn.sav.core.animation.animators.VEIListenerAnimation
 import good.damn.sav.core.animation.keyframe.VEKeyframes
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionFill
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionPosition
@@ -22,10 +20,10 @@ VEIListenerOnSelectPoint {
 
     private var mAnimations = HashMap<
         Int,
-        List<VEIAnimationOptionCanvas>
+        MutableList<VEIAnimationOptionCanvas>
     >(10)
 
-    private var mCurrentAnimation: List<VEIAnimationOptionCanvas>? = null
+    private var mCurrentAnimation: MutableList<VEIAnimationOptionCanvas>? = null
 
     private var mCurrentAnimationId = 0xffff
 
@@ -35,6 +33,10 @@ VEIListenerOnSelectPoint {
         it.value.mapNotNull {
             anim -> anim.exportAnimation()
         }
+    }
+
+    fun clearAnimations() {
+        mAnimations.clear()
     }
 
     fun play() = viewAnimatorEditor?.run {
@@ -47,9 +49,16 @@ VEIListenerOnSelectPoint {
 
     fun addAnimation(
         id: Int,
-        animation: List<VEIAnimationOptionCanvas>
+        animation: VEIAnimationOptionCanvas
     ) {
-        mAnimations[id] = animation
+        mAnimations[id]?.apply {
+            add(animation)
+            return@apply
+        }
+
+        mAnimations[id] = arrayListOf(
+            animation
+        )
     }
 
     override fun onSelectShape(

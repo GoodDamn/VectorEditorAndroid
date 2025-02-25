@@ -5,10 +5,8 @@ import java.util.Stack
 import java.util.function.Consumer
 
 open class BinaryTree<T>(
-    val equality: ((T,T) -> Boolean),
-    val moreThan: ((T,T) -> Boolean)
+    val balancer: BinaryTreeBalancer<T>
 ) {
-    private var root: Node<T>? = null
 
     var size = 0
         private set
@@ -31,6 +29,8 @@ open class BinaryTree<T>(
 
         size++
     }
+
+    private var root: Node<T>? = null
 
     fun forEach(
         node: Node<T>? = root,
@@ -75,7 +75,9 @@ private fun <T> BinaryTree<T>.searchAdd(
         return
     }
 
-    if (moreThan.invoke(data, node.data)) {
+    if (balancer.moreThan(
+        data, node.data
+    )) {
         if (node.rightNode == null) {
             node.rightNode = Node(
                 data
