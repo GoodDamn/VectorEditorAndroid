@@ -8,15 +8,15 @@ import good.damn.sav.core.VEMExportAnimation
 import good.damn.sav.core.animation.animators.VEAnimatorInterpolation
 import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorStrokeWidth
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
-import good.damn.sav.core.animation.keyframe.VEMKeyframeWidth
+import good.damn.sav.core.animation.keyframe.VEMKeyframeStrokeWidth
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.misc.structures.tree.toList
 
 class VEAnimationOptionCanvasWidth(
     private val shape: VEShapeBase,
-    option: VEIAnimationOption<VEMKeyframeWidth>,
+    option: VEIAnimationOption<VEMKeyframeStrokeWidth>,
     requester: VEIRequesterFloat
-): VEAnimationOptionCanvasBase<VEMKeyframeWidth>(
+): VEAnimationOptionCanvasBase<VEMKeyframeStrokeWidth>(
     option,
     requester
 ), VEITransactionReceiver {
@@ -51,7 +51,7 @@ class VEAnimationOptionCanvasWidth(
     }
 
     override fun onReceiveTransaction() = option.keyframes.add(
-        VEMKeyframeWidth(
+        VEMKeyframeStrokeWidth(
             getFactor(),
             shape.strokeWidth
         )

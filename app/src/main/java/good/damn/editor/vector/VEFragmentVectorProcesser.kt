@@ -7,6 +7,8 @@ import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanva
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.views.VEViewAnimatorEditor
+import good.damn.sav.core.animation.animators.VEAnimatorInterpolation
+import good.damn.sav.core.animation.animators.VEIListenerAnimation
 import good.damn.sav.core.animation.keyframe.VEKeyframes
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionFill
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionPosition
@@ -42,6 +44,13 @@ VEIListenerOnSelectPoint {
     }
 
     fun pause() = viewAnimatorEditor?.pause()
+
+    fun addAnimation(
+        id: Int,
+        animation: List<VEIAnimationOptionCanvas>
+    ) {
+        mAnimations[id] = animation
+    }
 
     override fun onSelectShape(
         shape: VEShapeBase

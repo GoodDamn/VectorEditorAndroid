@@ -7,7 +7,7 @@ import good.damn.sav.misc.extensions.primitives.toDigitalFraction
 import java.io.InputStream
 import java.io.OutputStream
 
-data class VEMKeyframeWidth(
+data class VEMKeyframeStrokeWidth(
     override val factor: Float,
     val strokeWidth: Float
 ): VEIKeyframe {
@@ -18,7 +18,7 @@ data class VEMKeyframeWidth(
             factor: Float,
             inp: InputStream
         ) = inp.run {
-            VEMKeyframeWidth(
+            VEMKeyframeStrokeWidth(
                 factor,
                 readU() * size.width,
             )

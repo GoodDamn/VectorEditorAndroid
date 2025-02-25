@@ -17,6 +17,23 @@ data class VEMKeyframeFill(
     val fillPriority: VEIInterpolatablePriority
 ): VEIKeyframe {
 
+    companion object {
+        fun import(
+            factor: Float,
+            inp: InputStream,
+            canvasSize: Size
+        ) = VEIFill.importFill(
+            inp,
+            canvasSize
+        ).run {
+            VEMKeyframeFill(
+                factor,
+                this,
+                createPriority()
+            )
+        }
+    }
+
     override fun export(
         os: OutputStream,
         canvasSize: Size

@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.KeyFrames
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
@@ -38,7 +39,9 @@ import good.damn.editor.vector.launchers.VEListenerOnResultPermission
 import good.damn.editor.views.VEViewVectorEditor
 import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
+import good.damn.sav.core.animation.animators.VEAnimatorInterpolation
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
+import good.damn.sav.core.animation.keyframe.VEKeyframes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.fill.VEIFill
@@ -362,7 +365,7 @@ VEIListenerAnimationUpdateFrame {
         contentResolver.openInputStream(
             uri
         )?.apply {
-            val model = VEImport2.static(
+            val model = VEImport2.animation(
                 Size(
                     modeShape.canvasWidth,
                     modeShape.canvasHeight
@@ -374,12 +377,12 @@ VEIListenerAnimationUpdateFrame {
 
             modeShape.apply {
                 skeleton.resetSkeleton(
-                    model.skeleton.points
+                    model.static.skeleton.points
                 )
 
                 shapes.clear()
                 shapes.addAll(
-                    model.shapes
+                    model.static.shapes
                 )
 
                 mViewVector?.invalidate()

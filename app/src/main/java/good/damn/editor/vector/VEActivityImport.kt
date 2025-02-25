@@ -5,19 +5,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Gravity
-import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import good.damn.editor.importer.VEModelImport
-import good.damn.editor.importer.VEModelImportAnimation
+import good.damn.editor.importer.animation.VEModelImportAnimation
 import good.damn.editor.importer.VEViewAVS
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.sav.core.animation.animators.VEAnimatorGlobal
+import good.damn.sav.core.animation.animators.VEIListenerAnimation
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 import good.damn.sav.misc.Size
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +30,9 @@ VEIListenerAnimationUpdateFrame {
         onUpdateFrameAnimation = this@VEActivityImport
     }
 
-    private var mCurrentAnimation: VEModelImportAnimation? = null
+    private var mCurrentAnimation: VEModelImportAnimation<
+        VEIListenerAnimation
+    >? = null
     private val mCanvasSize = Size()
     private var mViewAvs: VEViewAVS? = null
 
@@ -164,7 +164,7 @@ VEIListenerAnimationUpdateFrame {
 private inline fun placeDurations(
     rootLayout: LinearLayout,
     context: Context,
-    animation: VEModelImportAnimation
+    animation: VEModelImportAnimation<VEIListenerAnimation>
 ) = animation.animations?.forEach {
     EditText(
         context

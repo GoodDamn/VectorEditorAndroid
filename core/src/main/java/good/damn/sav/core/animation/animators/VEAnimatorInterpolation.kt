@@ -3,7 +3,7 @@ package good.damn.sav.core.animation.animators
 import good.damn.sav.core.animation.interpolators.VEIAnimationInterpolator
 
 class VEAnimatorInterpolation(
-    private val interpolators: List<VEIAnimationInterpolator>
+    val interpolators: List<VEIAnimationInterpolator>
 ): VEIListenerAnimation {
 
     companion object {
