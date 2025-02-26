@@ -30,7 +30,10 @@ class VECanvasOptionKeyframeBase<T: VEIKeyframe>(
     }
 
     private var mRadius = 0f
+    private var mRadiusTouch = 0f
     private var mcy = 0f
+
+    private var mScrollTemp = 0f
 
     private var mScrollDuration = 0
 
@@ -39,6 +42,8 @@ class VECanvasOptionKeyframeBase<T: VEIKeyframe>(
     private var mDurationPixels = 0f
 
     private var mCurrentTickPosition = 0f
+
+    private var mSelectedKeyframe: T? = null
 
     final override fun layout(
         x: Float,
@@ -53,6 +58,7 @@ class VECanvasOptionKeyframeBase<T: VEIKeyframe>(
         )
 
         mRadius = mRect.height() * 0.15f
+        mRadiusTouch = mRadius * 2f
 
         mcy = mRect.top + mRect.height() * 0.5f
 
@@ -104,33 +110,57 @@ class VECanvasOptionKeyframeBase<T: VEIKeyframe>(
         event: MotionEvent
     ): Boolean {
 
-        var keyframe: T? = null
-        option.keyframes.forEach {
-            if (keyframe != null) {
-                return@forEach
-            }
+        if (event.action == MotionEvent.ACTION_UP) {
+            mSelectedKeyframe?.apply {
 
-            val x = mRect.left +
-                    mScrollerHorizontal.scrollValue +
-                    it.factor * option.duration
+                if (abs(mScrollTemp -
+                            mScrollerHorizontal.scrollValue
+                ) > mRadius) {
+                    return mScrollerHorizontal.onTouchEvent(
+                        event
+                    )
+                }
 
-            if (hypot(
-                event.x - x,
-                event.y - mcy
-            ) < mRadius) {
-                keyframe = it
+                if (hypot(
+                        event.x - keyframePositionX(this),
+                        event.y - mcy
+                    ) < mRadiusTouch
+                ) {
+                    option.keyframes.remove(
+                        this
+                    )
+                }
             }
         }
 
-        keyframe?.apply {
-            option.keyframes.remove(
-                this
-            )
-            return false
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            mSelectedKeyframe = null
+            option.keyframes.forEach {
+                if (mSelectedKeyframe != null) {
+                    return@forEach
+                }
+
+                if (hypot(
+                        event.x - keyframePositionX(it),
+                        event.y - mcy
+                    ) < mRadiusTouch
+                ) {
+                    mSelectedKeyframe = it
+                }
+            }
+
+            mScrollTemp = mScrollerHorizontal.scrollValue
         }
+
 
         return mScrollerHorizontal.onTouchEvent(
             event
         )
     }
+
+    private inline fun keyframePositionX(
+        k: T
+    ) = mRect.left +
+        mScrollerHorizontal.scrollValue +
+        k.factor * option.duration
 }

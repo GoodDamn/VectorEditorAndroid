@@ -99,6 +99,7 @@ private fun <T> BinaryTree<T>.searchRemove(
             return t
         }
 
+        // for in-order tree
         val s = node.rightNode.run {
             var n = this
             while (n?.leftNode != null) {
