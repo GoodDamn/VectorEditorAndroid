@@ -6,7 +6,6 @@ import good.damn.sav.core.VEMIdentifier
 import good.damn.sav.misc.Size
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.fill.VEIFill
-import good.damn.sav.core.shapes.primitives.VEShapeFill
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.io.write
 import good.damn.sav.misc.extensions.primitives.toDigitalFraction
@@ -78,12 +77,6 @@ class VEExport {
                     write(
                         this
                     )
-
-                    if (this == VEShapeFill.shapeType) {
-                        write(
-                            it.points.size
-                        )
-                    }
                 }
 
                 it.points.forEach { point ->

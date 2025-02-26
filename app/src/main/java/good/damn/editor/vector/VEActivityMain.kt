@@ -18,7 +18,6 @@ import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
 import good.damn.editor.editmodes.VEEditModeAnimation
-import good.damn.editor.editmodes.VEEditModeFillPoints
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.extensions.views.boundsFrame
@@ -113,12 +112,6 @@ VEIListenerAnimationUpdateFrame {
             }
         )
     )
-
-    private val modeFillPoints = VEEditModeFillPoints(
-        modeShape.skeleton
-    ).apply {
-        onSelectPoint = this@VEActivityMain
-    }
 
     private val mFragmentVectorEdit = VEFragmentVectorOptions().apply {
         onClickDeleteAll = View.OnClickListener {
@@ -243,31 +236,6 @@ VEIListenerAnimationUpdateFrame {
                 setOnClickListener {
                     mViewVector?.mode = modeFreeMove
                     mCurrentAnchor = modeExistingPoint
-                }
-
-                addView(
-                    this,
-                    s, s
-                )
-            }
-
-            Button(
-                context
-            ).apply {
-
-                text = "FIL"
-
-                setOnClickListener {
-                    modeShape.apply {
-                        shapes.addFirst(
-                            modeFillPoints.createShape(
-                                canvasWidth,
-                                canvasHeight
-                            )
-                        )
-                    }
-                    mViewVector?.mode = modeFillPoints
-                    mCurrentAnchor = null
                 }
 
                 addView(

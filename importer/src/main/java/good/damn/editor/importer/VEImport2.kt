@@ -10,7 +10,6 @@ import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.core.shapes.primitives.VEShapeBezierQuad
-import good.damn.sav.core.shapes.primitives.VEShapeFill
 import good.damn.sav.core.shapes.primitives.VEShapeLine
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.Size
@@ -63,21 +62,10 @@ class VEImport2 {
                 defineShape(
                     readU()
                 ).apply {
-                    if (shapeType() == VEShapeFill.shapeType) {
-                        val p = readU()
-                        for (i in 0 until p) {
-                            points.add(
-                                skeleton.getPointIndexed(
-                                    readU()
-                                )
-                            )
-                        }
-                    } else {
-                        for (i in points.indices) {
-                            points[i] = skeleton.getPointIndexed(
-                                readU()
-                            )
-                        }
+                    for (i in points.indices) {
+                        points[i] = skeleton.getPointIndexed(
+                            readU()
+                        )
                     }
 
                     id = VEMIdentifier(
@@ -211,7 +199,6 @@ class VEImport2 {
 private fun defineShape(
     type: Int
 ) = when (type) {
-    VEShapeFill.shapeType -> VEShapeFill()
     VEShapeBezierQuad.shapeType -> VEShapeBezierQuad()
     else -> VEShapeLine()
 }
