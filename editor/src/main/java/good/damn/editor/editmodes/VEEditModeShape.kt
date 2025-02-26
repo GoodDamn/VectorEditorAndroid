@@ -25,6 +25,7 @@ import good.damn.sav.misc.extensions.primitives.toByteArray
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
 import java.util.LinkedList
+import kotlin.math.sign
 
 class VEEditModeShape(
     private val anchor: VEAnchor,
@@ -121,40 +122,6 @@ VEIListenerOnAnchorPoint {
                     )
                 }
 
-                if (mPointFrom == null) {
-                    mPointFrom = VEPointIndexed(
-                        tempX,
-                        tempY
-                    ).apply {
-                        skeleton.addSkeletonPoint(
-                            this
-                        )
-
-                        mActions.add(
-                            VEDataActionPosition(
-                                this
-                            )
-                        )
-                    }
-                }
-
-                mPointTo = VEPointIndexed(
-                    tempX,
-                    tempY
-                ).apply {
-                    // New point
-                    // New primitive
-                    skeleton.addSkeletonPoint(
-                        this
-                    )
-
-                    mActions.add(
-                        VEDataActionPosition(
-                            this
-                        )
-                    )
-                }
-
                 vectorFill = currentPrimitive.fill
                 vectorStrokeWidth = currentPrimitive.strokeWidth
 
@@ -165,22 +132,26 @@ VEIListenerOnAnchorPoint {
                     fill = vectorFill
                     strokeWidth = vectorStrokeWidth
 
+                    preparePointFrom(
+                        tempX,
+                        tempY
+                    )
+
+                    mPointTo = VEPointIndexed(
+                        tempX,
+                        tempY
+                    )
+
                     points[0] = mPointFrom
                     points[1] = mPointTo
 
                     if (points.size == 3) {
-                        mPointMiddle = mPointFrom?.interpolateWith(
-                            0.5f,
-                            mPointTo
-                        )?.apply {
-                            skeleton.addSkeletonPoint(
-                                this
-                            )
-                        }
-
+                        preparePointMiddle()
                         points[1] = mPointMiddle
                         points[2] = mPointTo
                     }
+
+                    addPoint(mPointTo)
 
                     if (mPointFrom != null) {
                         shapes.add(
@@ -220,7 +191,9 @@ VEIListenerOnAnchorPoint {
                         if (id == to.id) {
                             return@let
                         }
-                        currentPrimitive.points[1] = this
+                        currentPrimitive.points.let {
+                            it[it.size-1] = this
+                        }
                         skeleton.removeLast()
                     }
                 }
@@ -288,5 +261,40 @@ VEIListenerOnAnchorPoint {
         ) {}
     }
 
+    private inline fun preparePointFrom(
+        x: Float,
+        y: Float
+    ) {
+        if (mPointFrom == null) {
+            mPointFrom = VEPointIndexed(
+                x,
+                y
+            ).apply {
+                addPoint(this)
+            }
+        }
+    }
 
+    private inline fun preparePointMiddle() {
+        mPointMiddle = mPointFrom?.interpolateWith(
+            0.5f,
+            mPointTo
+        )?.apply {
+            addPoint(this)
+        }
+    }
+
+    private inline fun addPoint(
+        point: VEPointIndexed?
+    ) = point?.run {
+        skeleton.addSkeletonPoint(
+            this
+        )
+
+        mActions.add(
+            VEDataActionPosition(
+                this
+            )
+        )
+    }
 }
