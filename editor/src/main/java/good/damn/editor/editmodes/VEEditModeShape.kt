@@ -20,6 +20,8 @@ import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.interpolate
 import good.damn.sav.core.extensions.interpolateWith
 import good.damn.sav.core.shapes.fill.VEIFill
+import good.damn.sav.core.shapes.fill.VEMFillColor
+import good.damn.sav.misc.extensions.primitives.toByteArray
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
 import java.util.LinkedList
@@ -40,22 +42,29 @@ VEIListenerOnAnchorPoint {
 
     var onSelectShape: VEIListenerOnSelectShape? = null
 
+    var vectorStrokeWidth = 25f
+    var vectorFill: VEIFill? = VEMFillColor(
+        0xffffffff.toInt().toByteArray()
+    )
+
     var currentPrimitive: VEShapeBase = VEShapeLine()
+        set(v) {
+            field = v
+            v.fill = vectorFill
+            v.strokeWidth = vectorStrokeWidth
+        }
 
     val shapes = VEListShapes().apply {
         onAddShape = this@VEEditModeShape
     }
-
-    var vectorStrokeWidth = 5f
-    var vectorFill: VEIFill? = null
-
-    private val mActions = LinkedList<VEIActionable>()
 
     val skeleton = VESkeleton2D(
         LinkedList()
     ).apply {
         onAddSkeletonPoint = this@VEEditModeShape
     }
+
+    private val mActions = LinkedList<VEIActionable>()
 
     private var mPointFrom: VEPointIndexed? = null
     private var mPointTo: VEPointIndexed? = null
@@ -64,6 +73,13 @@ VEIListenerOnAnchorPoint {
 
     private var mTouchX = 0f
     private var mTouchY = 0f
+
+    init {
+        currentPrimitive.apply {
+            fill = vectorFill
+            strokeWidth = vectorStrokeWidth
+        }
+    }
 
     override fun onTouchEvent(
         event: MotionEvent

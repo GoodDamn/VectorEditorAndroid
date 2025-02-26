@@ -303,6 +303,8 @@ VEIListenerAnimationUpdateFrame {
 
             isUserInputEnabled = false
 
+            offscreenPageLimit = 2
+
             adapter = VEFragmentAdapter(
                 arrayOf(
                     mFragmentVectorEdit,
