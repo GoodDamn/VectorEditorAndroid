@@ -415,15 +415,16 @@ VEIListenerAnimationUpdateFrame {
     override fun draw(
         canvas: Canvas
     ) = modeShape.run {
-        skeleton.draw(
-            canvas
-        )
 
         shapes.forEach {
             it.draw(
                 canvas
             )
         }
+
+        skeleton.draw(
+            canvas
+        )
 
         draw(
             canvas

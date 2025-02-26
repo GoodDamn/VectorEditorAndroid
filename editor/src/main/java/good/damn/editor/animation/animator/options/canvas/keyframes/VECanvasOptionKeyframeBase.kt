@@ -9,6 +9,7 @@ import good.damn.editor.animation.animator.scroller.VEScrollerHorizontal
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
 import good.damn.sav.core.animation.keyframe.VEIKeyframe
 import kotlin.math.abs
+import kotlin.math.hypot
 
 class VECanvasOptionKeyframeBase<T: VEIKeyframe>(
     private val option: VEIAnimationOption<T>,
@@ -101,7 +102,35 @@ class VECanvasOptionKeyframeBase<T: VEIKeyframe>(
 
     final override fun onTouchEvent(
         event: MotionEvent
-    ) = mScrollerHorizontal.onTouchEvent(
-        event
-    )
+    ): Boolean {
+
+        var keyframe: T? = null
+        option.keyframes.forEach {
+            if (keyframe != null) {
+                return@forEach
+            }
+
+            val x = mRect.left +
+                    mScrollerHorizontal.scrollValue +
+                    it.factor * option.duration
+
+            if (hypot(
+                event.x - x,
+                event.y - mcy
+            ) < mRadius) {
+                keyframe = it
+            }
+        }
+
+        keyframe?.apply {
+            option.keyframes.remove(
+                this
+            )
+            return false
+        }
+
+        return mScrollerHorizontal.onTouchEvent(
+            event
+        )
+    }
 }
