@@ -121,7 +121,7 @@ VEIListenerAnimationUpdateFrame {
         VEBrowserContent().apply {
             register(this@VEActivityImport)
             onGetContent = this@VEActivityImport
-            launch("*/*")
+            launch()
         }
     }
 

@@ -2,7 +2,7 @@ package good.damn.editor.views
 
 import android.content.Context
 import android.graphics.Canvas
-import android.util.Log
+import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
 import good.damn.sav.misc.interfaces.VEIDrawable
@@ -22,6 +22,34 @@ class VEViewVectorEditor(
     var mode: VEITouchable = startMode
     var canvasRenderer: VEIDrawable? = null
 
+    private var mx = 0f
+    private var my = 0f
+
+    private val mPaint = Paint().apply {
+        strokeWidth = 9f
+        style = Paint.Style.STROKE
+        color = 0x19191919
+    }
+
+    override fun onLayout(
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int
+    ) {
+        super.onLayout(
+            changed,
+            left,
+            top,
+            right,
+            bottom
+        )
+
+        mx = width / 2f
+        my = height / 2f
+    }
+
     override fun onDraw(
         canvas: Canvas
     ) {
@@ -29,10 +57,27 @@ class VEViewVectorEditor(
             canvas
         )
 
+        canvas.drawLine(
+            mx,
+            0f,
+            mx,
+            height.toFloat(),
+            mPaint
+        )
+
+        canvas.drawLine(
+            0f,
+            my,
+            width.toFloat(),
+            my,
+            mPaint
+        )
+
         canvasRenderer?.draw(
             canvas
         )
     }
+
     override fun onTouchEvent(
         event: MotionEvent?
     ): Boolean {
