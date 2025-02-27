@@ -348,7 +348,7 @@ VEIListenerAnimationUpdateFrame {
             val model = VEImport2.animationWrapper(
                 canvasSize,
                 this,
-                true,
+                false,
                 VEImportAnimationMutable(
                     canvasSize,
                     processer.viewAnimatorEditor!!,

@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import good.damn.editor.anchors.internal.VEAnchorInternalBase
 import good.damn.editor.anchors.internal.VEAnchorInternalPropLenHorizontal
+import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.drawLine
 import kotlin.math.abs
 
@@ -49,7 +50,7 @@ class VEAnchorStraightHorizontal
     }
 
     override fun checkAnchor(
-        skeleton: good.damn.sav.core.skeleton.VESkeleton2D,
+        skeleton: VESkeleton2D,
         touchX: Float,
         touchY: Float
     ): Boolean {
