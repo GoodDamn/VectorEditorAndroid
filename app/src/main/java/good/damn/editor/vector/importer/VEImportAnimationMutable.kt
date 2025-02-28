@@ -11,6 +11,7 @@ import good.damn.editor.importer.animation.extractor.VEImportAnimationExtractorF
 import good.damn.editor.importer.animation.extractor.VEImportAnimationExtractorPosition
 import good.damn.editor.importer.animation.extractor.VEImportAnimationExtractorStrokeWidth
 import good.damn.editor.transaction.VEIRequesterFloat
+import good.damn.sav.core.animation.interpolators.fill.VEAnimationObserverFill
 import good.damn.sav.core.animation.keyframe.VEKeyframes
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionFill
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionPosition
@@ -20,6 +21,7 @@ import good.damn.sav.core.animation.keyframe.VEMKeyframeStrokeWidth
 import good.damn.sav.core.animation.keyframe.fill.VEMKeyframeFill
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
+import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.misc.Size
 import java.io.InputStream
 
@@ -29,6 +31,30 @@ class VEImportAnimationMutable(
     private val duration: Int
 ): VEIListenerImportAnimation<VEMImportAnimationMutable> {
 
+    override fun createFillAnimation(
+        type: Int,
+        keyframesCount: Int,
+        observerFill: VEAnimationObserverFill,
+        inp: InputStream
+    ) = VEMImportAnimationMutable(
+        observerFill.value.id.id,
+        VEAnimationOptionCanvasFill(
+            observerFill,
+            VEMAnimationOptionFill(
+                VEIImportAnimationExtractor.extractAnimationKeyframes(
+                    keyframesCount,
+                    inp,
+                    VEImportAnimationExtractorFill(
+                        observerFill,
+                        canvasSize
+                    )
+                ),
+                duration
+            ),
+            requester
+        )
+    )
+
     override fun createShapeAnimation(
         property: Int,
         keyframesCount: Int,
@@ -36,41 +62,21 @@ class VEImportAnimationMutable(
         inp: InputStream
     ) = VEMImportAnimationMutable(
         shape.hashCode(),
-        when (
-            property
-        ) {
-            0 -> VEAnimationOptionCanvasFill(
-                shape,
-                VEMAnimationOptionFill(
-                    VEIImportAnimationExtractor.extractAnimationKeyframes(
-                        keyframesCount,
-                        inp,
-                        VEImportAnimationExtractorFill(
-                            shape,
-                            canvasSize
-                        )
-                    ),
-                    duration
+        VEAnimationOptionCanvasWidth(
+            shape,
+            VEMAnimationOptionWidth(
+                VEIImportAnimationExtractor.extractAnimationKeyframes(
+                    keyframesCount,
+                    inp,
+                    VEImportAnimationExtractorStrokeWidth(
+                        shape,
+                        canvasSize
+                    )
                 ),
-                requester
-            )
-
-            else -> VEAnimationOptionCanvasWidth(
-                shape,
-                VEMAnimationOptionWidth(
-                    VEIImportAnimationExtractor.extractAnimationKeyframes(
-                        keyframesCount,
-                        inp,
-                        VEImportAnimationExtractorStrokeWidth(
-                            shape,
-                            canvasSize
-                        )
-                    ),
-                    duration
-                ),
-                requester
-            )
-        }
+                duration
+            ),
+            requester
+        )
     )
 
     override fun createPointAnimation(

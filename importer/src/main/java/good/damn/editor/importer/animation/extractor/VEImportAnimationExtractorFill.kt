@@ -2,6 +2,7 @@ package good.damn.editor.importer.animation.extractor
 
 import good.damn.sav.core.animation.interpolators.VEAnimationInterpolatorPosition
 import good.damn.sav.core.animation.interpolators.fill.VEAnimationInterpolatorFill
+import good.damn.sav.core.animation.interpolators.fill.VEAnimationObserverFill
 import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
 import good.damn.sav.core.animation.keyframe.fill.VEMKeyframeFill
 import good.damn.sav.core.shapes.VEShapeBase
@@ -9,7 +10,7 @@ import good.damn.sav.misc.Size
 import java.io.InputStream
 
 class VEImportAnimationExtractorFill(
-    var shape: VEShapeBase,
+    var observer: VEAnimationObserverFill,
     private val canvasSize: Size
 ): VEIImportAnimationExtractor<
     VEMKeyframeFill,
@@ -31,7 +32,7 @@ class VEImportAnimationExtractorFill(
     ) = VEAnimationInterpolatorFill(
         start,
         end,
-        shape
+        observer
     )
 
 

@@ -26,10 +26,11 @@ import good.damn.sav.misc.extensions.toInt32
 class VEBottomSheetSetupShape(
     private val toView: ViewGroup,
     private val currentFill: VEIFill?,
+    private val fills: List<VEIFill>,
     private val p: PointF?,
     private val pp: PointF?,
     private val onConfirmFill: VEIListenerBottomSheetFill<VEIFill>
-): VEBottomSheet(
+) : VEBottomSheet(
     toView
 ) {
     var onSeekProgressWidth: VSIListenerSeekBarProgress? = null
@@ -128,40 +129,39 @@ class VEBottomSheetSetupShape(
                 )
             }
 
-            currentFill?.let { fill ->
-
+            fills.forEach { fill ->
                 when (fill) {
                     is VEMFillColor -> addView(
                         placeColorView(
                             toView,
-                            fill,
-                            onConfirmFill
-                        )
+                            fill
+                        ) {
+                            onConfirmFill.onConfirmFill(it)
+                        }
                     )
-                    is VEMFillGradientLinear -> {
-                        addView(
-                            VEBottomSheetMakeGradient.makeView(
-                                toView.context,
-                                toView,
-                                fill.colors,
-                                fill.positions,
-                                p,
-                                pp
-                            ) {
-                                it ?: return@makeView
-                                fill.updateGradient(
-                                    it.p0x,
-                                    it.p0y,
-                                    it.p1x,
-                                    it.p1y,
-                                    it.colors,
-                                    it.positions,
-                                    it.gradient
-                                )
-                                onConfirmFill.onConfirmFill(it)
-                            }
-                        )
-                    }
+
+                    is VEMFillGradientLinear -> addView(
+                        VEBottomSheetMakeGradient.makeView(
+                            toView.context,
+                            toView,
+                            fill.colors,
+                            fill.positions,
+                            p,
+                            pp
+                        ) {
+                            it ?: return@makeView
+                            fill.updateGradient(
+                                it.p0x,
+                                it.p0y,
+                                it.p1x,
+                                it.p1y,
+                                it.colors,
+                                it.positions,
+                                it.gradient
+                            )
+                            onConfirmFill.onConfirmFill(it)
+                        }
+                    )
                 }
             }
 

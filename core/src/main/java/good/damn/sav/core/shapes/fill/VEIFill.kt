@@ -1,6 +1,7 @@
 package good.damn.sav.core.shapes.fill
 
 import android.graphics.Paint
+import good.damn.sav.core.VEIIdentifiable
 import good.damn.sav.core.animation.keyframe.VEIInterpolatablePriority
 import good.damn.sav.misc.Size
 import good.damn.sav.misc.extensions.io.readFraction
@@ -9,7 +10,8 @@ import good.damn.sav.misc.extensions.io.readU
 import java.io.InputStream
 import java.io.OutputStream
 
-interface VEIFill {
+interface VEIFill
+: VEIIdentifiable {
 
     companion object {
         fun importFill(

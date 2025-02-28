@@ -25,6 +25,7 @@ import good.damn.editor.editmodes.VEEditModeShape
 import good.damn.editor.editmodes.VEEditModeSwap
 import good.damn.editor.editmodes.freemove.VEEditModeExistingPoint
 import good.damn.editor.editmodes.freemove.VEEditModeExistingShape
+import good.damn.editor.editmodes.listeners.VEIListenerOnSelectFill
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.export.VEExport
@@ -61,6 +62,7 @@ VEIDrawable,
 VEIListenerOnAnchorPoint,
 VEIListenerOnSelectShape,
 VEIListenerOnSelectPoint,
+VEIListenerOnSelectFill,
 VEListenerOnResultPermission,
 VEIListenerAnimationUpdateFrame {
 
@@ -479,13 +481,21 @@ VEIListenerAnimationUpdateFrame {
         mCurrentAnchor = modeAnimation
     }
 
+    override fun onSelectFill(
+        fill: VEIFill
+    ) {
+        modeShape.shapes.forEach {
+            it.fill = fill
+        }
+    }
+
     override fun onSelectShape(
         shape: VEShapeBase
     ) {
         val view = window.decorView
             as? ViewGroup ?: return
 
-        VEBottomSheetSetupShape(
+        /*VEBottomSheetSetupShape(
             view,
             shape.fill,
             shape.points.firstOrNull(),
@@ -502,7 +512,7 @@ VEIListenerAnimationUpdateFrame {
                 mViewVector?.invalidate()
             }
             show()
-        }
+        }*/
     }
 
     override fun onSelectPoint(

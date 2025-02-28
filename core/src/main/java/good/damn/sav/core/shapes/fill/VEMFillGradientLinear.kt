@@ -3,6 +3,7 @@ package good.damn.sav.core.shapes.fill
 import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Shader
+import good.damn.sav.core.VEMIdentifier
 import good.damn.sav.core.animation.interpolators.fill.VEMFillGradientPriority
 import good.damn.sav.core.animation.keyframe.VEIInterpolatablePriority
 import good.damn.sav.misc.Size
@@ -27,6 +28,11 @@ data class VEMFillGradientLinear(
     companion object {
         const val TYPE = 1
     }
+
+    override var id = VEMIdentifier(
+        0,
+        8
+    )
 
     var gradient = LinearGradient(
         p0x,

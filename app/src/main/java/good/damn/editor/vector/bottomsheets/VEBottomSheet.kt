@@ -43,7 +43,7 @@ abstract class VEBottomSheet(
     ).apply {
 
         setBackgroundColor(
-            0x99000000.toInt()
+            0x15000000
         )
 
         setOnClickListener {
