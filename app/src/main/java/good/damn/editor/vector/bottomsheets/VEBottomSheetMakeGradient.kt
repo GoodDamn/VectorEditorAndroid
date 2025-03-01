@@ -16,8 +16,6 @@ import good.damn.sav.misc.extensions.toInt32
 
 class VEBottomSheetMakeGradient(
     private val toView: ViewGroup,
-    private val p: PointF?,
-    private val pp: PointF?,
     private val onConfirmFill: VEIListenerBottomSheetFill<VEMFillGradientLinear>
 ): VEBottomSheet(
     toView
@@ -29,18 +27,19 @@ class VEBottomSheetMakeGradient(
             toView: ViewGroup,
             colors: IntArray,
             positions: FloatArray,
-            p: PointF?,
-            pp: PointF?,
             onConfirmFill: VEIListenerBottomSheetFill<VEMFillGradientLinear>
         ) = LinearLayout(
             context
         ).apply {
 
-            p ?: return@apply
-            pp ?: return@apply
-
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
+
+            val p = PointF()
+            val pp = PointF().apply {
+                x = toView.width.toFloat()
+                y = toView.height.toFloat()
+            }
 
             val w = (VEApp.width * 0.1f).toInt()
             addColorView(
@@ -109,8 +108,6 @@ class VEBottomSheetMakeGradient(
         toView,
         mColors,
         mPositions,
-        p,
-        pp,
         onConfirmFill
     )
 

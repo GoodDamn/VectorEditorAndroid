@@ -115,8 +115,6 @@ class VEBottomSheetSetupShape(
                 setOnClickListener {
                     VEBottomSheetMakeGradient(
                         toView,
-                        p,
-                        pp
                     ) {
                         onConfirmFill.onConfirmFill(it)
                     }.show()
@@ -146,8 +144,6 @@ class VEBottomSheetSetupShape(
                             toView,
                             fill.colors,
                             fill.positions,
-                            p,
-                            pp
                         ) {
                             it ?: return@makeView
                             fill.updateGradient(

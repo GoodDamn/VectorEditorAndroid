@@ -30,6 +30,7 @@ import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.export.VEExport
 import good.damn.editor.importer.VEImport2
+import good.damn.editor.vector.bottomsheets.VEBottomSheetMakeGradient
 import good.damn.editor.vector.bottomsheets.VEBottomSheetSetupShape
 import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
@@ -246,6 +247,33 @@ VEIListenerAnimationUpdateFrame {
                 )
             }
 
+            View(
+                context
+            ).apply {
+
+                setBackgroundColor(
+                    0xffff0000.toInt()
+                )
+
+                setOnClickListener {
+                    VEBottomSheetMakeGradient(
+                        root
+                    ) {
+                        modeShape.vectorFill = it
+                        modeShape.shapes.forEach { shape ->
+                            shape.fill = it
+                            shape.updateFillPaint()
+                        }
+                        mViewVector?.invalidate()
+                    }.show()
+                }
+
+                addView(
+                    this,
+                    s,
+                    s,
+                )
+            }
 
             boundsFrame(
                 gravity = Gravity.END,
