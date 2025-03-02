@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.LinearGradient
 import android.graphics.Paint
+import android.graphics.PointF
 import android.graphics.Shader
 import android.view.MotionEvent
 import android.view.View
@@ -17,6 +18,8 @@ class VEViewGradientMaker(
     companion object {
         private const val TAG = "VEViewGradientMaker"
     }
+
+    var onGradientShader: VEIListenerOnGradientShader? = null
 
     var colors: List<VECanvasColorSeek>? = null
         set(v) {
@@ -196,8 +199,9 @@ class VEViewGradientMaker(
         return false
     }
 
+
     private inline fun invalidateGradient() {
-        mPaintSeek.shader = LinearGradient(
+        LinearGradient(
             mx,
             my,
             mxx,
@@ -205,7 +209,13 @@ class VEViewGradientMaker(
             mColors,
             mPositions,
             Shader.TileMode.CLAMP
-        )
+        ).apply {
+            mPaintSeek.shader = this
+            onGradientShader?.onGetGradientShader(
+                mColors,
+                mPositions
+            )
+        }
     }
 
 }

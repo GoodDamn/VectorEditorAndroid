@@ -1,30 +1,28 @@
 package good.damn.editor.vector.bottomsheets
 
 import android.content.Context
+import android.graphics.LinearGradient
 import android.graphics.PointF
 import android.view.Gravity
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
-import good.damn.editor.vector.extensions.views.bounds
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.view.gradient.VECanvasColorSeek
+import good.damn.editor.vector.view.gradient.VEIListenerOnGradientPosition
+import good.damn.editor.vector.view.gradient.VEIListenerOnGradientShader
 import good.damn.editor.vector.view.gradient.VEViewGradientMaker
-import good.damn.sav.core.shapes.fill.VEIFill
-import good.damn.sav.core.shapes.fill.VEMFillColor
+import good.damn.editor.vector.view.gradient.VEViewGradientPlacer
 import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
-import good.damn.sav.misc.extensions.toInt32
 
 class VEBottomSheetMakeGradient(
     private val toView: ViewGroup,
     private val onConfirmFill: VEIListenerBottomSheetFill<VEMFillGradientLinear>
 ): VEBottomSheet(
     toView
-) {
+), VEIListenerOnGradientShader, VEIListenerOnGradientPosition {
 
     private val mColors = arrayListOf(
         VECanvasColorSeek().apply {
@@ -36,6 +34,7 @@ class VEBottomSheetMakeGradient(
     )
 
     private var mViewGradMaker: VEViewGradientMaker? = null
+    private var mViewGradPlacer: VEViewGradientPlacer? = null
 
     override fun onCreateView(
         context: Context
@@ -54,10 +53,29 @@ class VEBottomSheetMakeGradient(
         ).apply {
             colors = mColors
 
+            onGradientShader = this@VEBottomSheetMakeGradient
+
             addView(
                 this,
                 w.toInt(),
                 -1
+            )
+        }
+
+        mViewGradPlacer = VEViewGradientPlacer(
+            context
+        ).apply {
+
+            onChangePosition = this@VEBottomSheetMakeGradient
+
+            boundsFrame(
+                width = w,
+                height = -1f,
+                start = w
+            )
+
+            addView(
+                this
             )
         }
 
@@ -125,6 +143,26 @@ class VEBottomSheetMakeGradient(
             height = VEApp.height * 0.2f,
             gravity = Gravity.BOTTOM
         )
+    }
+
+    override fun onGetGradientShader(
+        colors: IntArray,
+        positions: FloatArray
+    ) {
+        mViewGradPlacer?.apply {
+            changeShader(
+                colors,
+                positions
+            )
+            invalidate()
+        }
+    }
+
+    override fun onGetGradientPosition(
+        from: PointF,
+        to: PointF
+    ) {
+
     }
 
 }
