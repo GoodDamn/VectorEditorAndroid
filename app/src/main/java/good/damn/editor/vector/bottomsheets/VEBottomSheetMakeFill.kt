@@ -12,8 +12,10 @@ import good.damn.editor.vector.extensions.views.bounds
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
+import good.damn.sav.misc.Size
 
 class VEBottomSheetMakeFill(
+    private val canvasSize: Size,
     private val toView: ViewGroup,
     private val onConfirmFill: VEIListenerBottomSheetFill<VEIFill>
 ): VEBottomSheet(
@@ -37,6 +39,7 @@ class VEBottomSheetMakeFill(
 
             setOnClickListener {
                 VEBottomSheetMakeGradient(
+                    canvasSize,
                     toView
                 ) {
                     onConfirmFill.onConfirmFill(it)

@@ -34,7 +34,7 @@ data class VEMFillGradientLinear(
         8
     )
 
-    private var gradient = LinearGradient(
+    private val gradient = LinearGradient(
         p0x,
         p0y,
         p1x,

@@ -16,16 +16,18 @@ import good.damn.editor.vector.view.gradient.VEViewGradientMaker
 import good.damn.editor.vector.view.gradient.VEViewGradientPlacer
 import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientColorSeek
 import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
+import good.damn.sav.misc.Size
 import good.damn.sav.misc.extensions.toInt32
 
 class VEBottomSheetMakeGradient(
+    private val canvasSize: Size,
     private val toView: ViewGroup,
     private val onConfirmFill: VEIListenerBottomSheetFill<VEMFillGradientLinear>
 ): VEBottomSheet(
     toView
 ), VEIListenerOnGradientShader, VEIListenerOnGradientPosition, VEIListenerOnGradientColorSeek {
 
-    private val mColors = arrayListOf(
+    private val mColorsSeek = arrayListOf(
         VECanvasColorSeek().apply {
             color = 0xffff0000.toInt()
         },
@@ -33,6 +35,12 @@ class VEBottomSheetMakeGradient(
             color = 0xff00ff00.toInt()
         }
     )
+
+    private var mPointFrom: PointF? = null
+    private var mPointTo: PointF? = null
+
+    private var mColors: IntArray? = null
+    private var mPositions: FloatArray? = null
 
     private var mViewGradMaker: VEViewGradientMaker? = null
     private var mViewGradPlacer: VEViewGradientPlacer? = null
@@ -48,11 +56,12 @@ class VEBottomSheetMakeGradient(
         )
 
         val w = VEApp.width * 0.5f
+        val wplacer = VEApp.height * 0.2f
 
         mViewGradMaker = VEViewGradientMaker(
             context
         ).apply {
-            colors = mColors
+            colors = mColorsSeek
 
             onGradientShader = this@VEBottomSheetMakeGradient
             onSelectColor = this@VEBottomSheetMakeGradient
@@ -71,8 +80,8 @@ class VEBottomSheetMakeGradient(
             onChangePosition = this@VEBottomSheetMakeGradient
 
             boundsFrame(
-                width = w,
-                height = -1f,
+                width = wplacer,
+                height = wplacer,
                 start = w
             )
 
@@ -89,7 +98,7 @@ class VEBottomSheetMakeGradient(
             text = "+"
 
             setOnClickListener {
-                mColors.add(
+                mColorsSeek.add(
                     VECanvasColorSeek().apply {
                         color = 0xffffffff.toInt()
                     }
@@ -97,9 +106,9 @@ class VEBottomSheetMakeGradient(
 
                 mViewGradMaker?.apply {
                     layoutColorSeekById(
-                        mColors.size - 1
+                        mColorsSeek.size - 1
                     )
-                    colors = mColors
+                    colors = mColorsSeek
                     invalidate()
                 }
             }
@@ -122,9 +131,9 @@ class VEBottomSheetMakeGradient(
             text = "-"
 
             setOnClickListener {
-                mColors.removeLastOrNull()
+                mColorsSeek.removeLastOrNull()
                 mViewGradMaker?.apply {
-                    colors = mColors
+                    colors = mColorsSeek
                     invalidate()
                 }
             }
@@ -142,7 +151,7 @@ class VEBottomSheetMakeGradient(
 
         boundsFrame(
             width = VEApp.width.toFloat(),
-            height = VEApp.height * 0.2f,
+            height = wplacer,
             gravity = Gravity.BOTTOM
         )
     }
@@ -156,6 +165,11 @@ class VEBottomSheetMakeGradient(
                 colors,
                 positions
             )
+            mColors = colors
+            mPositions = positions
+
+            confirmFill()
+
             invalidate()
         }
     }
@@ -181,6 +195,37 @@ class VEBottomSheetMakeGradient(
         from: PointF,
         to: PointF
     ) {
+        mPointFrom = from
+        mPointTo = to
 
+        confirmFill()
+    }
+
+    private inline fun confirmFill() {
+        val f = mPointFrom
+            ?: return
+
+        val p = mPointTo
+            ?: return
+
+        val colors = mColors
+            ?: return
+
+        val positions = mPositions
+            ?: return
+
+        val view = mViewGradPlacer
+            ?: return
+
+        onConfirmFill.onConfirmFill(
+            VEMFillGradientLinear(
+                f.x / view.width * canvasSize.width,
+                f.y / view.height * canvasSize.height,
+                p.x / view.width * canvasSize.width,
+                p.y / view.height * canvasSize.height,
+                colors,
+                positions
+            )
+        )
     }
 }

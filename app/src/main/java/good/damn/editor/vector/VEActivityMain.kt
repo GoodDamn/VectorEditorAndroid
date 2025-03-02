@@ -255,6 +255,10 @@ VEIListenerAnimationUpdateFrame {
 
                 setOnClickListener {
                     VEBottomSheetMakeFill(
+                        Size(
+                            VEApp.width.toFloat(),
+                            VEApp.width.toFloat()
+                        ),
                         root
                     ) {
                         modeShape.vectorFill = it
