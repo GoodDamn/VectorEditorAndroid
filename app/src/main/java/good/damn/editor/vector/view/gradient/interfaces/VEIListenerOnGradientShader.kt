@@ -1,6 +1,4 @@
-package good.damn.editor.vector.view.gradient
-
-import android.graphics.LinearGradient
+package good.damn.editor.vector.view.gradient.interfaces
 
 interface VEIListenerOnGradientShader {
     fun onGetGradientShader(

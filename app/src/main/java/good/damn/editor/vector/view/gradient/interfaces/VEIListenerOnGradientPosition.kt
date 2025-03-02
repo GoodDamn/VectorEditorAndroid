@@ -1,4 +1,4 @@
-package good.damn.editor.vector.view.gradient
+package good.damn.editor.vector.view.gradient.interfaces
 
 import android.graphics.PointF
 

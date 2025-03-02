@@ -8,6 +8,7 @@ import android.graphics.PointF
 import android.graphics.Shader
 import android.view.MotionEvent
 import android.view.View
+import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientPosition
 import good.damn.sav.misc.extensions.drawCircle
 import kotlin.math.hypot
 import kotlin.math.min
@@ -29,8 +30,8 @@ class VEViewGradientPlacer(
     private var mColors = intArrayOf()
     private var mPositions = floatArrayOf()
 
-    val from = PointF()
-    val to = PointF()
+    private val from = PointF()
+    private val to = PointF()
 
     var onChangePosition: VEIListenerOnGradientPosition? = null
 
@@ -91,7 +92,17 @@ class VEViewGradientPlacer(
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_CANCEL -> {
                     mCurrentPoint = null
-                }
+               if (mColors.size > 1) {
+                mPaintGrad.shader = LinearGradient(
+                    from.x,
+                    from.y,
+                    to.x,
+                    to.y,
+                    mColors,
+                    mPositions,
+                    Shader.TileMode.CLAMP
+                )
+            } }
             }
 
             invalidateGradient()

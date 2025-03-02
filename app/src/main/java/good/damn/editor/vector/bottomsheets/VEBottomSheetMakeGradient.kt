@@ -1,7 +1,6 @@
 package good.damn.editor.vector.bottomsheets
 
 import android.content.Context
-import android.graphics.LinearGradient
 import android.graphics.PointF
 import android.view.Gravity
 import android.view.ViewGroup
@@ -11,18 +10,20 @@ import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.view.gradient.VECanvasColorSeek
-import good.damn.editor.vector.view.gradient.VEIListenerOnGradientPosition
-import good.damn.editor.vector.view.gradient.VEIListenerOnGradientShader
+import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientPosition
+import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientShader
 import good.damn.editor.vector.view.gradient.VEViewGradientMaker
 import good.damn.editor.vector.view.gradient.VEViewGradientPlacer
+import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientColorSeek
 import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
+import good.damn.sav.misc.extensions.toInt32
 
 class VEBottomSheetMakeGradient(
     private val toView: ViewGroup,
     private val onConfirmFill: VEIListenerBottomSheetFill<VEMFillGradientLinear>
 ): VEBottomSheet(
     toView
-), VEIListenerOnGradientShader, VEIListenerOnGradientPosition {
+), VEIListenerOnGradientShader, VEIListenerOnGradientPosition, VEIListenerOnGradientColorSeek {
 
     private val mColors = arrayListOf(
         VECanvasColorSeek().apply {
@@ -54,6 +55,7 @@ class VEBottomSheetMakeGradient(
             colors = mColors
 
             onGradientShader = this@VEBottomSheetMakeGradient
+            onSelectColor = this@VEBottomSheetMakeGradient
 
             addView(
                 this,
@@ -158,11 +160,27 @@ class VEBottomSheetMakeGradient(
         }
     }
 
+    override fun onSelectColorSeek(
+        index: Int
+    ) {
+        VEBottomSheetSelectColor(
+            toView
+        ) {
+            it ?: return@VEBottomSheetSelectColor
+            mViewGradMaker?.apply {
+                updateGradientColorSeek(
+                    index,
+                    it.color.toInt32()
+                )
+                invalidate()
+            }
+        }.show()
+    }
+
     override fun onGetGradientPosition(
         from: PointF,
         to: PointF
     ) {
 
     }
-
 }

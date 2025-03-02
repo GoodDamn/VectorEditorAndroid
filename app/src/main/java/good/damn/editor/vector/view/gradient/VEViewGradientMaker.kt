@@ -4,10 +4,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.LinearGradient
 import android.graphics.Paint
-import android.graphics.PointF
 import android.graphics.Shader
 import android.view.MotionEvent
 import android.view.View
+import androidx.annotation.ColorInt
+import good.damn.editor.vector.extensions.containsX
+import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientColorSeek
+import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientShader
 
 class VEViewGradientMaker(
     context: Context
@@ -20,6 +23,7 @@ class VEViewGradientMaker(
     }
 
     var onGradientShader: VEIListenerOnGradientShader? = null
+    var onSelectColor: VEIListenerOnGradientColorSeek? = null
 
     var colors: List<VECanvasColorSeek>? = null
         set(v) {
@@ -149,8 +153,6 @@ class VEViewGradientMaker(
         event: MotionEvent?
     ): Boolean {
         event ?: return false
-        colors ?: return false
-
 
         mCurrentColorSeek?.apply {
 
@@ -187,18 +189,43 @@ class VEViewGradientMaker(
             return true
         }
 
-        for (it in colors!!.indices) {
-            if (colors!![it].touchEvent(event)) {
-                mCurrentColorSeek = colors!![it]
-                mCurrentColorSeekIndex = it
-                mCurrentColorSeekDtX = event.x - colors!![it].rectColor.left
-                return true
+        colors?.apply {
+            for (it in indices) {
+                val color = this[it]
+
+                if (color.touchEvent(event)) {
+                    onSelectColor?.onSelectColorSeek(
+                        it
+                    )
+                    return false
+                }
+
+                if (color.rectColor.containsX(
+                    event.x.toInt()
+                )) {
+                    mCurrentColorSeek = color
+                    mCurrentColorSeekIndex = it
+                    mCurrentColorSeekDtX = event.x - color.rectColor.left
+                    return true
+                }
             }
         }
 
         return false
     }
 
+    fun updateGradientColorSeek(
+        colorIndex: Int,
+        @ColorInt color: Int
+    ) {
+        mColors[colorIndex] = color
+
+        colors?.getOrNull(
+            colorIndex
+        )?.color = color
+
+        invalidateGradient()
+    }
 
     private inline fun invalidateGradient() {
         LinearGradient(
