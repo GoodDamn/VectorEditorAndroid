@@ -17,12 +17,12 @@ import good.damn.sav.misc.utils.VEUtilsWrite
 import java.io.OutputStream
 
 data class VEMFillGradientLinear(
-    var p0x: Float,
-    var p0y: Float,
-    var p1x: Float,
-    var p1y: Float,
-    var colors: IntArray,
-    var positions: FloatArray
+    val p0x: Float,
+    val p0y: Float,
+    val p1x: Float,
+    val p1y: Float,
+    val colors: IntArray,
+    val positions: FloatArray
 ): VEIFill {
 
     companion object {
@@ -34,7 +34,7 @@ data class VEMFillGradientLinear(
         8
     )
 
-    var gradient = LinearGradient(
+    private var gradient = LinearGradient(
         p0x,
         p0y,
         p1x,
@@ -43,24 +43,6 @@ data class VEMFillGradientLinear(
         positions,
         Shader.TileMode.CLAMP
     )
-
-    fun updateGradient(
-        p0x: Float,
-        p0y: Float,
-        p1x: Float,
-        p1y: Float,
-        colors: IntArray,
-        positions: FloatArray,
-        gradient: LinearGradient
-    ) {
-        this.p0x = p0x
-        this.p0y = p0y
-        this.p1x = p1x
-        this.p1y = p1y
-        this.colors = colors
-        this.positions = positions
-        this.gradient = gradient
-    }
 
     override fun copy() = VEMFillGradientLinear(
         p0x, p0y,

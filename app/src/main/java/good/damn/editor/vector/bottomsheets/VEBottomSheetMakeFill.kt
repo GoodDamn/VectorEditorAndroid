@@ -3,54 +3,69 @@ package good.damn.editor.vector.bottomsheets
 import android.content.Context
 import android.graphics.PointF
 import android.view.Gravity
-import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
+import android.widget.Button
 import android.widget.LinearLayout
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.extensions.views.bounds
 import good.damn.editor.vector.extensions.views.boundsFrame
-import good.damn.editor.vector.view.gradient.VECanvasColorSeek
-import good.damn.editor.vector.view.gradient.VEViewGradientMaker
 import good.damn.sav.core.shapes.fill.VEIFill
-import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
-import good.damn.sav.misc.extensions.toInt32
 
-class VEBottomSheetMakeGradient(
+class VEBottomSheetMakeFill(
     private val toView: ViewGroup,
-    private val onConfirmFill: VEIListenerBottomSheetFill<VEMFillGradientLinear>
+    private val onConfirmFill: VEIListenerBottomSheetFill<VEIFill>
 ): VEBottomSheet(
     toView
 ) {
 
     override fun onCreateView(
         context: Context
-    ) = FrameLayout(
+    ) = LinearLayout(
         context
     ).apply {
+        orientation = LinearLayout.HORIZONTAL
 
-        setBackgroundColor(
-            0xff000315.toInt()
-        )
+        val btnWidth = VEApp.width / 2
 
-        VEViewGradientMaker(
+        Button(
             context
         ).apply {
 
-            colors = arrayListOf(
-                VECanvasColorSeek().apply {
-                    color = 0xffff0000.toInt()
-                },
-                VECanvasColorSeek().apply {
-                    color = 0xff00ff00.toInt()
-                }
-            )
+            text = "Gradient"
+
+            setOnClickListener {
+                VEBottomSheetMakeGradient(
+                    toView
+                ) {
+                    onConfirmFill.onConfirmFill(it)
+                }.show()
+            }
 
             addView(
                 this,
-                -1,
+                btnWidth,
+                -1
+            )
+        }
+
+        Button(
+            context
+        ).apply {
+            text = "Color"
+
+            setOnClickListener {
+                VEBottomSheetSelectColor(
+                    toView
+                ) {
+                    onConfirmFill.onConfirmFill(it)
+                }.show()
+            }
+
+            addView(
+                this,
+                btnWidth,
                 -1
             )
         }
