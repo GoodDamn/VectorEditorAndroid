@@ -10,20 +10,20 @@ import androidx.annotation.NonNull;
 
 public final class VECanvasColorSeek {
 
-    private final Paint mPaint = new Paint();
+    private final Paint mPaintRect = new Paint();
 
     final Rect rectColor = new Rect();
 
 
     @ColorInt
     public final int getColor() {
-        return mPaint.getColor();
+        return mPaintRect.getColor();
     }
 
     public final void setColor(
         @ColorInt int color
     ) {
-        mPaint.setColor(
+        mPaintRect.setColor(
             color
         );
     }
@@ -49,7 +49,7 @@ public final class VECanvasColorSeek {
     ) {
         canvas.drawRect(
             rectColor,
-            mPaint
+            mPaintRect
         );
     }
 
