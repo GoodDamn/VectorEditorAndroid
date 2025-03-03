@@ -6,7 +6,7 @@ import good.damn.editor.importer.animation.VEModelImportAnimation
 import good.damn.editor.importer.exceptions.VEExceptionDifferentVersion
 import good.damn.editor.importer.exceptions.VEExceptionNoAnimation
 import good.damn.sav.core.VEMIdentifier
-import good.damn.sav.core.animation.interpolators.fill.VEAnimationObserverFill
+import good.damn.sav.core.animation.interpolators.fill.VEFillGroupObserver
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.fill.VEIFill
@@ -182,7 +182,7 @@ class VEImport3 {
                         importAnimation.createFillAnimation(
                             property,
                             keyframesCount,
-                            VEAnimationObserverFill.import(
+                            VEFillGroupObserver.import(
                                 this,
                                 model.shapes,
                                 entityId

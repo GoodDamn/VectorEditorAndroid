@@ -12,6 +12,7 @@ import good.damn.sav.core.listeners.VEICallbackOnAddSkeletonPoint
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
+import good.damn.sav.core.animation.interpolators.fill.VEFillGroupObserver
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
@@ -25,7 +26,6 @@ import good.damn.sav.misc.extensions.primitives.toByteArray
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
 import java.util.LinkedList
-import kotlin.math.sign
 
 class VEEditModeShape(
     private val anchor: VEAnchor,
@@ -54,6 +54,8 @@ VEIListenerOnAnchorPoint {
             v.fill = vectorFill
             v.strokeWidth = vectorStrokeWidth
         }
+
+    val groupFill = VEFillGroupObserver()
 
     val shapes = VEListShapes().apply {
         onAddShape = this@VEEditModeShape
@@ -154,6 +156,9 @@ VEIListenerOnAnchorPoint {
                     addPoint(mPointTo)
 
                     if (mPointFrom != null) {
+                        groupFill.observe(
+                            this
+                        )
                         shapes.add(
                             this
                         )

@@ -36,7 +36,6 @@ import good.damn.editor.vector.launchers.VELauncherPermission
 import good.damn.editor.vector.launchers.VEListenerOnResultPermission
 import good.damn.editor.views.VEViewVectorEditor
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
-import good.damn.sav.core.animation.interpolators.fill.VEAnimationObserverFill
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.primitives.VEShapeBezierQuad
@@ -144,8 +143,6 @@ VEIListenerAnimationUpdateFrame {
     private var mRoot: FrameLayout? = null
 
     private var mFileExport: VEFile? = null
-
-    private var mCurrentFillObserver = VEAnimationObserverFill()
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -370,6 +367,7 @@ VEIListenerAnimationUpdateFrame {
                     2000
                 )
             )
+
             close()
 
             modeShape.apply {
@@ -501,7 +499,7 @@ VEIListenerAnimationUpdateFrame {
             mFragmentVectorAnimation
                 .processer
                 .onSelectFill(
-                    mCurrentFillObserver
+                    modeShape.groupFill
                 )
 
             return
@@ -510,14 +508,6 @@ VEIListenerAnimationUpdateFrame {
         val root = mRoot
             ?: return
 
-        mCurrentFillObserver.removeObservers()
-
-        modeShape.shapes.forEach {
-            mCurrentFillObserver.observe(
-                it
-            )
-        }
-
         VEBottomSheetMakeFill(
             Size(
                 modeShape.canvasWidth,
@@ -525,7 +515,7 @@ VEIListenerAnimationUpdateFrame {
             ),
             root
         ) {
-            mCurrentFillObserver.value = it
+            modeShape.groupFill.value = it
             modeShape.vectorFill = it
             mViewVector?.invalidate()
         }.show()

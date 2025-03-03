@@ -1,27 +1,20 @@
 package good.damn.editor.vector.importer
 
-import android.graphics.PointF
 import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanvasFill
 import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanvasPosition
 import good.damn.editor.animation.animator.options.canvas.VEAnimationOptionCanvasWidth
-import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
 import good.damn.editor.importer.animation.VEIListenerImportAnimation
 import good.damn.editor.importer.animation.extractor.VEIImportAnimationExtractor
 import good.damn.editor.importer.animation.extractor.VEImportAnimationExtractorFill
 import good.damn.editor.importer.animation.extractor.VEImportAnimationExtractorPosition
 import good.damn.editor.importer.animation.extractor.VEImportAnimationExtractorStrokeWidth
 import good.damn.editor.transaction.VEIRequesterFloat
-import good.damn.sav.core.animation.interpolators.fill.VEAnimationObserverFill
-import good.damn.sav.core.animation.keyframe.VEKeyframes
+import good.damn.sav.core.animation.interpolators.fill.VEFillGroupObserver
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionFill
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionPosition
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionWidth
-import good.damn.sav.core.animation.keyframe.VEMKeyframePosition
-import good.damn.sav.core.animation.keyframe.VEMKeyframeStrokeWidth
-import good.damn.sav.core.animation.keyframe.fill.VEMKeyframeFill
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.misc.Size
 import java.io.InputStream
 
@@ -34,7 +27,7 @@ class VEImportAnimationMutable(
     override fun createFillAnimation(
         type: Int,
         keyframesCount: Int,
-        observerFill: VEAnimationObserverFill,
+        observerFill: VEFillGroupObserver,
         inp: InputStream
     ) = VEMImportAnimationMutable(
         observerFill.id.id,

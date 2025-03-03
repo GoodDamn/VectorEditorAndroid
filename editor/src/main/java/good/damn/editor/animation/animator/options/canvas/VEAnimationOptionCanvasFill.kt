@@ -7,17 +7,13 @@ import good.damn.editor.transaction.VETransactionKeyFrame
 import good.damn.sav.core.VEMExportAnimation
 import good.damn.sav.core.animation.animators.VEAnimatorInterpolation
 import good.damn.sav.core.animation.interpolators.fill.VEAnimationInterpolatorFill
-import good.damn.sav.core.animation.interpolators.fill.VEAnimationObserverFill
-import good.damn.sav.core.animation.interpolators.fill.VEMFillColorPriority
+import good.damn.sav.core.animation.interpolators.fill.VEFillGroupObserver
 import good.damn.sav.core.animation.keyframe.VEIAnimationOption
 import good.damn.sav.core.animation.keyframe.fill.VEMKeyframeFill
-import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.core.shapes.fill.VEIFill
-import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.misc.structures.tree.toList
 
 class VEAnimationOptionCanvasFill(
-    private val observerFill: VEAnimationObserverFill,
+    private val observerFill: VEFillGroupObserver,
     option: VEIAnimationOption<VEMKeyframeFill>,
     requester: VEIRequesterFloat
 ): VEAnimationOptionCanvasBase<VEMKeyframeFill>(

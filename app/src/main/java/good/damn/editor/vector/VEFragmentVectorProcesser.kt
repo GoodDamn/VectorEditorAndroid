@@ -8,14 +8,13 @@ import good.damn.editor.editmodes.listeners.VEIListenerOnSelectFill
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.views.VEViewAnimatorEditor
-import good.damn.sav.core.animation.interpolators.fill.VEAnimationObserverFill
+import good.damn.sav.core.animation.interpolators.fill.VEFillGroupObserver
 import good.damn.sav.core.animation.keyframe.VEKeyframes
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionFill
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionPosition
 import good.damn.sav.core.animation.keyframe.VEMAnimationOptionWidth
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.core.shapes.fill.VEIFill
 
 class VEFragmentVectorProcesser
 : VEIListenerOnSelectShape,
@@ -66,7 +65,7 @@ VEIListenerOnSelectFill {
     }
 
     override fun onSelectFill(
-        fill: VEAnimationObserverFill
+        fill: VEFillGroupObserver
     ) = selectAnimation(
         fill.id.id
     ) {
