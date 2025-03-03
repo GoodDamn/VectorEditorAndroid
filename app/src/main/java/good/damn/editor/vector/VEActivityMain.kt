@@ -34,6 +34,7 @@ import good.damn.editor.vector.fragments.VEFragmentVectorOptions
 import good.damn.editor.vector.importer.VEImportAnimationMutable
 import good.damn.editor.vector.launchers.VELauncherPermission
 import good.damn.editor.vector.launchers.VEListenerOnResultPermission
+import good.damn.editor.vector.view.VEViewPaint
 import good.damn.editor.views.VEViewVectorEditor
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 import good.damn.sav.core.points.VEPointIndexed
@@ -238,16 +239,12 @@ VEIListenerAnimationUpdateFrame {
                 )
             }
 
-            View(
+            VEViewPaint(
                 context
             ).apply {
 
-                setBackgroundColor(
-                    0xffff0000.toInt()
-                )
-
                 setOnClickListener {
-                    onClickBtnFill()
+                    onClickBtnFill(this)
                 }
 
                 addView(
@@ -495,7 +492,9 @@ VEIListenerAnimationUpdateFrame {
         mCurrentAnchor = modeAnimation
     }
 
-    private inline fun onClickBtnFill() {
+    private inline fun onClickBtnFill(
+        v: VEViewPaint
+    ) {
 
         val mode = mViewVector?.mode ?: return
         if (mode is VEEditModeAnimation) {
@@ -521,7 +520,9 @@ VEIListenerAnimationUpdateFrame {
         ) {
             modeShape.groupFill.value = it
             modeShape.vectorFill = it
+            it?.fillPaint(v.paint)
             mViewVector?.invalidate()
+            v.invalidate()
         }.show()
     }
 

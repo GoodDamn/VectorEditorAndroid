@@ -52,11 +52,19 @@ class VEBottomSheetMakeGradient(
             positions
         )
     } ?: VEMGradientEdit(
-        colors = intArrayOf(
+        PointF(
+            mwplacer * 0.25f,
+            mwplacer * 0.25f
+        ),
+        PointF(
+            mwplacer * 0.75f,
+            mwplacer * 0.75f
+        ),
+        intArrayOf(
             0xffff0000.toInt(),
             0xff00ff00.toInt()
         ),
-        positions = floatArrayOf(
+        floatArrayOf(
             0.0f,
             1.0f
         )
