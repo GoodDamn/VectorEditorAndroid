@@ -12,7 +12,7 @@ public final class VECanvasColorSeek {
 
     private final Paint mPaintRect = new Paint();
 
-    final Rect rectColor = new Rect();
+    public final Rect rectColor = new Rect();
 
 
     @ColorInt

@@ -381,6 +381,7 @@ VEIListenerAnimationUpdateFrame {
                 )
 
                 groupFill = model.static.groupsFill.first()
+                vectorFill = shapes.firstOrNull()?.fill
             }
 
             processer.clearAnimations()
@@ -511,6 +512,7 @@ VEIListenerAnimationUpdateFrame {
             ?: return
 
         VEBottomSheetMakeFill(
+            modeShape.vectorFill,
             Size(
                 modeShape.canvasWidth,
                 modeShape.canvasHeight

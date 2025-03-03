@@ -13,6 +13,7 @@ import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientCol
 import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientShader
 
 class VEViewGradientMaker(
+    private val gradientEdit: VEMGradientEdit,
     context: Context
 ): View(
     context
@@ -25,44 +26,11 @@ class VEViewGradientMaker(
     var onGradientShader: VEIListenerOnGradientShader? = null
     var onSelectColor: VEIListenerOnGradientColorSeek? = null
 
-    var colors: List<VECanvasColorSeek>? = null
-        set(v) {
-            field = v
-
-            v?.apply {
-                mColors = IntArray(size).apply {
-                    for (i in indices) {
-                        this[i] = v[i].color
-                    }
-                }
-                mPositions = FloatArray(size)
-                invalidateGradient()
-                return
-            }
-
-            mColors = intArrayOf()
-            mPositions = floatArrayOf()
-        }
-
-    inline fun layoutColorSeekById(
-        v: Int
-    ) {
-        colors?.getOrNull(v)?.apply {
-            layout(
-                0f,
-                0f,
-                width.toFloat(),
-                height.toFloat()
-            )
-        }
-    }
+    private var mColorsSeek: List<VECanvasColorSeek>? = null
 
     private var mCurrentColorSeek: VECanvasColorSeek? = null
     private var mCurrentColorSeekIndex = 0
     private var mCurrentColorSeekDtX = 0f
-
-    private var mColors = intArrayOf()
-    private var mPositions = floatArrayOf()
 
     private val mPaintSeek = Paint().apply {
         style = Paint.Style.STROKE
@@ -107,14 +75,24 @@ class VEViewGradientMaker(
 
         mPaintTriangle.strokeWidth = w * 0.01f
 
-        colors?.forEach {
+        mColorsSeek?.forEachIndexed { i, it ->
             it.layout(
                 0f,
                 0f,
                 w,
                 h
             )
+
+            val l = (
+                mx + (mxx - mx) * gradientEdit.positions[i]
+            ).toInt()
+            val ww = it.rectColor.width()
+
+            it.rectColor.left = l
+            it.rectColor.right = l + ww
         }
+
+        invalidateGradient()
     }
 
     override fun onDraw(
@@ -133,7 +111,7 @@ class VEViewGradientMaker(
         )
 
 
-        colors?.forEach {
+        mColorsSeek?.forEach {
             it.draw(
                 canvas
             )
@@ -170,7 +148,7 @@ class VEViewGradientMaker(
                 rectColor.bottom
             )
 
-            mPositions[
+            gradientEdit.positions[
                 mCurrentColorSeekIndex
             ] = (rectColor.centerX()-mx) / mSeekWidth
 
@@ -189,7 +167,7 @@ class VEViewGradientMaker(
             return true
         }
 
-        colors?.apply {
+        mColorsSeek?.apply {
             for (it in indices) {
                 val color = this[it]
 
@@ -214,13 +192,33 @@ class VEViewGradientMaker(
         return false
     }
 
+    fun setInitialValues(
+        colorsSeek: List<VECanvasColorSeek>
+    ) {
+        mColorsSeek = colorsSeek
+        invalidateGradient()
+    }
+
+    fun layoutColorSeekById(
+        v: Int
+    ) {
+        mColorsSeek?.getOrNull(v)?.apply {
+            layout(
+                0f,
+                0f,
+                width.toFloat(),
+                height.toFloat()
+            )
+        }
+    }
+
     fun updateGradientColorSeek(
         colorIndex: Int,
         @ColorInt color: Int
     ) {
-        mColors[colorIndex] = color
+        gradientEdit.colors[colorIndex] = color
 
-        colors?.getOrNull(
+        mColorsSeek?.getOrNull(
             colorIndex
         )?.color = color
 
@@ -233,15 +231,12 @@ class VEViewGradientMaker(
             my,
             mxx,
             my,
-            mColors,
-            mPositions,
+            gradientEdit.colors,
+            gradientEdit.positions,
             Shader.TileMode.CLAMP
         ).apply {
             mPaintSeek.shader = this
-            onGradientShader?.onGetGradientShader(
-                mColors,
-                mPositions
-            )
+            onGradientShader?.onReadyGradientShader()
         }
     }
 

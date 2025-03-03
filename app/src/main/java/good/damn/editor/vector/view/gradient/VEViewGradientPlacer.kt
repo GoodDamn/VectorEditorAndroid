@@ -14,8 +14,9 @@ import kotlin.math.hypot
 import kotlin.math.min
 
 class VEViewGradientPlacer(
+    private val gradientEdit: VEMGradientEdit,
     context: Context
-): View(
+) : View(
     context
 ) {
 
@@ -26,12 +27,6 @@ class VEViewGradientPlacer(
 
     private var mCurrentPoint: PointF? = null
     private var mRadius = 0f
-
-    private var mColors = intArrayOf()
-    private var mPositions = floatArrayOf()
-
-    private val from = PointF()
-    private val to = PointF()
 
     var onChangePosition: VEIListenerOnGradientPosition? = null
 
@@ -52,6 +47,8 @@ class VEViewGradientPlacer(
             width,
             height
         ) * 0.1f
+
+        invalidateGradient()
     }
 
     override fun onDraw(
@@ -64,13 +61,13 @@ class VEViewGradientPlacer(
         )
 
         canvas.drawCircle(
-            from,
+            gradientEdit.from,
             mRadius,
             mPaintPoint
         )
 
         canvas.drawCircle(
-            to,
+            gradientEdit.to,
             mRadius,
             mPaintPoint
         )
@@ -92,25 +89,12 @@ class VEViewGradientPlacer(
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_CANCEL -> {
                     mCurrentPoint = null
-               if (mColors.size > 1) {
-                mPaintGrad.shader = LinearGradient(
-                    from.x,
-                    from.y,
-                    to.x,
-                    to.y,
-                    mColors,
-                    mPositions,
-                    Shader.TileMode.CLAMP
-                )
-            } }
+                }
             }
 
             invalidateGradient()
 
-            onChangePosition?.onGetGradientPosition(
-                from,
-                to
-            )
+            onChangePosition?.onChangeGradientPosition()
 
             invalidate()
 
@@ -118,45 +102,41 @@ class VEViewGradientPlacer(
         }
 
         if (insidePoint(
-            event.x,
-            event.y,
-            from
-        )) {
-            mCurrentPoint = from
+                event.x,
+                event.y,
+                gradientEdit.from
+            )
+        ) {
+            mCurrentPoint = gradientEdit.from
             return true
         }
 
         if (insidePoint(
-            event.x,
-            event.y,
-            to
-        )) {
-            mCurrentPoint = to
+                event.x,
+                event.y,
+                gradientEdit.to
+            )
+        ) {
+            mCurrentPoint = gradientEdit.to
             return true
         }
 
         return false
     }
 
-    fun changeShader(
-        colors: IntArray,
-        positions: FloatArray
-    ) {
-        mColors = colors
-        mPositions = positions
-
+    fun changeShader() {
         invalidateGradient()
     }
 
-    private inline fun invalidateGradient() {
-        if (mColors.size > 1) {
+    private inline fun invalidateGradient() = gradientEdit.run {
+        if (colors.size > 1) {
             mPaintGrad.shader = LinearGradient(
                 from.x,
                 from.y,
                 to.x,
                 to.y,
-                mColors,
-                mPositions,
+                colors,
+                positions,
                 Shader.TileMode.CLAMP
             )
         }

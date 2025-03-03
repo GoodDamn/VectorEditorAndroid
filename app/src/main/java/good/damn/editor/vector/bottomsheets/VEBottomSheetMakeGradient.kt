@@ -10,6 +10,7 @@ import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.vector.view.gradient.VECanvasColorSeek
+import good.damn.editor.vector.view.gradient.VEMGradientEdit
 import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientPosition
 import good.damn.editor.vector.view.gradient.interfaces.VEIListenerOnGradientShader
 import good.damn.editor.vector.view.gradient.VEViewGradientMaker
@@ -22,30 +23,57 @@ import good.damn.sav.misc.extensions.toInt32
 class VEBottomSheetMakeGradient(
     private val canvasSize: Size,
     private val toView: ViewGroup,
+    currentFill: VEMFillGradientLinear?,
     private val onConfirmFill: VEIListenerBottomSheetFill<VEMFillGradientLinear>
-): VEBottomSheet(
+) : VEBottomSheet(
     toView
 ), VEIListenerOnGradientShader,
-VEIListenerOnGradientPosition,
-VEIListenerOnGradientColorSeek {
+    VEIListenerOnGradientPosition,
+    VEIListenerOnGradientColorSeek {
 
-    private val mColorsSeek = arrayListOf(
-        VECanvasColorSeek().apply {
-            color = 0xffff0000.toInt()
-        },
-        VECanvasColorSeek().apply {
-            color = 0xff00ff00.toInt()
-        }
-    )
 
-    private var mPointFrom: PointF? = null
-    private var mPointTo: PointF? = null
-
-    private var mColors: IntArray? = null
-    private var mPositions: FloatArray? = null
+    private val mw = VEApp.width * 0.5f
+    private val mwplacer = VEApp.height * 0.2f
 
     private var mViewGradMaker: VEViewGradientMaker? = null
     private var mViewGradPlacer: VEViewGradientPlacer? = null
+
+    private val mGradientEdit = currentFill?.run {
+        VEMGradientEdit(
+            PointF(
+                p0x / canvasSize.width * mwplacer,
+                p0y / canvasSize.height * mwplacer
+            ),
+            PointF(
+                p1x / canvasSize.width * mwplacer,
+                p1y / canvasSize.height * mwplacer
+            ),
+            colors,
+            positions
+        )
+    } ?: VEMGradientEdit(
+        colors = intArrayOf(
+            0xffff0000.toInt(),
+            0xff00ff00.toInt()
+        ),
+        positions = floatArrayOf(
+            0.0f,
+            1.0f
+        )
+    )
+
+    private val mColorsSeek = ArrayList<VECanvasColorSeek>(
+        mGradientEdit.colors.size
+    ).apply {
+        for (i in mGradientEdit.colors.indices) {
+            add(
+                VECanvasColorSeek().apply {
+                    color = mGradientEdit.colors[i]
+                    rectColor
+                }
+            )
+        }
+    }
 
     override fun onCreateView(
         context: Context
@@ -57,34 +85,35 @@ VEIListenerOnGradientColorSeek {
             0xff000315.toInt()
         )
 
-        val w = VEApp.width * 0.5f
-        val wplacer = VEApp.height * 0.2f
-
         mViewGradMaker = VEViewGradientMaker(
+            mGradientEdit,
             context
         ).apply {
-            colors = mColorsSeek
 
             onGradientShader = this@VEBottomSheetMakeGradient
             onSelectColor = this@VEBottomSheetMakeGradient
 
+            setInitialValues(
+                mColorsSeek
+            )
+
             addView(
                 this,
-                w.toInt(),
+                mw.toInt(),
                 -1
             )
         }
 
         mViewGradPlacer = VEViewGradientPlacer(
+            mGradientEdit,
             context
         ).apply {
 
             onChangePosition = this@VEBottomSheetMakeGradient
-
             boundsFrame(
-                width = wplacer,
-                height = wplacer,
-                start = w
+                width = mwplacer,
+                height = mwplacer,
+                start = mw
             )
 
             addView(
@@ -92,7 +121,7 @@ VEIListenerOnGradientColorSeek {
             )
         }
 
-        val wb = VEApp.width * 0.08f
+        val wb = VEApp.width * 0.1f
         Button(
             context
         ).apply {
@@ -106,11 +135,34 @@ VEIListenerOnGradientColorSeek {
                     }
                 )
 
+                mGradientEdit.colors = IntArray(
+                    mGradientEdit.colors.size + 1
+                ).run {
+                    for (i in mGradientEdit.colors.indices) {
+                        this[i] = mGradientEdit.colors[i]
+                    }
+                    this[size - 1] = 0xffffffff.toInt()
+                    this
+                }
+
+                mGradientEdit.positions = FloatArray(
+                    mGradientEdit.positions.size + 1
+                ).run {
+                    for (i in mGradientEdit.positions.indices) {
+                        this[i] = mGradientEdit.positions[i]
+                    }
+
+                    this[size - 1] = 1.0f
+                    this
+                }
+
                 mViewGradMaker?.apply {
                     layoutColorSeekById(
                         mColorsSeek.size - 1
                     )
-                    colors = mColorsSeek
+                    setInitialValues(
+                        mColorsSeek
+                    )
                     invalidate()
                 }
             }
@@ -134,8 +186,30 @@ VEIListenerOnGradientColorSeek {
 
             setOnClickListener {
                 mColorsSeek.removeLastOrNull()
+
+                mGradientEdit.colors = IntArray(
+                    mGradientEdit.colors.size - 1
+                ).run {
+                    for (i in indices) {
+                        this[i] = mGradientEdit.colors[i]
+                    }
+
+                    this
+                }
+
+                mGradientEdit.positions = FloatArray(
+                    mGradientEdit.positions.size - 1
+                ).run {
+                    for (i in indices) {
+                        this[i] = mGradientEdit.positions[i]
+                    }
+                    this
+                }
+
                 mViewGradMaker?.apply {
-                    colors = mColorsSeek
+                    setInitialValues(
+                        mColorsSeek
+                    )
                     invalidate()
                 }
             }
@@ -153,25 +227,15 @@ VEIListenerOnGradientColorSeek {
 
         boundsFrame(
             width = VEApp.width.toFloat(),
-            height = wplacer,
+            height = mwplacer,
             gravity = Gravity.BOTTOM
         )
     }
 
-    override fun onGetGradientShader(
-        colors: IntArray,
-        positions: FloatArray
-    ) {
+    override fun onReadyGradientShader() {
         mViewGradPlacer?.apply {
-            changeShader(
-                colors,
-                positions
-            )
-            mColors = colors
-            mPositions = positions
-
+            changeShader()
             confirmFill()
-
             invalidate()
         }
     }
@@ -193,41 +257,21 @@ VEIListenerOnGradientColorSeek {
         }.show()
     }
 
-    override fun onGetGradientPosition(
-        from: PointF,
-        to: PointF
-    ) {
-        mPointFrom = from
-        mPointTo = to
-
+    override fun onChangeGradientPosition() {
         confirmFill()
     }
 
-    private inline fun confirmFill() {
-        val f = mPointFrom
-            ?: return
-
-        val p = mPointTo
-            ?: return
-
-        val colors = mColors
-            ?: return
-
-        val positions = mPositions
-            ?: return
-
-        val view = mViewGradPlacer
-            ?: return
-
+    private inline fun confirmFill() = mGradientEdit.run {
         onConfirmFill.onConfirmFill(
             VEMFillGradientLinear(
-                f.x / view.width * canvasSize.width,
-                f.y / view.height * canvasSize.height,
-                p.x / view.width * canvasSize.width,
-                p.y / view.height * canvasSize.height,
+                from.x / mwplacer * canvasSize.width,
+                from.y / mwplacer * canvasSize.height,
+                to.x / mwplacer * canvasSize.width,
+                to.y / mwplacer * canvasSize.height,
                 colors,
                 positions
             )
         )
     }
+
 }

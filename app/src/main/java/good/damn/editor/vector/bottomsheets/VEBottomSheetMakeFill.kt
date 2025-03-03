@@ -10,11 +10,13 @@ import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.extensions.views.bounds
 import good.damn.editor.vector.extensions.views.boundsFrame
+import good.damn.editor.vector.view.gradient.VECanvasColorSeek
 import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.core.shapes.fill.VEMFillGradientLinear
 import good.damn.sav.misc.Size
 
 class VEBottomSheetMakeFill(
+    private val currentFill: VEIFill?,
     private val canvasSize: Size,
     private val toView: ViewGroup,
     private val onConfirmFill: VEIListenerBottomSheetFill<VEIFill>
@@ -38,9 +40,11 @@ class VEBottomSheetMakeFill(
             text = "Gradient"
 
             setOnClickListener {
+
                 VEBottomSheetMakeGradient(
                     canvasSize,
-                    toView
+                    toView,
+                    currentFill as? VEMFillGradientLinear
                 ) {
                     onConfirmFill.onConfirmFill(it)
                 }.show()
