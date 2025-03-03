@@ -2,6 +2,7 @@ package good.damn.editor.importer
 
 import android.content.res.Resources
 import androidx.annotation.RawRes
+import good.damn.sav.core.animation.interpolators.fill.VEFillGroupObserver
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.Size
@@ -9,7 +10,8 @@ import java.io.InputStream
 
 data class VEModelImport(
     val skeleton: VESkeleton2D,
-    val shapes: VEListShapes
+    val shapes: VEListShapes,
+    val groupsFill: List<VEFillGroupObserver>
 ) {
     companion object {
 

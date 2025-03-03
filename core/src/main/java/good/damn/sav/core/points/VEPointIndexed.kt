@@ -27,10 +27,6 @@ VEIExportableAnimationEntity {
         point.y
     )
 
-    override fun write(
-        os: OutputStream
-    ) = Unit
-
     override fun writeId(
         os: OutputStream
     ) = id.write(os)

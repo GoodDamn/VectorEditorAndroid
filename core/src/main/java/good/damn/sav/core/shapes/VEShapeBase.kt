@@ -23,10 +23,6 @@ VEIExportableAnimationEntity {
     override val typeEntity: Byte
         get() = 0
 
-    override fun write(
-        os: OutputStream
-    ) = Unit
-
     override fun writeId(
         os: OutputStream
     ) = id.write(os)

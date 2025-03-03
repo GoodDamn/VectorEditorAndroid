@@ -8,8 +8,4 @@ interface VEIExportableAnimationEntity {
     fun writeId(
         os: OutputStream
     )
-
-    fun write(
-        os: OutputStream
-    )
 }

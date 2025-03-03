@@ -84,9 +84,19 @@ class VEImport3 {
 
             // Filling
             val paletteSize = readU()
+            val groups = ArrayList<VEFillGroupObserver>(
+                paletteSize
+            )
+
             for (i in 0 until paletteSize) {
                 val idsCount = readU()
 
+                val groupFill = VEFillGroupObserver().apply {
+                    id = VEMIdentifier(
+                        i shl 8,
+                        8
+                    )
+                }
                 val fill = VEIFill.importFill(
                     this,
                     canvasSize
@@ -95,12 +105,20 @@ class VEImport3 {
                 for (j in 0 until idsCount) {
                     val id = readU()
                     shapes[id].fill = fill
+                    groupFill.observe(
+                        shapes[id]
+                    )
                 }
+
+                groups.add(
+                    groupFill
+                )
             }
 
             VEModelImport(
                 skeleton,
-                shapes
+                shapes,
+                groups
             )
         }
 
@@ -134,25 +152,19 @@ class VEImport3 {
 
             var type: Int
             var property: Int
-            var entityId: Int
+            var entityIndex: Int
             var keyframesCount: Int
 
             for (i in 0 until animSize) {
-                entityId = readU()
+                entityIndex = readU()
                 readU().apply {
                     type = this shr 5 and 0xff
                     property = this and 0b00011111
 
+                    // Type
                     // 0 - shape
                     // 1 - point
                     // 2 - fill
-                    entityId = entityId shl when (
-                        type
-                    ) {
-                        0 -> 16
-                        1 -> 0
-                        else -> 8
-                    }
                 }
 
                 keyframesCount = readU()
@@ -162,7 +174,7 @@ class VEImport3 {
                         importAnimation.createShapeAnimation(
                             property,
                             keyframesCount,
-                            model.shapes[(entityId shr 16) and 0xff],
+                            model.shapes[entityIndex],
                             this
                         )
                     )
@@ -172,7 +184,7 @@ class VEImport3 {
                             property,
                             keyframesCount,
                             model.skeleton.getPointIndexed(
-                                entityId
+                                entityIndex
                             ),
                             this
                         )
@@ -182,11 +194,9 @@ class VEImport3 {
                         importAnimation.createFillAnimation(
                             property,
                             keyframesCount,
-                            VEFillGroupObserver.import(
-                                this,
-                                model.shapes,
-                                entityId
-                            ),
+                            model.groupsFill[
+                                entityIndex
+                            ],
                             this
                         )
                     )

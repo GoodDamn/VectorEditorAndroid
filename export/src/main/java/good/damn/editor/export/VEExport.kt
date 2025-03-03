@@ -158,13 +158,6 @@ class VEExport {
                 )
                 write(props)
                 write(it.keyframes.size)
-
-                if (type == 2.toByte()) {
-                    it.entity.write(
-                        this
-                    )
-                }
-
                 it.keyframes.forEach { keyframe ->
                     keyframe.export(
                         this,

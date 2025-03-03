@@ -15,29 +15,10 @@ class VEFillGroupObserver
 : VEIIdentifiable,
 VEIExportableAnimationEntity {
 
-    companion object {
-        fun import(
-            inp: InputStream,
-            shapes: VEListShapes,
-            entityId: Int
-        ) = VEFillGroupObserver().apply {
-            id = VEMIdentifier(
-                entityId,
-                8
-            )
-            inp.readU().apply {
-                for (i in 0 until this) {
-                    observe(shapes[inp.readU()])
-                }
-            }
-
-        }
-    }
-
     private val mList = LinkedList<VEShapeBase>()
 
     override var id = VEMIdentifier(
-        1 shl 8,
+        0 shl 8,
         8
     )
 
@@ -48,20 +29,6 @@ VEIExportableAnimationEntity {
         os: OutputStream
     ) = id.write(os)
 
-    override fun write(
-        os: OutputStream
-    ) = os.run {
-
-        write(
-            mList.size
-        )
-
-        mList.forEach {
-            it.id.write(
-                this
-            )
-        }
-    }
 
     var value: VEIFill? = null
         set(v) {
