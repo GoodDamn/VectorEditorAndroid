@@ -1,8 +1,6 @@
 package good.damn.editor.export
 
-import android.util.Log
 import good.damn.sav.core.VEMExportAnimation
-import good.damn.sav.core.VEMIdentifier
 import good.damn.sav.misc.Size
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.shapes.fill.VEIFill
@@ -136,11 +134,6 @@ class VEExport {
             animations: List<VEMExportAnimation>,
         ) = os.run {
 
-            if (animations.isEmpty()) {
-                write(0)
-                return@run
-            }
-
             write(
                 animations.size
             )
@@ -148,11 +141,14 @@ class VEExport {
             var type: Byte
             var props: Int
             animations.forEach {
-                type = if (it.entity.id.offset > 0)
-                    0 // shape
-                else 1 // point
 
-                it.entity.id.write(
+                type = it.entity.typeEntity
+
+                // 16 -> 0 - shape
+                // 8 -> 2 - fill
+                // else -> 1 - point
+
+                it.entity.writeId(
                     this
                 )
 
@@ -162,6 +158,13 @@ class VEExport {
                 )
                 write(props)
                 write(it.keyframes.size)
+
+                if (type == 2.toByte()) {
+                    it.entity.write(
+                        this
+                    )
+                }
+
                 it.keyframes.forEach { keyframe ->
                     keyframe.export(
                         this,

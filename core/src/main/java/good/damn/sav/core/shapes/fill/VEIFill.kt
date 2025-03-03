@@ -10,8 +10,7 @@ import good.damn.sav.misc.extensions.io.readU
 import java.io.InputStream
 import java.io.OutputStream
 
-interface VEIFill
-: VEIIdentifiable {
+interface VEIFill {
 
     companion object {
         fun importFill(

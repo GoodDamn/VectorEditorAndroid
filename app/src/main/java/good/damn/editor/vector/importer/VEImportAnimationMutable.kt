@@ -37,7 +37,7 @@ class VEImportAnimationMutable(
         observerFill: VEAnimationObserverFill,
         inp: InputStream
     ) = VEMImportAnimationMutable(
-        observerFill.value.id.id,
+        observerFill.id.id,
         VEAnimationOptionCanvasFill(
             observerFill,
             VEMAnimationOptionFill(

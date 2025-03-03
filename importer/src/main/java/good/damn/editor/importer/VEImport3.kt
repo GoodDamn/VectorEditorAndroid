@@ -6,6 +6,7 @@ import good.damn.editor.importer.animation.VEModelImportAnimation
 import good.damn.editor.importer.exceptions.VEExceptionDifferentVersion
 import good.damn.editor.importer.exceptions.VEExceptionNoAnimation
 import good.damn.sav.core.VEMIdentifier
+import good.damn.sav.core.animation.interpolators.fill.VEAnimationObserverFill
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.fill.VEIFill
@@ -17,7 +18,7 @@ import good.damn.sav.misc.extensions.io.readFraction
 import good.damn.sav.misc.extensions.io.readU
 import java.io.InputStream
 
-class VEImport2 {
+class VEImport3 {
     companion object {
         const val VERSION = 3
 
@@ -144,15 +145,29 @@ class VEImport2 {
 
                     // 0 - shape
                     // 1 - point
-                    entityId = entityId shl if (
-                        type == 0
-                    ) 16 else 0
+                    // 2 - fill
+                    entityId = entityId shl when (
+                        type
+                    ) {
+                        0 -> 16
+                        1 -> 0
+                        else -> 8
+                    }
                 }
 
                 keyframesCount = readU()
 
-                if (type == 1) {
-                    animations.add(
+                when (type) {
+                    0 -> animations.add(
+                        importAnimation.createShapeAnimation(
+                            property,
+                            keyframesCount,
+                            model.shapes[(entityId shr 16) and 0xff],
+                            this
+                        )
+                    )
+
+                    1 -> animations.add(
                         importAnimation.createPointAnimation(
                             property,
                             keyframesCount,
@@ -162,17 +177,21 @@ class VEImport2 {
                             this
                         )
                     )
-                    continue
+
+                    2 -> animations.add(
+                        importAnimation.createFillAnimation(
+                            property,
+                            keyframesCount,
+                            VEAnimationObserverFill.import(
+                                this,
+                                model.shapes,
+                                entityId
+                            ),
+                            this
+                        )
+                    )
                 }
 
-                animations.add(
-                    importAnimation.createShapeAnimation(
-                        property,
-                        keyframesCount,
-                        model.shapes[(entityId shr 16) and 0xff],
-                        this
-                    )
-                )
             }
 
             return@run VEModelImportAnimation(

@@ -49,7 +49,7 @@ data class VEModelImport(
             inp: InputStream,
             canvasSize: Size,
             throwException: Boolean
-        ) = VEImport2.animation(
+        ) = VEImport3.animation(
             canvasSize,
             inp,
             throwException
@@ -59,7 +59,7 @@ data class VEModelImport(
             inp: InputStream,
             canvasSize: Size,
             throwException: Boolean
-        ) = VEImport2.static(
+        ) = VEImport3.static(
             canvasSize,
             inp,
             throwException

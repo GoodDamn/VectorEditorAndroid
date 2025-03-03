@@ -2,6 +2,7 @@ package good.damn.sav.core.shapes
 
 import android.graphics.Paint
 import androidx.annotation.ColorInt
+import good.damn.sav.core.VEIExportableAnimationEntity
 import good.damn.sav.core.VEIIdentifiable
 import good.damn.sav.core.VEMIdentifier
 import good.damn.sav.core.animation.keyframe.VEIInterpolatablePriority
@@ -9,14 +10,26 @@ import good.damn.sav.core.listeners.VEIHittable
 import good.damn.sav.core.listeners.VEIPointIndexable
 import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.misc.interfaces.VEIDrawable
+import java.io.OutputStream
 
 abstract class VEShapeBase
 : VEIDrawable,
 VEIPointIndexable,
 VEIHittable,
-VEIIdentifiable {
+VEIIdentifiable,
+VEIExportableAnimationEntity {
 
     override var id = VEMIdentifier.ZERO
+    override val typeEntity: Byte
+        get() = 0
+
+    override fun write(
+        os: OutputStream
+    ) = Unit
+
+    override fun writeId(
+        os: OutputStream
+    ) = id.write(os)
 
     var fill: VEIFill? = null
         set(v) {

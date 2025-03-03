@@ -25,7 +25,9 @@ class VEBottomSheetMakeGradient(
     private val onConfirmFill: VEIListenerBottomSheetFill<VEMFillGradientLinear>
 ): VEBottomSheet(
     toView
-), VEIListenerOnGradientShader, VEIListenerOnGradientPosition, VEIListenerOnGradientColorSeek {
+), VEIListenerOnGradientShader,
+VEIListenerOnGradientPosition,
+VEIListenerOnGradientColorSeek {
 
     private val mColorsSeek = arrayListOf(
         VECanvasColorSeek().apply {

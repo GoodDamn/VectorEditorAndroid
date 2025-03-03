@@ -29,11 +29,6 @@ data class VEMFillGradientLinear(
         const val TYPE = 1
     }
 
-    override var id = VEMIdentifier(
-        0,
-        8
-    )
-
     private val gradient = LinearGradient(
         p0x,
         p0y,

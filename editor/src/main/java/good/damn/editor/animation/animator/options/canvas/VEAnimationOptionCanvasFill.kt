@@ -34,7 +34,7 @@ class VEAnimationOptionCanvasFill(
     override fun exportAnimation() = if (
         option.keyframes.size > 1
     ) VEMExportAnimation(
-        observerFill.value,
+        observerFill,
         0,
         option.keyframes.toList()
     ) else null

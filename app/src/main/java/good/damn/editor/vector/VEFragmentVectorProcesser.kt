@@ -66,15 +66,13 @@ VEIListenerOnSelectFill {
     }
 
     override fun onSelectFill(
-        fill: VEIFill
+        fill: VEAnimationObserverFill
     ) = selectAnimation(
         fill.id.id
     ) {
         arrayListOf(
             VEAnimationOptionCanvasFill(
-                VEAnimationObserverFill(
-                    fill
-                ),
+                fill,
                 VEMAnimationOptionFill(
                     VEKeyframes(),
                     duration = 1000

@@ -19,11 +19,6 @@ data class VEMFillColor(
         const val TYPE = 0
     }
 
-    override var id = VEMIdentifier(
-        0,
-        8
-    )
-
     override fun fillPaint(
         paint: Paint
     ) {

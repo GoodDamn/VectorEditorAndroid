@@ -12,11 +12,9 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.motion.widget.KeyFrames
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
-import good.damn.editor.animation.animator.options.canvas.VEIAnimationOptionCanvas
 import good.damn.editor.editmodes.VEEditModeAnimation
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
@@ -25,11 +23,10 @@ import good.damn.editor.editmodes.VEEditModeShape
 import good.damn.editor.editmodes.VEEditModeSwap
 import good.damn.editor.editmodes.freemove.VEEditModeExistingPoint
 import good.damn.editor.editmodes.freemove.VEEditModeExistingShape
-import good.damn.editor.editmodes.listeners.VEIListenerOnSelectFill
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.export.VEExport
-import good.damn.editor.importer.VEImport2
+import good.damn.editor.importer.VEImport3
 import good.damn.editor.vector.bottomsheets.VEBottomSheetMakeFill
 import good.damn.editor.vector.fragments.adapter.VEFragmentAdapter
 import good.damn.editor.vector.fragments.VEFragmentVectorAnimation
@@ -38,15 +35,10 @@ import good.damn.editor.vector.importer.VEImportAnimationMutable
 import good.damn.editor.vector.launchers.VELauncherPermission
 import good.damn.editor.vector.launchers.VEListenerOnResultPermission
 import good.damn.editor.views.VEViewVectorEditor
-import good.damn.gradient_color_picker.OnPickColorListener
-import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
-import good.damn.sav.core.animation.animators.VEAnimatorInterpolation
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
-import good.damn.sav.core.animation.keyframe.VEKeyframes
+import good.damn.sav.core.animation.interpolators.fill.VEAnimationObserverFill
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.core.shapes.fill.VEIFill
-import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.core.shapes.primitives.VEShapeBezierQuad
 import good.damn.sav.core.shapes.primitives.VEShapeLine
 import good.damn.sav.misc.Size
@@ -61,7 +53,6 @@ VEIDrawable,
 VEIListenerOnAnchorPoint,
 VEIListenerOnSelectShape,
 VEIListenerOnSelectPoint,
-VEIListenerOnSelectFill,
 VEListenerOnResultPermission,
 VEIListenerAnimationUpdateFrame {
 
@@ -150,7 +141,11 @@ VEIListenerAnimationUpdateFrame {
         this
     )
 
+    private var mRoot: FrameLayout? = null
+
     private var mFileExport: VEFile? = null
+
+    private var mCurrentFillObserver = VEAnimationObserverFill()
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -172,6 +167,7 @@ VEIListenerAnimationUpdateFrame {
         val root = FrameLayout(
             context
         ).apply {
+            mRoot = this
             setBackgroundColor(
                 0xff08193A.toInt()
             )
@@ -254,20 +250,7 @@ VEIListenerAnimationUpdateFrame {
                 )
 
                 setOnClickListener {
-                    VEBottomSheetMakeFill(
-                        Size(
-                            VEApp.width.toFloat(),
-                            VEApp.width.toFloat()
-                        ),
-                        root
-                    ) {
-                        modeShape.vectorFill = it
-                        modeShape.shapes.forEach { shape ->
-                            shape.fill = it
-                            shape.updateFillPaint()
-                        }
-                        mViewVector?.invalidate()
-                    }.show()
+                    onClickBtnFill()
                 }
 
                 addView(
@@ -377,7 +360,7 @@ VEIListenerAnimationUpdateFrame {
             val processer = mFragmentVectorAnimation
                 .processer
 
-            val model = VEImport2.animationWrapper(
+            val model = VEImport3.animationWrapper(
                 canvasSize,
                 this,
                 false,
@@ -511,12 +494,41 @@ VEIListenerAnimationUpdateFrame {
         mCurrentAnchor = modeAnimation
     }
 
-    override fun onSelectFill(
-        fill: VEIFill
-    ) {
-        modeShape.shapes.forEach {
-            it.fill = fill
+    private inline fun onClickBtnFill() {
+
+        val mode = mViewVector?.mode ?: return
+        if (mode is VEEditModeAnimation) {
+            mFragmentVectorAnimation
+                .processer
+                .onSelectFill(
+                    mCurrentFillObserver
+                )
+
+            return
         }
+
+        val root = mRoot
+            ?: return
+
+        mCurrentFillObserver.removeObservers()
+
+        modeShape.shapes.forEach {
+            mCurrentFillObserver.observe(
+                it
+            )
+        }
+
+        VEBottomSheetMakeFill(
+            Size(
+                modeShape.canvasWidth,
+                modeShape.canvasHeight
+            ),
+            root
+        ) {
+            mCurrentFillObserver.value = it
+            modeShape.vectorFill = it
+            mViewVector?.invalidate()
+        }.show()
     }
 
     override fun onSelectShape(

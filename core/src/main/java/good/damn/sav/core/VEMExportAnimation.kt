@@ -1,7 +1,7 @@
 package good.damn.sav.core
 
 data class VEMExportAnimation(
-    val entity: VEIIdentifiable,
+    val entity: VEIExportableAnimationEntity,
     val propertyId: Byte,
-    val keyframes: List<VEIExportable>
+    val keyframes: List<VEIExportableKeyframe>
 )
