@@ -1,5 +1,6 @@
 package good.damn.sav.core.animation.interpolators.fill
 
+import android.view.animation.AccelerateDecelerateInterpolator
 import good.damn.sav.core.animation.interpolators.VEIAnimationInterpolator
 import good.damn.sav.core.animation.keyframe.fill.VEMKeyframeFill
 
@@ -9,6 +10,8 @@ class VEAnimationInterpolatorFill(
     private val observer: VEFillGroupObserver
 ): VEIAnimationInterpolator {
 
+    private val mInterpolator = AccelerateDecelerateInterpolator()
+
     private val mPriorityFill = if (
         start.fillPriority.priority > end.fillPriority.priority
     ) start.fillPriority else end.fillPriority
@@ -17,7 +20,9 @@ class VEAnimationInterpolatorFill(
         factor: Float
     ) {
         observer.value = mPriorityFill.priorityInterpolate(
-            factor,
+            mInterpolator.getInterpolation(
+                factor
+            ),
             start.fillPriority,
             end.fillPriority
         )

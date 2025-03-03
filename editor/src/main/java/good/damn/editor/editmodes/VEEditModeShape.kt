@@ -55,7 +55,7 @@ VEIListenerOnAnchorPoint {
             v.strokeWidth = vectorStrokeWidth
         }
 
-    val groupFill = VEFillGroupObserver()
+    var groupFill = VEFillGroupObserver()
 
     val shapes = VEListShapes().apply {
         onAddShape = this@VEEditModeShape

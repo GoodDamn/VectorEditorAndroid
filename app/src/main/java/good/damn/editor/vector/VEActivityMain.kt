@@ -379,6 +379,8 @@ VEIListenerAnimationUpdateFrame {
                 shapes.addAll(
                     model.static.shapes
                 )
+
+                groupFill = model.static.groupsFill.first()
             }
 
             processer.clearAnimations()
