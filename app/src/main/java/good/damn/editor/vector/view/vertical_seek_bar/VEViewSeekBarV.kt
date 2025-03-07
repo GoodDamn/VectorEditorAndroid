@@ -1,4 +1,4 @@
-package good.damn.lib.verticalseekbar
+package good.damn.editor.vector.view.vertical_seek_bar
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,14 +6,14 @@ import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
-import good.damn.lib.verticalseekbar.interfaces.VSIListenerSeekBarProgress
+import good.damn.editor.vector.view.vertical_seek_bar.interfaces.VEIListenerSeekBarProgress
 
-class VSViewSeekBarV(
+class VEViewSeekBarV(
     context: Context
 ): View(
     context
 ) {
-    var onSeekProgress: VSIListenerSeekBarProgress? = null
+    var onSeekProgress: VEIListenerSeekBarProgress? = null
 
     @setparam:ColorInt
     @get:ColorInt

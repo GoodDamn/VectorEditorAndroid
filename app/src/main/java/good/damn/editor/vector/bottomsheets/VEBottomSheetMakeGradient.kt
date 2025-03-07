@@ -28,9 +28,8 @@ class VEBottomSheetMakeGradient(
 ) : VEBottomSheet(
     toView
 ), VEIListenerOnGradientShader,
-    VEIListenerOnGradientPosition,
-    VEIListenerOnGradientColorSeek {
-
+VEIListenerOnGradientPosition,
+VEIListenerOnGradientColorSeek {
 
     private val mw = VEApp.width * 0.5f
     private val mwplacer = VEApp.height * 0.2f

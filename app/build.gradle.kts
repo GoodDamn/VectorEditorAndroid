@@ -39,7 +39,6 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.gradientcolorpicker)
-    implementation(project(":VerticalSeekBar"))
     implementation(project(":misc"))
     implementation(project(":editor"))
     implementation(project(":core"))
