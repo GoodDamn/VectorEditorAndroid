@@ -2,6 +2,7 @@ package good.damn.editor.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
@@ -21,6 +22,27 @@ class VEViewVectorEditor(
 
     var mode: VEITouchable = startMode
     var canvasRenderer: VEIDrawable? = null
+
+    var scale = 1.0f
+        set(v) {
+            field = v
+
+            matrixView.setScale(
+                v, v,
+                mx, my
+            )
+
+            matrixInverted.set(
+                matrixView
+            )
+
+            matrixInverted.invert(
+                matrixInverted
+            )
+        }
+
+    private val matrixView = Matrix()
+    private val matrixInverted = Matrix()
 
     private var mx = 0f
     private var my = 0f
@@ -57,6 +79,10 @@ class VEViewVectorEditor(
             canvas
         )
 
+        canvas.concat(
+            matrixView
+        )
+
         canvas.drawLine(
             mx,
             0f,
@@ -84,6 +110,10 @@ class VEViewVectorEditor(
         if (event == null) {
             return false
         }
+
+        event.transform(
+            matrixInverted
+        )
 
         val b = mode.onTouchEvent(
             event

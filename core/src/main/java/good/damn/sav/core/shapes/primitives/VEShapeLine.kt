@@ -1,7 +1,9 @@
 package good.damn.sav.core.shapes.primitives
 
+import android.graphics.Camera
 import android.graphics.Canvas
 import android.graphics.LinearGradient
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Shader
 import good.damn.sav.core.points.VEPointIndexed

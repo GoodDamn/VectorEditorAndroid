@@ -254,6 +254,40 @@ VEIListenerAnimationUpdateFrame {
                 )
             }
 
+            Button(
+                context
+            ).apply {
+
+                text = "+"
+
+                setOnClickListener {
+                    onClickBtnScaleUp()
+                }
+
+                addView(
+                    this,
+                    s,
+                    s
+                )
+            }
+
+            Button(
+                context
+            ).apply {
+
+                text = "-"
+
+                setOnClickListener {
+                    onClickBtnScaleDown()
+                }
+
+                addView(
+                    this,
+                    s,
+                    s
+                )
+            }
+
             boundsFrame(
                 gravity = Gravity.END,
                 width = -2f,
@@ -424,6 +458,20 @@ VEIListenerAnimationUpdateFrame {
         y: Float
     ) {
         mCurrentAnchor?.onAnchorY(y)
+    }
+
+    private inline fun onClickBtnScaleDown() {
+        mViewVector?.apply {
+            scale -= 0.1f
+            invalidate()
+        }
+    }
+
+    private inline fun onClickBtnScaleUp() {
+        mViewVector?.apply {
+            scale += 0.1f
+            invalidate()
+        }
     }
 
     private inline fun onClickExportVector(
