@@ -21,10 +21,12 @@ import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import good.damn.editor.vector.extensions.views.boundsFrame
 import good.damn.editor.editmodes.VEEditModeShape
 import good.damn.editor.editmodes.VEEditModeSwap
+import good.damn.editor.editmodes.VEEditModeTransform
 import good.damn.editor.editmodes.freemove.VEEditModeExistingPoint
 import good.damn.editor.editmodes.freemove.VEEditModeExistingShape
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
+import good.damn.editor.editmodes.listeners.VEIListenerOnTransform
 import good.damn.editor.export.VEExport
 import good.damn.editor.importer.VEImport3
 import good.damn.editor.vector.bottomsheets.VEBottomSheetMakeFill
@@ -54,7 +56,8 @@ VEIListenerOnAnchorPoint,
 VEIListenerOnSelectShape,
 VEIListenerOnSelectPoint,
 VEListenerOnResultPermission,
-VEIListenerAnimationUpdateFrame {
+VEIListenerAnimationUpdateFrame,
+VEIListenerOnTransform {
 
     companion object {
         private val TAG = VEActivityMain::class.simpleName
@@ -88,6 +91,10 @@ VEIListenerAnimationUpdateFrame {
         modeShape.skeleton,
         mAnchor
     )
+
+    private val modeTransform = VEEditModeTransform().apply {
+        transformListener = this@VEActivityMain
+    }
 
     private val modeExistingPoint = VEEditModeExistingPoint(
         modeShape.skeleton,
@@ -258,27 +265,10 @@ VEIListenerAnimationUpdateFrame {
                 context
             ).apply {
 
-                text = "+"
+                text = "T"
 
                 setOnClickListener {
-                    onClickBtnScaleUp()
-                }
-
-                addView(
-                    this,
-                    s,
-                    s
-                )
-            }
-
-            Button(
-                context
-            ).apply {
-
-                text = "-"
-
-                setOnClickListener {
-                    onClickBtnScaleDown()
+                    onClickBtnTransform()
                 }
 
                 addView(
@@ -460,18 +450,10 @@ VEIListenerAnimationUpdateFrame {
         mCurrentAnchor?.onAnchorY(y)
     }
 
-    private inline fun onClickBtnScaleDown() {
-        mViewVector?.apply {
-            scale -= 0.1f
-            invalidate()
-        }
-    }
-
-    private inline fun onClickBtnScaleUp() {
-        mViewVector?.apply {
-            scale += 0.1f
-            invalidate()
-        }
+    private inline fun onClickBtnTransform() = mViewVector?.run {
+        mode = modeTransform
+        scale += 0.1f
+        invalidate()
     }
 
     private inline fun onClickExportVector(
@@ -574,30 +556,33 @@ VEIListenerAnimationUpdateFrame {
         }.show()
     }
 
+    override fun onScale(
+        delta: Float
+    ) {
+        mViewVector?.apply {
+            scale += delta
+            updateTransformation()
+            invalidate()
+        }
+    }
+
+    override fun onTranslate(
+        x: Float,
+        y: Float
+    ) {
+        mViewVector?.apply {
+            translateX = x
+            translateY = y
+            updateTransformation()
+            invalidate()
+        }
+    }
+
+
     override fun onSelectShape(
         shape: VEShapeBase
     ) {
-        val view = window.decorView
-            as? ViewGroup ?: return
 
-        /*VEBottomSheetSetupShape(
-            view,
-            shape.fill,
-            shape.points.firstOrNull(),
-            shape.points.lastOrNull()
-        ) {
-            shape.fill = it
-            modeShape.shapes.forEach { shape ->
-                shape.updateFillPaint()
-            }
-            mViewVector?.invalidate()
-        }.apply {
-            onSeekProgressWidth = VSIListenerSeekBarProgress {
-                shape.strokeWidth = it * modeShape.canvasWidth
-                mViewVector?.invalidate()
-            }
-            show()
-        }*/
     }
 
     override fun onSelectPoint(

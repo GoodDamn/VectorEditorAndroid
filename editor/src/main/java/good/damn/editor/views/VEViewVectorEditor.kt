@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import good.damn.sav.misc.interfaces.VEIDrawable
@@ -24,22 +25,8 @@ class VEViewVectorEditor(
     var canvasRenderer: VEIDrawable? = null
 
     var scale = 1.0f
-        set(v) {
-            field = v
-
-            matrixView.setScale(
-                v, v,
-                mx, my
-            )
-
-            matrixInverted.set(
-                matrixView
-            )
-
-            matrixInverted.invert(
-                matrixInverted
-            )
-        }
+    var translateX = 0f
+    var translateY = 0f
 
     private val matrixView = Matrix()
     private val matrixInverted = Matrix()
@@ -51,6 +38,26 @@ class VEViewVectorEditor(
         strokeWidth = 9f
         style = Paint.Style.STROKE
         color = 0x19191919
+    }
+
+    fun updateTransformation() {
+        matrixView.setScale(
+            scale, scale,
+            mx, my
+        )
+
+        matrixView.postTranslate(
+            translateX,
+            translateY
+        )
+
+        matrixInverted.set(
+            matrixView
+        )
+
+        matrixInverted.invert(
+            matrixInverted
+        )
     }
 
     override fun onLayout(
