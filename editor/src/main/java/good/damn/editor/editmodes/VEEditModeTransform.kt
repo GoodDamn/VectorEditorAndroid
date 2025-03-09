@@ -33,31 +33,49 @@ class VEEditModeTransform
     private var mTranslate2X = 0f
     private var mTranslate2Y = 0f
 
+    private var mTouchesCount = 0
 
     override fun onTouchEvent(
         event: MotionEvent
     ): Boolean {
         when (
-            event.action
+            event.actionMasked
         ) {
             MotionEvent.ACTION_DOWN -> {
-                mx1 = event.rawX
-                my1 = event.rawY
+                mTouchesCount++
+
+                when (mTouchesCount) {
+                    1 -> {
+                        mx1 = event.rawX
+                        my1 = event.rawY
+                    }
+
+                    2 -> {
+                        mx2 = event.rawX
+                        my2 = event.rawY
+                    }
+                }
             }
 
             MotionEvent.ACTION_MOVE -> {
-                mTranslate2X = mTranslateX + event.rawX - mx1
-                mTranslate2Y = mTranslateY + event.rawY - my1
-                transformListener?.onTranslate(
-                    mTranslate2X,
-                    mTranslate2Y
-                )
+                if (mTouchesCount == 1) {
+                    mTranslate2X = mTranslateX + event.rawX - mx1
+                    mTranslate2Y = mTranslateY + event.rawY - my1
+                    transformListener?.onTranslate(
+                        mTranslate2X,
+                        mTranslate2Y
+                    )
+                }
             }
 
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL -> {
-                mTranslateX = mTranslate2X
-                mTranslateY = mTranslate2Y
+                if (mTouchesCount == 1) {
+                    mTranslateX = mTranslate2X
+                    mTranslateY = mTranslate2Y
+                }
+
+                mTouchesCount--
             }
         }
 
