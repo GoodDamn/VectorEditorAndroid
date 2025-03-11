@@ -7,12 +7,13 @@ import android.graphics.Paint
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import good.damn.editor.editmodes.VEEditMode
 import good.damn.sav.misc.interfaces.VEIDrawable
 import good.damn.sav.misc.interfaces.VEITouchable
 
 class VEViewVectorEditor(
     context: Context,
-    startMode: VEITouchable
+    startMode: VEEditMode
 ): View(
     context
 ) {
@@ -21,7 +22,7 @@ class VEViewVectorEditor(
         private const val TAG = "VEViewVector"
     }
 
-    var mode: VEITouchable = startMode
+    var mode: VEEditMode = startMode
     var canvasRenderer: VEIDrawable? = null
 
     var scale = 1.0f
@@ -118,12 +119,9 @@ class VEViewVectorEditor(
             return false
         }
 
-        event.transform(
-            matrixInverted
-        )
-
         val b = mode.onTouchEvent(
-            event
+            event,
+            matrixInverted
         )
 
         invalidate()

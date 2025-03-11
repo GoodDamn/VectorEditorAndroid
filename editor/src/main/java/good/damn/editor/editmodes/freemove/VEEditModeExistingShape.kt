@@ -1,20 +1,26 @@
 package good.damn.editor.editmodes.freemove
 
+import android.graphics.Matrix
 import android.view.MotionEvent
+import good.damn.editor.editmodes.VEEditModeTransformed
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.sav.core.lists.VEListShapes
-import good.damn.sav.core.shapes.VEShapeBase
-import good.damn.sav.misc.interfaces.VEITouchable
 
 class VEEditModeExistingShape(
     private val mShapes: VEListShapes
-): VEITouchable {
+): VEEditModeTransformed() {
 
     var onSelectShape: VEIListenerOnSelectShape? = null
 
     override fun onTouchEvent(
-        event: MotionEvent
+        event: MotionEvent,
+        invertedMatrix: Matrix
     ): Boolean {
+        super.onTouchEvent(
+            event,
+            invertedMatrix
+        )
+
         if (event.action == MotionEvent.ACTION_DOWN) {
             mShapes.find(
                 event.x,

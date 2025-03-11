@@ -78,10 +78,15 @@ VEIListenerOnTransform {
         onAnchorPoint = this@VEActivityMain
     }
 
-    private val modeShape = VEEditModeShape(
-        mAnchor,
+    private val mCanvasSize = Size(
         VEApp.width.toFloat(),
         VEApp.width.toFloat()
+    )
+
+    private val modeShape = VEEditModeShape(
+        mAnchor,
+        mCanvasSize.width,
+        mCanvasSize.height
     ).apply {
         onSelectShape = this@VEActivityMain
     }
@@ -370,20 +375,16 @@ VEIListenerOnTransform {
         contentResolver.openInputStream(
             uri
         )?.apply {
-            val canvasSize = Size(
-                modeShape.canvasWidth,
-                modeShape.canvasHeight
-            )
 
             val processer = mFragmentVectorAnimation
                 .processer
 
             val model = VEImport3.animationWrapper(
-                canvasSize,
+                mCanvasSize,
                 this,
                 false,
                 VEImportAnimationMutable(
-                    canvasSize,
+                    mCanvasSize,
                     processer.viewAnimatorEditor!!,
                     2000
                 )
@@ -479,10 +480,7 @@ VEIListenerOnTransform {
                 mFragmentVectorAnimation
                     .processer
                     .exportAnimations(),
-                Size(
-                    modeShape.canvasWidth,
-                    modeShape.canvasHeight
-                ),
+                mCanvasSize,
                 this
             )
         }
@@ -542,10 +540,7 @@ VEIListenerOnTransform {
 
         VEBottomSheetMakeFill(
             modeShape.vectorFill,
-            Size(
-                modeShape.canvasWidth,
-                modeShape.canvasHeight
-            ),
+            mCanvasSize,
             root
         ) {
             modeShape.groupFill.value = it
@@ -560,7 +555,7 @@ VEIListenerOnTransform {
         delta: Float
     ) {
         mViewVector?.apply {
-            scale += delta
+            scale = delta
             updateTransformation()
             invalidate()
         }

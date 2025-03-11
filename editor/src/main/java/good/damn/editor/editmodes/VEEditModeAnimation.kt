@@ -1,5 +1,6 @@
 package good.damn.editor.editmodes
 
+import android.graphics.Matrix
 import android.view.MotionEvent
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
@@ -8,13 +9,12 @@ import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.skeleton.VESkeleton2D
-import good.damn.sav.misc.interfaces.VEITouchable
 
 class VEEditModeAnimation(
     private val shapes: VEListShapes,
     private val skeleton: VESkeleton2D,
     private val anchor: VEAnchor
-): VEITouchable,
+): VEEditModeTransformed(),
 VEIListenerOnAnchorPoint {
 
     var onSelectPoint: VEIListenerOnSelectPoint? = null
@@ -23,8 +23,14 @@ VEIListenerOnAnchorPoint {
     private var mSelectedPoint: VEPointIndexed? = null
 
     override fun onTouchEvent(
-        event: MotionEvent
+        event: MotionEvent,
+        invertedMatrix: Matrix
     ): Boolean {
+        super.onTouchEvent(
+            event,
+            invertedMatrix
+        )
+
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 anchor.isNoDrawAnchors = false

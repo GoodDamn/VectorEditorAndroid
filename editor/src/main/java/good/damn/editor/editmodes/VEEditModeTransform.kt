@@ -1,31 +1,30 @@
 package good.damn.editor.editmodes
 
+import android.graphics.Matrix
 import android.util.Log
 import android.view.MotionEvent
-import good.damn.editor.anchors.VEAnchor
-import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
-import good.damn.editor.editmodes.listeners.VEIListenerOnSelectPoint
-import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
 import good.damn.editor.editmodes.listeners.VEIListenerOnTransform
-import good.damn.sav.core.lists.VEListShapes
-import good.damn.sav.core.points.VEPointIndexed
-import good.damn.sav.core.skeleton.VESkeleton2D
+import good.damn.sav.misc.Size
 import good.damn.sav.misc.interfaces.VEITouchable
+import kotlin.math.hypot
+import kotlin.math.max
+import kotlin.math.min
 
 class VEEditModeTransform
-: VEITouchable {
+: VEEditMode {
 
     companion object {
         private const val TAG = "VEEditModeTransform"
+        private const val SCALE_FACTOR = 0.01f
     }
 
     var transformListener: VEIListenerOnTransform? = null
 
-    private var mx2 = 0f
-    private var my2 = 0f
+    private var mPivotX = 0f
+    private var mPivotY = 0f
 
-    private var mx1 = 0f
-    private var my1 = 0f
+    private var mPrevDistance = 0f
+    private var mCurrentDistance = 0f
 
     private var mTranslateX = 0f
     private var mTranslateY = 0f
@@ -33,49 +32,86 @@ class VEEditModeTransform
     private var mTranslate2X = 0f
     private var mTranslate2Y = 0f
 
-    private var mTouchesCount = 0
+    private var mScale = 1.0f
 
     override fun onTouchEvent(
-        event: MotionEvent
+        event: MotionEvent,
+        invertedMatrix: Matrix
     ): Boolean {
         when (
             event.actionMasked
         ) {
             MotionEvent.ACTION_DOWN -> {
-                mTouchesCount++
+                Log.d(TAG, "onTouchEvent: ACTION_DOWN")
+                mPivotX = event.rawX
+                mPivotY = event.rawY
+            }
+            
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                Log.d(TAG, "onTouchEvent: ACTION_POINTER_DOWN ${event.pointerCount}")
+                if (event.pointerCount == 2) {
+                    event.apply {
+                        mPrevDistance = hypot(
+                            getX(1) - getX(0),
+                            getY(1) - getY(0)
+                        )
 
-                when (mTouchesCount) {
-                    1 -> {
-                        mx1 = event.rawX
-                        my1 = event.rawY
-                    }
-
-                    2 -> {
-                        mx2 = event.rawX
-                        my2 = event.rawY
                     }
                 }
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (mTouchesCount == 1) {
-                    mTranslate2X = mTranslateX + event.rawX - mx1
-                    mTranslate2Y = mTranslateY + event.rawY - my1
-                    transformListener?.onTranslate(
-                        mTranslate2X,
-                        mTranslate2Y
-                    )
+                when {
+                    event.pointerCount == 1 -> {
+                        mTranslate2X = mTranslateX + event.rawX - mPivotX
+                        mTranslate2Y = mTranslateY + event.rawY - mPivotY
+                        transformListener?.onTranslate(
+                            mTranslate2X,
+                            mTranslate2Y
+                        )
+                    }
+
+                    event.pointerCount > 1 -> {
+                        val x = event.getX(0)
+                        val y = event.getY(0)
+
+                        val xx = event.getX(1)
+                        val yy = event.getY(1)
+
+                        mCurrentDistance = hypot(
+                            xx - x,
+                            yy - y
+                        )
+
+                        mScale += (mCurrentDistance - mPrevDistance) * SCALE_FACTOR
+                        if (mScale > 7f) {
+                            mScale = 7f
+                        }
+                        if (mScale < 0.4f) {
+                            mScale = 0.4f
+                        }
+                        transformListener?.onScale(
+                            mScale
+                        )
+                        Log.d(TAG, "onTouchEvent: ${event.pointerCount} ACTION_MOVE: $xx ; $x")
+                        mPrevDistance = mCurrentDistance
+                    }
                 }
+            }
+
+            MotionEvent.ACTION_POINTER_UP -> {
+                if (event.pointerCount == 1) {
+                    mPivotX = event.rawX
+                    mPivotY = event.rawY
+                }
+                Log.d(TAG, "onTouchEvent: ACTION_POINTER_UP ${event.pointerCount}")
             }
 
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL -> {
-                if (mTouchesCount == 1) {
-                    mTranslateX = mTranslate2X
-                    mTranslateY = mTranslate2Y
-                }
-
-                mTouchesCount--
+                Log.d(TAG, "onTouchEvent: ACTION_UP ${event.pointerCount}")
+                mTranslateX = mTranslate2X
+                mTranslateY = mTranslate2Y
             }
         }
 

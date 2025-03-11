@@ -1,23 +1,30 @@
 package good.damn.editor.editmodes.freemove
 
+import android.graphics.Matrix
 import android.view.MotionEvent
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
+import good.damn.editor.editmodes.VEEditModeTransformed
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.skeleton.VESkeleton2D
-import good.damn.sav.misc.interfaces.VEITouchable
 
 class VEEditModeExistingPoint(
     private val mSkeleton: VESkeleton2D,
     private val mAnchor: VEAnchor
-): VEIListenerOnAnchorPoint,
-VEITouchable {
+): VEEditModeTransformed(),
+VEIListenerOnAnchorPoint {
 
     var foundPoint: VEPointIndexed? = null
 
     override fun onTouchEvent(
-        event: MotionEvent
+        event: MotionEvent,
+        invertedMatrix: Matrix
     ): Boolean {
+        super.onTouchEvent(
+            event,
+            invertedMatrix
+        )
+
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 mAnchor.isNoDrawAnchors = false

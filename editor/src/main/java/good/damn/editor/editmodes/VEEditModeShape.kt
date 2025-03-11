@@ -1,6 +1,7 @@
 package good.damn.editor.editmodes
 
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.PointF
 import android.view.MotionEvent
 import good.damn.editor.actions.VEDataActionPosition
@@ -24,14 +25,13 @@ import good.damn.sav.core.shapes.fill.VEIFill
 import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.misc.extensions.primitives.toByteArray
 import good.damn.sav.misc.interfaces.VEIDrawable
-import good.damn.sav.misc.interfaces.VEITouchable
 import java.util.LinkedList
 
 class VEEditModeShape(
     private val anchor: VEAnchor,
     val canvasWidth: Float,
     val canvasHeight: Float
-): VEITouchable,
+): VEEditModeTransformed(),
 VEIDrawable,
 VEICallbackOnAddSkeletonPoint,
 VEICallbackOnAddShape,
@@ -85,8 +85,14 @@ VEIListenerOnAnchorPoint {
     }
 
     override fun onTouchEvent(
-        event: MotionEvent
+        event: MotionEvent,
+        invertedMatrix: Matrix
     ): Boolean {
+        super.onTouchEvent(
+            event,
+            invertedMatrix
+        )
+
         mTouchX = event.x
         mTouchY = event.y
 
