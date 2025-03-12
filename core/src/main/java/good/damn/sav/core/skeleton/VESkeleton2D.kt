@@ -3,6 +3,7 @@ package good.damn.sav.core.skeleton
 import android.graphics.Canvas
 import android.graphics.Paint
 import good.damn.sav.core.VEMIdentifier
+import good.damn.sav.core.VEMProjection
 import good.damn.sav.core.listeners.VEICallbackOnAddSkeletonPoint
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.misc.extensions.drawCircle
@@ -11,7 +12,8 @@ import kotlin.math.abs
 import kotlin.math.hypot
 
 class VESkeleton2D(
-    dataStruct: MutableList<VEPointIndexed>
+    dataStruct: MutableList<VEPointIndexed>,
+    private val projection: VEMProjection
 ): VEIDrawable {
 
     companion object {
@@ -32,8 +34,6 @@ class VESkeleton2D(
 
     private val mPoints = dataStruct
 
-    val radius = 50f
-
     fun getLastPoint() = mPoints
         .lastOrNull()
 
@@ -45,7 +45,7 @@ class VESkeleton2D(
             if (abs(hypot(
                 it.x - withX,
                 it.y - withY
-            )) < radius) {
+            )) < projection.radiusPointsScaled) {
                 return it
             }
         }
@@ -89,7 +89,7 @@ class VESkeleton2D(
         mPoints.forEach {
             canvas.drawCircle(
                 it,
-                radius,
+                projection.radiusPoint,
                 mPaintPoint
             )
         }

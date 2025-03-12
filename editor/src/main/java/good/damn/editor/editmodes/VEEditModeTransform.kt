@@ -33,6 +33,7 @@ class VEEditModeTransform
     private var mTranslate2Y = 0f
 
     private var mScale = 1.0f
+    private var mScaleDt = 0f
 
     override fun onTouchEvent(
         event: MotionEvent,
@@ -83,7 +84,8 @@ class VEEditModeTransform
                             yy - y
                         )
 
-                        mScale += (mCurrentDistance - mPrevDistance) * SCALE_FACTOR
+                        mScaleDt = (mCurrentDistance - mPrevDistance) * SCALE_FACTOR
+                        mScale += mScaleDt
                         if (mScale > 7f) {
                             mScale = 7f
                         }

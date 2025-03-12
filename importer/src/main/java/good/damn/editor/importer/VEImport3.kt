@@ -6,6 +6,7 @@ import good.damn.editor.importer.animation.VEModelImportAnimation
 import good.damn.editor.importer.exceptions.VEExceptionDifferentVersion
 import good.damn.editor.importer.exceptions.VEExceptionNoAnimation
 import good.damn.sav.core.VEMIdentifier
+import good.damn.sav.core.VEMProjection
 import good.damn.sav.core.animation.interpolators.fill.VEFillGroupObserver
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
@@ -37,9 +38,16 @@ class VEImport3 {
                 )
             }
 
+            val projection = VEMProjection(
+                scale = 1.0f,
+                radiusPointsScaled = 50f,
+                radiusPoint = 50f
+            )
+
             val pointsSize = readU()
             val skeleton = VESkeleton2D(
-                ArrayList(pointsSize)
+                ArrayList(pointsSize),
+                projection
             )
 
             for (j in 0 until pointsSize) {
@@ -57,7 +65,9 @@ class VEImport3 {
             }
 
             val shapesCount = readU()
-            val shapes = VEListShapes()
+            val shapes = VEListShapes(
+                projection
+            )
 
             for (j in 0 until shapesCount) {
                 defineShape(

@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
+import good.damn.sav.core.VEMProjection
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.utils.VEUtilsHit
@@ -79,7 +80,8 @@ class VEShapeBezierQuad
 
     override fun checkHit(
         x: Float,
-        y: Float
+        y: Float,
+        projection: VEMProjection
     ): Boolean {
 
         val p0 = points[0]
@@ -98,10 +100,10 @@ class VEShapeBezierQuad
             p0.y
         )
 
-        var lineWidth = mPaint.strokeWidth * 0.5f
+        var lineWidth = mPaint.strokeWidth * projection.scale * 0.5f
         lineWidth = if (
-            lineWidth > 50f
-        ) lineWidth else 50f
+            lineWidth > projection.radiusPointsScaled
+        ) lineWidth else projection.radiusPointsScaled
 
         while (i < 1.01f) {
             val lp1x = p0.x + (p1.x - p0.x) * i

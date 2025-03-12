@@ -8,8 +8,9 @@ import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.drawLine
 import kotlin.math.abs
 
-class VEAnchorStraightVertical
-: VEBaseAnchor() {
+class VEAnchorStraightVertical(
+    private val projection: VEMProjectionAnchor
+): VEBaseAnchor() {
 
     companion object {
         private const val TAG = "VEAnchorStraightVertica"
@@ -24,7 +25,7 @@ class VEAnchorStraightVertical
             VEAnchorInternalBase
     > = arrayOf(
         VEAnchorInternalPropLenVertical(
-            lineWidth = 20f
+            projection
         )
     )
 
@@ -70,7 +71,7 @@ class VEAnchorStraightVertical
                 continue
             }
 
-            if (abs(it.x - mPointTouch.x) < 30) { // px
+            if (abs(it.x - mPointTouch.x) < projection.propLenScaled) { // px
                 mPointTouch.x = it.x
                 onAnchorPoint?.onAnchorX(
                     it.x

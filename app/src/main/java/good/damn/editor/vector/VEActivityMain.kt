@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import good.damn.editor.anchors.VEAnchor
+import good.damn.editor.anchors.VEMProjectionAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.editmodes.VEEditModeAnimation
 import good.damn.editor.vector.browsers.VEBrowserContent
@@ -38,6 +39,7 @@ import good.damn.editor.vector.launchers.VELauncherPermission
 import good.damn.editor.vector.launchers.VEListenerOnResultPermission
 import good.damn.editor.vector.view.VEViewPaint
 import good.damn.editor.views.VEViewVectorEditor
+import good.damn.sav.core.VEMProjection
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
@@ -72,8 +74,24 @@ VEIListenerOnTransform {
         onGetContent = this@VEActivityMain
     }
 
+
+    private val mProjection = VEMProjection(
+        scale = 1.0f,
+        radiusPoint = 50f,
+        radiusPointsScaled = 50f
+    )
+
+    private val mProjectionAnchor = VEMProjectionAnchor(
+        50f,
+        15f,
+        35f,
+        35f,
+        15f,
+        15f
+    )
+
     private val mAnchor = VEAnchor(
-        50f
+        mProjectionAnchor
     ).apply {
         onAnchorPoint = this@VEActivityMain
     }
@@ -84,12 +102,14 @@ VEIListenerOnTransform {
     )
 
     private val modeShape = VEEditModeShape(
+        mProjection,
         mAnchor,
         mCanvasSize.width,
         mCanvasSize.height
     ).apply {
         onSelectShape = this@VEActivityMain
     }
+
 
     private val modeAnimation = VEEditModeAnimation(
         modeShape.shapes,
@@ -552,10 +572,19 @@ VEIListenerOnTransform {
     }
 
     override fun onScale(
-        delta: Float
+        v: Float
     ) {
         mViewVector?.apply {
-            scale = delta
+            mProjection.scale = v
+            mProjection.radiusPointsScaled = mProjection.radiusPoint * v
+
+            mProjectionAnchor.apply {
+                radiusPointerScaled = mProjection.radiusPointsScaled
+                propLenScaled = propLen * v
+                propMiddlePointLenScaled = propMiddlePointLen * v
+            }
+
+            scale = v
             updateTransformation()
             invalidate()
         }

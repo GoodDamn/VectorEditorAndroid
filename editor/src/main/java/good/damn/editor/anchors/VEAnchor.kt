@@ -2,9 +2,10 @@ package good.damn.editor.anchors
 
 import android.graphics.Canvas
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
+import good.damn.sav.core.VEMProjection
 
 class VEAnchor(
-    radiusPointer: Float
+    projection: VEMProjectionAnchor
 ) {
 
     companion object {
@@ -20,9 +21,9 @@ class VEAnchor(
         }
 
     private val mAnchors: Array<VEBaseAnchor> = arrayOf(
-        VEAnchorStraightHorizontal(),
-        VEAnchorStraightVertical(),
-        VEAnchorPoint(radiusPointer * 0.3f)
+        VEAnchorStraightHorizontal(projection),
+        VEAnchorStraightVertical(projection),
+        VEAnchorPoint(projection)
     )
 
     var isNoDrawAnchors = false

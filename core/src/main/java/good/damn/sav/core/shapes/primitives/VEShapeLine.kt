@@ -6,6 +6,7 @@ import android.graphics.LinearGradient
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Shader
+import good.damn.sav.core.VEMProjection
 import good.damn.sav.core.points.VEPointIndexed
 import good.damn.sav.core.shapes.VEShapeBase
 import good.damn.sav.core.utils.VEUtilsHit
@@ -41,7 +42,8 @@ class VEShapeLine
 
     override fun checkHit(
         x: Float,
-        y: Float
+        y: Float,
+        projection: VEMProjection
     ): Boolean {
         val p = points[0]
             ?: return false
@@ -49,14 +51,14 @@ class VEShapeLine
         val pp = points[1]
             ?: return false
 
-        val stroke = mPaint.strokeWidth * 0.5f
+        val stroke = mPaint.strokeWidth * projection.scale * 0.5f
 
         return VEUtilsHit.line(
             x, y,
             p, pp,
             if (
-                stroke > 50f
-            ) stroke else 50f
+                stroke > projection.radiusPointsScaled
+            ) stroke else projection.radiusPointsScaled
         )
     }
 

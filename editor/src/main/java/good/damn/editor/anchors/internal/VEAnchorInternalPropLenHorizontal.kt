@@ -3,12 +3,12 @@ package good.damn.editor.anchors.internal
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
-import android.util.Log
+import good.damn.editor.anchors.VEMProjectionAnchor
 import kotlin.math.abs
 import kotlin.math.hypot
 
 class VEAnchorInternalPropLenHorizontal(
-    private val lineWidth: Float
+    private val projection: VEMProjectionAnchor
 ): VEAnchorInternalBase() {
 
     companion object {
@@ -17,7 +17,7 @@ class VEAnchorInternalPropLenHorizontal(
 
     private val mPaint = Paint().apply {
         color = 0x99ffff00.toInt()
-        strokeWidth = lineWidth
+        strokeWidth = projection.lineWidth
         strokeCap = Paint.Cap.ROUND
         style = Paint.Style.STROKE
     }
@@ -62,15 +62,16 @@ class VEAnchorInternalPropLenHorizontal(
         val len = abs(
             from.x - to.x
         )
+
         mPointTarget.x = from.x + len * 0.5f
         mPointTarget.y = from.y
 
         if (hypot(
             touch.x - mPointTarget.x,
             touch.y - mPointTarget.y
-        ) < 35) {
-            my = from.y - 15
-            my2 = from.y + 15
+        ) < projection.propLenScaled) {
+            my = from.y - projection.propMiddlePointLenScaled
+            my2 = from.y + projection.propMiddlePointLenScaled
 
             mx = from.x + len * 0.25f
             mx2 = from.x + len * 0.75f

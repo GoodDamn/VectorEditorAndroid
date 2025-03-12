@@ -4,12 +4,14 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import good.damn.editor.anchors.internal.VEAnchorInternalBase
 import good.damn.editor.anchors.internal.VEAnchorInternalPropLenHorizontal
+import good.damn.sav.core.VEMProjection
 import good.damn.sav.core.skeleton.VESkeleton2D
 import good.damn.sav.misc.extensions.drawLine
 import kotlin.math.abs
 
-class VEAnchorStraightHorizontal
-: VEBaseAnchor() {
+class VEAnchorStraightHorizontal(
+    private val projection: VEMProjectionAnchor
+): VEBaseAnchor() {
 
     companion object {
         private const val TAG = "VEAnchorStraightHorizon"
@@ -24,7 +26,7 @@ class VEAnchorStraightHorizontal
         VEAnchorInternalBase
     > = arrayOf(
         VEAnchorInternalPropLenHorizontal(
-            lineWidth = 15f
+            projection
         )
     )
 
@@ -66,7 +68,7 @@ class VEAnchorStraightHorizontal
         )
 
         for (it in skeleton.points) {
-            if (abs(it.y - mPointTouch.y) < 30) { // px
+            if (abs(it.y - mPointTouch.y) < projection.propLenScaled) { // px
                 mPointTouch.y = it.y
                 onAnchorPoint?.onAnchorY(
                     it.y

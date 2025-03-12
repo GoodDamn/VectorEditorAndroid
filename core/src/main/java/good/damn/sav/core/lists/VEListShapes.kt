@@ -1,12 +1,14 @@
 package good.damn.sav.core.lists
 
 import good.damn.sav.core.VEMIdentifier
+import good.damn.sav.core.VEMProjection
 import good.damn.sav.core.listeners.VEICallbackOnAddShape
 import good.damn.sav.core.shapes.VEShapeBase
 import java.util.LinkedList
 
-class VEListShapes
-: LinkedList<VEShapeBase>() {
+class VEListShapes(
+    private val projection: VEMProjection
+): LinkedList<VEShapeBase>() {
 
     var onAddShape: VEICallbackOnAddShape? = null
 
@@ -16,9 +18,10 @@ class VEListShapes
     ): VEShapeBase? {
         forEach {
             if (it.checkHit(
-                    touchX,
-                    touchY
-                )) {
+                touchX,
+                touchY,
+                projection
+            )) {
                 return it
             }
         }

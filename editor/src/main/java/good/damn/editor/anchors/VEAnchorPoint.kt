@@ -6,7 +6,7 @@ import kotlin.math.abs
 import kotlin.math.hypot
 
 class VEAnchorPoint(
-    private val radius: Float
+    private val projection: VEMProjectionAnchor
 ): VEBaseAnchor() {
 
     override fun onDraw(
@@ -26,7 +26,7 @@ class VEAnchorPoint(
             if (abs(hypot(
                 it.x - touchX,
                 it.y - touchY
-            )) < radius) {
+            )) < projection.radiusPointerScaled) {
                 onAnchorPoint?.apply {
                     onAnchorX(it.x)
                     onAnchorY(it.y)

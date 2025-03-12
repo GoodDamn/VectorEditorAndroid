@@ -14,11 +14,6 @@ open class VEEditModeSwap<T: VEEditMode>(
         event: MotionEvent,
         invertedMatrix: Matrix
     ): Boolean {
-        super.onTouchEvent(
-            event,
-            invertedMatrix
-        )
-
         mCurrentEditMode?.apply {
             if (!onTouchEvent(event, invertedMatrix)) {
                 mCurrentEditMode = null

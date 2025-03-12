@@ -13,6 +13,7 @@ import good.damn.sav.core.listeners.VEICallbackOnAddSkeletonPoint
 import good.damn.editor.anchors.VEAnchor
 import good.damn.editor.anchors.listeners.VEIListenerOnAnchorPoint
 import good.damn.editor.editmodes.listeners.VEIListenerOnSelectShape
+import good.damn.sav.core.VEMProjection
 import good.damn.sav.core.animation.interpolators.fill.VEFillGroupObserver
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.points.VEPointIndexed
@@ -28,6 +29,7 @@ import good.damn.sav.misc.interfaces.VEIDrawable
 import java.util.LinkedList
 
 class VEEditModeShape(
+    private val projection: VEMProjection,
     private val anchor: VEAnchor,
     val canvasWidth: Float,
     val canvasHeight: Float
@@ -57,12 +59,15 @@ VEIListenerOnAnchorPoint {
 
     var groupFill = VEFillGroupObserver()
 
-    val shapes = VEListShapes().apply {
+    val shapes = VEListShapes(
+        projection
+    ).apply {
         onAddShape = this@VEEditModeShape
     }
 
     val skeleton = VESkeleton2D(
-        LinkedList()
+        LinkedList(),
+        projection
     ).apply {
         onAddSkeletonPoint = this@VEEditModeShape
     }
