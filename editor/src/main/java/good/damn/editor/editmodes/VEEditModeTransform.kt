@@ -34,6 +34,8 @@ class VEEditModeTransform
 
     private var mScale = 1.0f
 
+    private val mValues = FloatArray(9)
+
     override fun onTouchEvent(
         event: MotionEvent,
         invertedMatrix: Matrix
@@ -103,6 +105,9 @@ class VEEditModeTransform
                 if (event.pointerCount == 1) {
                     mPivotX = event.rawX
                     mPivotY = event.rawY
+                    invertedMatrix.getValues(mValues)
+                    mTranslateX = mValues[Matrix.MTRANS_X]
+                    mTranslateY = mValues[Matrix.MTRANS_Y]
                 }
                 Log.d(TAG, "onTouchEvent: ACTION_POINTER_UP ${event.pointerCount}")
             }
