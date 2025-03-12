@@ -15,7 +15,7 @@ class VEEditModeTransform
 
     companion object {
         private const val TAG = "VEEditModeTransform"
-        private const val SCALE_FACTOR = 0.01f
+        private const val SCALE_FACTOR = 0.0025f
     }
 
     var transformListener: VEIListenerOnTransform? = null
@@ -34,8 +34,6 @@ class VEEditModeTransform
 
     private var mScale = 1.0f
 
-    private val mValues = FloatArray(9)
-
     override fun onTouchEvent(
         event: MotionEvent,
         invertedMatrix: Matrix
@@ -45,8 +43,8 @@ class VEEditModeTransform
         ) {
             MotionEvent.ACTION_DOWN -> {
                 Log.d(TAG, "onTouchEvent: ACTION_DOWN")
-                mPivotX = event.rawX
-                mPivotY = event.rawY
+                mPivotX = event.x
+                mPivotY = event.y
             }
             
             MotionEvent.ACTION_POINTER_DOWN -> {
@@ -65,8 +63,8 @@ class VEEditModeTransform
             MotionEvent.ACTION_MOVE -> {
                 when {
                     event.pointerCount == 1 -> {
-                        mTranslate2X = mTranslateX + event.rawX - mPivotX
-                        mTranslate2Y = mTranslateY + event.rawY - mPivotY
+                        mTranslate2X = mTranslateX + event.x - mPivotX
+                        mTranslate2Y = mTranslateY + event.y - mPivotY
                         transformListener?.onTranslate(
                             mTranslate2X,
                             mTranslate2Y
@@ -95,21 +93,23 @@ class VEEditModeTransform
                         transformListener?.onScale(
                             mScale
                         )
-                        Log.d(TAG, "onTouchEvent: ${event.pointerCount} ACTION_MOVE: $xx ; $x")
+
                         mPrevDistance = mCurrentDistance
                     }
                 }
             }
 
             MotionEvent.ACTION_POINTER_UP -> {
-                if (event.pointerCount == 1) {
-                    mPivotX = event.rawX
-                    mPivotY = event.rawY
-                    invertedMatrix.getValues(mValues)
-                    mTranslateX = mValues[Matrix.MTRANS_X]
-                    mTranslateY = mValues[Matrix.MTRANS_Y]
+                if (event.pointerCount == 2) {
+                    val pivotIndex = if (
+                        event.actionIndex == 0
+                    ) 1 else 0
+
+                    mPivotX = event.getX(pivotIndex)
+                    mPivotY = event.getY(pivotIndex)
+                    mTranslateX = mTranslate2X
+                    mTranslateY = mTranslate2Y
                 }
-                Log.d(TAG, "onTouchEvent: ACTION_POINTER_UP ${event.pointerCount}")
             }
 
             MotionEvent.ACTION_UP,
