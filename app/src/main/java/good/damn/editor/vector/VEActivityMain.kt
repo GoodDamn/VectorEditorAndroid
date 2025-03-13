@@ -576,12 +576,28 @@ VEIListenerOnTransform {
     ) {
         mViewVector?.apply {
             mProjection.scale = v
-            mProjection.radiusPointsScaled = mProjection.radiusPoint * v
+            if (v > 1.0f) {
+                val s = 1.0f - (v - 1.0f) / 6.0f
+                mProjection.apply {
+                    radiusPoint = 50f * s
+                    radiusPointsScaled = mProjection.radiusPoint
+                }
 
-            mProjectionAnchor.apply {
-                radiusPointerScaled = mProjection.radiusPointsScaled
-                propLenScaled = propLen * v
-                propMiddlePointLenScaled = propMiddlePointLen * v
+                mProjectionAnchor.apply {
+                    radiusPointerScaled = mProjection.radiusPointsScaled
+                    propLenScaled = propLen * s
+                    propMiddlePointLenScaled = propMiddlePointLen * s
+                }
+            } else {
+                mProjection.apply {
+                    radiusPoint = 50f
+                    radiusPointsScaled = radiusPoint * v
+                }
+                mProjectionAnchor.apply {
+                    radiusPointerScaled = mProjection.radiusPointsScaled
+                    propLenScaled = propLen * v
+                    propMiddlePointLenScaled = propMiddlePointLen * v
+                }
             }
 
             scale = v
