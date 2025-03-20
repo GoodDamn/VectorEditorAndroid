@@ -6,8 +6,6 @@ import android.view.ViewGroup
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.extensions.views.boundsFrame
-import good.damn.gradient_color_picker.GradientColorPicker
-import good.damn.gradient_color_picker.OnPickColorListener
 import good.damn.sav.core.shapes.fill.VEMFillColor
 import good.damn.sav.misc.extensions.primitives.toByteArray
 

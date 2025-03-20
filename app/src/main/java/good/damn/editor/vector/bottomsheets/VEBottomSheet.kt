@@ -9,8 +9,6 @@ import android.widget.FrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.extensions.views.boundsFrame
-import good.damn.gradient_color_picker.GradientColorPicker
-import good.damn.gradient_color_picker.OnPickColorListener
 
 abstract class VEBottomSheet(
     private val mViewGroup: ViewGroup
