@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.PersistableBundle
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -383,22 +384,17 @@ VEIListenerOnTransform {
             root.addView(
                 this
             )
+
+            post {
+                onGetBrowserContent(
+                    intent.data
+                )
+            }
         }
 
         setContentView(
             root
         )
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Handler(
-            Looper.getMainLooper()
-        ).postDelayed({
-            onGetBrowserContent(
-                intent.data
-            )
-        }, 1000)
     }
 
     override fun onGetBrowserContent(
