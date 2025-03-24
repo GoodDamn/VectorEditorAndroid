@@ -38,16 +38,17 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
-    implementation("com.github.GoodDamn:GradientColorPicker:1.1")
+    implementation(libs.gradientcolorpicker)
     implementation(project(":misc"))
     implementation(project(":editor"))
     implementation(project(":core"))
+    implementation(project(":export"))
+    implementation(project(":importer"))
+
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.viewpager2)
     implementation(libs.material)
-    implementation(project(":export"))
-    implementation(project(":importer"))
 
 
     testImplementation(libs.junit)

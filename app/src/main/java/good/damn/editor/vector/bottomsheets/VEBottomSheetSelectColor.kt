@@ -3,6 +3,8 @@ package good.damn.editor.vector.bottomsheets
 import android.content.Context
 import android.view.Gravity
 import android.view.ViewGroup
+import good.damn.colorpicker.GradientColorPicker
+import good.damn.colorpicker.OnPickColorListener
 import good.damn.editor.vector.VEApp
 import good.damn.editor.vector.bottomsheets.listeners.VEIListenerBottomSheetFill
 import good.damn.editor.vector.extensions.views.boundsFrame
@@ -23,6 +25,7 @@ class VEBottomSheetSelectColor(
     ) = GradientColorPicker(
         context
     ).apply {
+
 
         setOnPickColorListener(
             this@VEBottomSheetSelectColor
