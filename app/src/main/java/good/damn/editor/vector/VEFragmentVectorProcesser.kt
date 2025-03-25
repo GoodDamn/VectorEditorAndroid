@@ -30,6 +30,8 @@ VEIListenerOnSelectFill {
 
     private var mCurrentAnimationId = 0xffff
 
+    var duration = 2000 //ms
+
     var viewAnimatorEditor: VEViewAnimatorEditor? = null
 
     fun exportAnimations() = mAnimations.flatMap {

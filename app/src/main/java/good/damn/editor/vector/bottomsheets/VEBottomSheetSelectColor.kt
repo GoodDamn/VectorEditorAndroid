@@ -25,8 +25,6 @@ class VEBottomSheetSelectColor(
     ) = GradientColorPicker(
         context
     ).apply {
-
-
         setOnPickColorListener(
             this@VEBottomSheetSelectColor
         )

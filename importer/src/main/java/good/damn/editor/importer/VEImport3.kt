@@ -133,16 +133,13 @@ class VEImport3 {
         }
 
         fun <T> animationWrapper(
-            canvasSize: Size,
+            shapes: VEListShapes,
+            skeleton: VESkeleton2D,
+            groupsFill: List<VEFillGroupObserver>,
             stream: InputStream,
             throwException: Boolean,
             importAnimation: VEIListenerImportAnimation<T>
         ) = stream.run {
-            val model = static(
-                canvasSize,
-                stream,
-                throwException
-            )
             val animSize = readU()
 
             if (animSize == 0) {
@@ -151,7 +148,6 @@ class VEImport3 {
                     throw VEExceptionNoAnimation()
                 }
                 return@run VEModelImportAnimation(
-                    model,
                     null
                 )
             }
@@ -184,7 +180,7 @@ class VEImport3 {
                         importAnimation.createShapeAnimation(
                             property,
                             keyframesCount,
-                            model.shapes[entityIndex],
+                            shapes[entityIndex],
                             this
                         )
                     )
@@ -193,7 +189,7 @@ class VEImport3 {
                         importAnimation.createPointAnimation(
                             property,
                             keyframesCount,
-                            model.skeleton.getPointIndexed(
+                            skeleton.getPointIndexed(
                                 entityIndex
                             ),
                             this
@@ -204,7 +200,7 @@ class VEImport3 {
                         importAnimation.createFillAnimation(
                             property,
                             keyframesCount,
-                            model.groupsFill[
+                            groupsFill[
                                 entityIndex
                             ],
                             this
@@ -215,17 +211,21 @@ class VEImport3 {
             }
 
             return@run VEModelImportAnimation(
-                model,
                 animations
             )
         }
 
         inline fun animation(
+            shapes: VEListShapes,
+            skeleton: VESkeleton2D,
+            groupsFill: List<VEFillGroupObserver>,
             canvasSize: Size,
             stream: InputStream,
             throwException: Boolean
         ) = animationWrapper(
-            canvasSize,
+            shapes,
+            skeleton,
+            groupsFill,
             stream,
             throwException,
             VEImportAnimationDefault(

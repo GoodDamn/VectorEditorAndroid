@@ -9,11 +9,16 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toFile
+import good.damn.editor.importer.VEAssetLoader
 import good.damn.editor.importer.VEModelImport
 import good.damn.editor.importer.animation.VEModelImportAnimation
 import good.damn.editor.importer.VEViewAVS
+import good.damn.editor.importer.animation.VEImportAnimationDefault
 import good.damn.editor.vector.browsers.VEBrowserContent
 import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
+import good.damn.editor.vector.extensions.extension
+import good.damn.editor.vector.importer.VEImportAnimationMutable
 import good.damn.sav.core.animation.animators.VEAnimatorGlobal
 import good.damn.sav.core.animation.animators.VEIListenerAnimation
 import good.damn.sav.core.animation.animators.VEIListenerAnimationUpdateFrame
@@ -33,6 +38,9 @@ VEIListenerAnimationUpdateFrame {
     private var mCurrentAnimation: VEModelImportAnimation<
         VEIListenerAnimation
     >? = null
+
+    private var modelStatic: VEModelImport? = null
+
     private val mCanvasSize = Size()
     private var mViewAvs: VEViewAVS? = null
 
@@ -130,25 +138,47 @@ VEIListenerAnimationUpdateFrame {
     ) {
         uri ?: return
 
-        val inp = contentResolver.openInputStream(
-            uri
-        ) ?: return
-
-        mCurrentAnimation = VEModelImport.createAnimationFromStream(
-            inp,
-            mCanvasSize,
-            false
-        ).apply {
-            inp.close()
-
-            mViewAvs?.model = static
-
-            mScrollLayout?.let {
-                placeDurations(
-                    it,
-                    this@VEActivityImport,
-                    this
+        when (uri.extension) {
+            "avs" -> {
+                val pair = VEAssetLoader.loadAssetStaticAnimation(
+                    mCanvasSize,
+                    contentResolver,
+                    VEImportAnimationDefault(
+                        mCanvasSize
+                    ),
+                    uri
                 )
+
+                modelStatic = pair?.first
+            }
+
+            "avss" -> {
+                modelStatic = VEAssetLoader.loadAssetStatic(
+                    mCanvasSize,
+                    contentResolver,
+                    uri
+                )
+            }
+
+            "avsa" -> modelStatic?.run {
+                mCurrentAnimation = VEAssetLoader.loadAssetAnimation(
+                    shapes,
+                    skeleton,
+                    groupsFill,
+                    VEImportAnimationDefault(
+                        mCanvasSize
+                    ),
+                    contentResolver,
+                    uri
+                )?.apply {
+                    mScrollLayout?.let {
+                        placeDurations(
+                            it,
+                            this@VEActivityImport,
+                            this
+                        )
+                    }
+                }
             }
         }
     }

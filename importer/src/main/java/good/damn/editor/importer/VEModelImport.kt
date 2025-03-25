@@ -16,12 +16,18 @@ data class VEModelImport(
     companion object {
 
         inline fun createAnimationFromResource(
+            shapes: VEListShapes,
+            skeleton: VESkeleton2D,
+            groupsFill: List<VEFillGroupObserver>,
             res: Resources,
             @RawRes id: Int,
             canvasSize: Size,
             throwException: Boolean = true
         ) = res.openRawResource(id).run {
             val model = createAnimationFromStream(
+                shapes,
+                skeleton,
+                groupsFill,
                 this,
                 canvasSize,
                 throwException
@@ -48,10 +54,16 @@ data class VEModelImport(
         }
 
         inline fun createAnimationFromStream(
+            shapes: VEListShapes,
+            skeleton: VESkeleton2D,
+            groupsFill: List<VEFillGroupObserver>,
             inp: InputStream,
             canvasSize: Size,
             throwException: Boolean
         ) = VEImport3.animation(
+            shapes,
+            skeleton,
+            groupsFill,
             canvasSize,
             inp,
             throwException
