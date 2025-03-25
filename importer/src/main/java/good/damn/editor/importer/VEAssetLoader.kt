@@ -3,7 +3,6 @@ package good.damn.editor.importer
 import android.content.ContentResolver
 import android.net.Uri
 import good.damn.editor.importer.animation.VEIListenerImportAnimation
-import good.damn.editor.importer.animation.extractor.VEImportAnimationExtractorFill
 import good.damn.sav.core.animation.interpolators.fill.VEFillGroupObserver
 import good.damn.sav.core.lists.VEListShapes
 import good.damn.sav.core.skeleton.VESkeleton2D
@@ -22,7 +21,7 @@ class VEAssetLoader {
             contentResolver,
             uri
         ) {
-            val static = VEImport3.static(
+            val static = VEImport.static(
                 canvasSize,
                 it,
                 false
@@ -30,13 +29,14 @@ class VEAssetLoader {
 
             return@loadAsset Pair(
                 static,
-                VEImport3.animationWrapper(
+                VEImport.animationWrapper(
                     static.shapes,
                     static.skeleton,
                     static.groupsFill,
                     it,
                     false,
-                    importAnimation
+                    importAnimation,
+                    static.version > 3
                 )
             )
         }
@@ -49,7 +49,7 @@ class VEAssetLoader {
             contentResolver,
             uri
         ) {
-            return@loadAsset VEImport3.static(
+            return@loadAsset VEImport.static(
                 canvasSize,
                 it,
                 false
@@ -67,13 +67,14 @@ class VEAssetLoader {
             contentResolver,
             uri
         ) { stream ->
-            return@loadAsset VEImport3.animationWrapper(
+            return@loadAsset VEImport.animationWrapper(
                 shapes,
                 skeleton,
                 groupsFill,
                 stream,
                 false,
-                importer
+                importer,
+                true
             )
         }
 

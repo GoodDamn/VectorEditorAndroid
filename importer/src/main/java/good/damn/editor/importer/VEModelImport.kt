@@ -9,6 +9,7 @@ import good.damn.sav.misc.Size
 import java.io.InputStream
 
 data class VEModelImport(
+    val version: Byte,
     val skeleton: VESkeleton2D,
     val shapes: VEListShapes,
     val groupsFill: List<VEFillGroupObserver>
@@ -22,7 +23,8 @@ data class VEModelImport(
             res: Resources,
             @RawRes id: Int,
             canvasSize: Size,
-            throwException: Boolean = true
+            throwException: Boolean = true,
+            version: Byte
         ) = res.openRawResource(id).run {
             val model = createAnimationFromStream(
                 shapes,
@@ -30,7 +32,8 @@ data class VEModelImport(
                 groupsFill,
                 this,
                 canvasSize,
-                throwException
+                throwException,
+                version
             )
             close()
 
@@ -59,21 +62,23 @@ data class VEModelImport(
             groupsFill: List<VEFillGroupObserver>,
             inp: InputStream,
             canvasSize: Size,
-            throwException: Boolean
-        ) = VEImport3.animation(
+            throwException: Boolean,
+            version: Byte
+        ) = VEImport.animation(
             shapes,
             skeleton,
             groupsFill,
             canvasSize,
             inp,
-            throwException
+            throwException,
+            version
         )
 
         inline fun createStaticFromStream(
             inp: InputStream,
             canvasSize: Size,
             throwException: Boolean
-        ) = VEImport3.static(
+        ) = VEImport.static(
             canvasSize,
             inp,
             throwException

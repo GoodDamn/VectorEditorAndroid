@@ -15,21 +15,16 @@ import java.util.LinkedList
 
 class VEExport {
     companion object {
-        const val VERSION = 3
+        const val VERSION_STATIC = 3
+        const val VERSION_ANIMATION = 1
 
-        fun export(
+        fun exportStaticAnimation(
             skeleton: VESkeleton2D,
             shapes: List<VEShapeBase>,
             animations: List<VEMExportAnimation>,
             canvasSize: Size,
-            file: File
-        ) = FileOutputStream(
-            file
-        ).run {
-            write(
-                VERSION
-            )
-
+            os: OutputStream
+        ) = os.run {
             exportStatic(
                 this,
                 skeleton,
@@ -42,16 +37,18 @@ class VEExport {
                 canvasSize,
                 animations
             )
-            close()
         }
 
-
-        private fun exportStatic(
+        fun exportStatic(
             os: OutputStream,
             skeleton: VESkeleton2D,
             canvasSize: Size,
             shapes: List<VEShapeBase>
         ) = os.run {
+
+            write(
+                VERSION_STATIC
+            )
 
             write(
                 skeleton.size
@@ -128,11 +125,15 @@ class VEExport {
             }
         }
 
-        private fun exportAnimation(
+        fun exportAnimation(
             os: OutputStream,
             canvasSize: Size,
             animations: List<VEMExportAnimation>,
         ) = os.run {
+
+            write(
+                VERSION_ANIMATION
+            )
 
             write(
                 animations.size
@@ -166,7 +167,6 @@ class VEExport {
                 }
             }
         }
-
     }
 }
 

@@ -19,9 +19,10 @@ import good.damn.sav.misc.extensions.io.readFraction
 import good.damn.sav.misc.extensions.io.readU
 import java.io.InputStream
 
-class VEImport3 {
+class VEImport {
     companion object {
-        const val VERSION = 3
+        const val VERSION_STATIC = 3
+        const val VERSION_ANIMATION = 1
 
         fun static(
             canvasSize: Size,
@@ -30,11 +31,11 @@ class VEImport3 {
         ) = stream.run {
 
             val version = readU()
-            if (throwException && version != VERSION) {
+            if (throwException && version != VERSION_STATIC) {
                 close()
                 throw VEExceptionDifferentVersion(
                     version,
-                    VERSION
+                    VERSION_STATIC
                 )
             }
 
@@ -126,6 +127,7 @@ class VEImport3 {
             }
 
             VEModelImport(
+                version.toByte(),
                 skeleton,
                 shapes,
                 groups
@@ -138,8 +140,21 @@ class VEImport3 {
             groupsFill: List<VEFillGroupObserver>,
             stream: InputStream,
             throwException: Boolean,
-            importAnimation: VEIListenerImportAnimation<T>
+            importAnimation: VEIListenerImportAnimation<T>,
+            isUpper3Version: Boolean
         ) = stream.run {
+
+            if (isUpper3Version) {
+                val version = readU()
+                if (throwException && version != VERSION_ANIMATION) {
+                    close()
+                    throw VEExceptionDifferentVersion(
+                        version,
+                        VERSION_ANIMATION
+                    )
+                }
+            }
+
             val animSize = readU()
 
             if (animSize == 0) {
@@ -221,7 +236,8 @@ class VEImport3 {
             groupsFill: List<VEFillGroupObserver>,
             canvasSize: Size,
             stream: InputStream,
-            throwException: Boolean
+            throwException: Boolean,
+            version: Byte
         ) = animationWrapper(
             shapes,
             skeleton,
@@ -230,7 +246,8 @@ class VEImport3 {
             throwException,
             VEImportAnimationDefault(
                 canvasSize
-            )
+            ),
+            version > 3
         )
     }
 }
