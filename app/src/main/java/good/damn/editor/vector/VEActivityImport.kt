@@ -162,6 +162,7 @@ VEIListenerAnimationUpdateFrame {
         mViewAvs?.model = it.first
         mCurrentAnimation = it.second.apply {
             mScrollLayout?.let { lay ->
+                lay.removeAllViews()
                 placeDurations(
                     lay,
                     this@VEActivityImport,
