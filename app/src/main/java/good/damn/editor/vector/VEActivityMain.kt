@@ -387,11 +387,14 @@ VEIListenerOnTransform {
                 this
             )
 
-            post {
-                onGetBrowserContent(
-                    intent.data
-                )
+            intent.data?.let { data ->
+                post {
+                    onGetBrowserContent(
+                        listOf(data)
+                    )
+                }
             }
+
         }
 
         setContentView(
@@ -400,10 +403,8 @@ VEIListenerOnTransform {
     }
 
     override fun onGetBrowserContent(
-        uri: Uri?
-    ) {
-        uri ?: return
-
+        list: List<Uri>
+    ) = list.forEach { uri ->
         when (
             uri.extension
         ) {

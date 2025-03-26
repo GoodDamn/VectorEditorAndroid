@@ -39,8 +39,6 @@ VEIListenerAnimationUpdateFrame {
         VEIListenerAnimation
     >? = null
 
-    private var modelStatic: VEModelImport? = null
-
     private val mCanvasSize = Size()
     private var mViewAvs: VEViewAVS? = null
 
@@ -134,52 +132,14 @@ VEIListenerAnimationUpdateFrame {
     }
 
     override fun onGetBrowserContent(
-        uri: Uri?
-    ) {
-        uri ?: return
-
-        when (uri.extension) {
-            "avs" -> {
-                val pair = VEAssetLoader.loadAssetStaticAnimation(
-                    mCanvasSize,
-                    contentResolver,
-                    VEImportAnimationDefault(
-                        mCanvasSize
-                    ),
-                    uri
-                )
-
-                modelStatic = pair?.first
-            }
-
-            "avss" -> {
-                modelStatic = VEAssetLoader.loadAssetStatic(
-                    mCanvasSize,
-                    contentResolver,
-                    uri
-                )
-            }
-
-            "avsa" -> modelStatic?.run {
-                mCurrentAnimation = VEAssetLoader.loadAssetAnimation(
-                    shapes,
-                    skeleton,
-                    groupsFill,
-                    VEImportAnimationDefault(
-                        mCanvasSize
-                    ),
-                    contentResolver,
-                    uri
-                )?.apply {
-                    mScrollLayout?.let {
-                        placeDurations(
-                            it,
-                            this@VEActivityImport,
-                            this
-                        )
-                    }
-                }
-            }
+        list: List<Uri>
+    ) = list.forEach { uri ->
+        when (
+            uri.extension
+        ) {
+            "avs" -> loadAssetStaticAnimation(uri)
+            "avss" -> loadAssetStatic(uri)
+            "avsa" -> loadAssetAnimation(uri)
         }
     }
 
@@ -188,6 +148,62 @@ VEIListenerAnimationUpdateFrame {
     ) {
         mViewAvs?.invalidate()
     } ?: Unit
+
+    private inline fun loadAssetStaticAnimation(
+        uri: Uri
+    ) = VEAssetLoader.loadAssetStaticAnimation(
+        mCanvasSize,
+        contentResolver,
+        VEImportAnimationDefault(
+            mCanvasSize
+        ),
+        uri
+    )?.let {
+        mViewAvs?.model = it.first
+        mCurrentAnimation = it.second.apply {
+            mScrollLayout?.let { lay ->
+                placeDurations(
+                    lay,
+                    this@VEActivityImport,
+                    this
+                )
+            }
+        }
+    }
+
+    private inline fun loadAssetStatic(
+        uri: Uri
+    ) = VEAssetLoader.loadAssetStatic(
+        mCanvasSize,
+        contentResolver,
+        uri
+    ).let {
+        mViewAvs?.model = it
+        mCurrentAnimation = null
+    }
+
+    private inline fun loadAssetAnimation(
+        uri: Uri
+    ) = mViewAvs?.model?.run {
+        mCurrentAnimation = VEAssetLoader.loadAssetAnimation(
+            shapes,
+            skeleton,
+            groupsFill,
+            VEImportAnimationDefault(
+                mCanvasSize
+            ),
+            contentResolver,
+            uri
+        )?.apply {
+            mScrollLayout?.let {
+                placeDurations(
+                    it,
+                    this@VEActivityImport,
+                    this
+                )
+            }
+        }
+    }
 
 }
 

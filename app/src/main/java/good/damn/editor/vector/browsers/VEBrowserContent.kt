@@ -10,7 +10,7 @@ import good.damn.editor.vector.browsers.interfaces.VEListenerOnGetBrowserContent
 import java.lang.ref.WeakReference
 
 class VEBrowserContent
-: ActivityResultCallback<Uri?> {
+: ActivityResultCallback<List<Uri>> {
 
     companion object {
         private const val ANY_TYPE = "*/*"
@@ -24,7 +24,7 @@ class VEBrowserContent
         activity: AppCompatActivity
     ) {
         mLauncher = activity.registerForActivityResult(
-            ActivityResultContracts.GetContent(),
+            ActivityResultContracts.GetMultipleContents(),
             this
         )
     }
@@ -38,11 +38,10 @@ class VEBrowserContent
     }
 
     override fun onActivityResult(
-        result: Uri?
+        result: List<Uri>
     ) {
         onGetContent?.onGetBrowserContent(
             result
         )
     }
-
 }

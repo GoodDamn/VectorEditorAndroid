@@ -4,6 +4,6 @@ import android.net.Uri
 
 interface VEListenerOnGetBrowserContent {
     fun onGetBrowserContent(
-        uri: Uri?
+        uri: List<Uri>
     )
 }
