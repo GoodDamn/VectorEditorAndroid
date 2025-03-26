@@ -26,6 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.EDIT"/>
@@ -47,12 +48,62 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.OPENABLE"/>
 
+                <data android:mimeType="application/octet-stream"
+                    android:scheme="file"/>
+
+            </intent-filter>
+
+            <!-- AVS file-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.EDIT"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.OPENABLE"/>
+
                 <data
                     android:host="*"
                     android:mimeType="*/*"
                     android:pathPattern=".*\\.avs"
                     android:scheme="content"/>
             </intent-filter>
+
+
+            <!-- AVSA file-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.EDIT"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.OPENABLE"/>
+
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\.avsa"
+                    android:scheme="content"/>
+            </intent-filter>
+
+
+            <!-- AVSS file-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.EDIT"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.OPENABLE"/>
+
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\.avss"
+                    android:scheme="content"/>
+            </intent-filter>
+
+
 
         </activity>
 
